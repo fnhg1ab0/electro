@@ -1,38 +1,38 @@
-version: '3.9'
+#version: '3.9'
 
 services:
-  electro-client:
-    container_name: electro-client
-    image: electro-client
-    restart: always
-    depends_on:
-      - electro-server
-    build:
-      context: electro-client
-      dockerfile: Dockerfile
-    ports:
-      - 3000:80
-    networks:
-      - network
-
-  electro-server:
-    container_name: electro-server
-    image: electro-server
-    restart: on-failure
-    depends_on:
-      electro-database:
-        condition: service_healthy
-    build:
-      context: electro-server
-      dockerfile: Dockerfile
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://electro-database:3306/electro
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: 12345
-    ports:
-      - 8085:8085
-    networks:
-      - network
+  #  electro-client:
+  #    container_name: electro-client
+  #    #    image: electro-client
+  #    restart: always
+  #    depends_on:
+  #      - electro-server
+  #    build:
+  #      context: electro-client
+  #      dockerfile: Dockerfile
+  #    ports:
+  #      - 3000:80
+  #    networks:
+  #      - network
+  #
+  #  electro-server:
+  #    container_name: electro-server
+  #    #    image: electro-server
+  #    restart: on-failure
+  #    depends_on:
+  #      electro-database:
+  #        condition: service_healthy
+  #    build:
+  #      context: electro-server
+  #      dockerfile: Dockerfile
+  #    environment:
+  #      SPRING_DATASOURCE_URL: jdbc:mysql://electro-database:3306/electro
+  #      SPRING_DATASOURCE_USERNAME: root
+  #      SPRING_DATASOURCE_PASSWORD: 12345
+  #    ports:
+  #      - 8085:8085
+  #    networks:
+  #      - network
 
   electro-database:
     container_name: electro-database

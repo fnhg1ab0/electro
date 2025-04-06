@@ -1,0 +1,32 @@
+{
+  "review": {
+    "id": 1,
+    "createdAt": "2021-10-03T14:16:01Z",
+    "updatedAt": "2021-11-17T17:55:52Z",
+    "user": {
+      "id": 4,
+      "createdAt": "2022-01-26T21:22:37Z",
+      "updatedAt": "2022-05-03T19:25:59Z",
+      "username": "dtreat3",
+      "fullname": "Danila Treat"
+    },
+    "product": {
+      "id": 1,
+      "createdAt": "2022-06-10T04:43:15Z",
+      "updatedAt": "2021-06-29T03:23:48Z",
+      "name": "Dell XPS 13 9315",
+      "code": "0003-1967",
+      "slug": "ealdus0"
+    },
+    "ratingScore": 4,
+    "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec posuere felis sed justo finibus, eget maximus diam rhoncus. Integer posuere tempor magna, ut dictum massa suscipit vel. Sed quis placerat neque. Etiam urna sapien, accumsan nec nulla in, condimentum venenatis ex.",
+    "status": 2
+  },
+  "create-success": {
+    "content": "Sản phẩm rất tốt, đóng gói cẩn thận",
+    "ratingScore": 5,
+    "productId": 2,
+    "userId": 2,
+    "status": 1
+  }
+}

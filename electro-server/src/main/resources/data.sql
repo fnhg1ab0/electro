@@ -419,45 +419,45 @@ VALUES (1, '2022-06-10 11:43:15', '2021-06-29 10:23:48', null, null, 'Dell XPS 1
         'Pellentesque ultrices mattis odio. Donec vitae nisi.',
         'Praesent blandit. Nam nulla. Integer pede justo, lacinia eget, tincidunt eget, tempus vel, pede.', 1, 1, 3, 5,
         2, '{
-  "content": [
-    {
-      "id": 1,
-      "code": "screen-size",
-      "name": "Cỡ màn hình",
-      "value": "15 inch"
-    },
-    {
-      "id": 2,
-      "code": "cpu",
-      "name": "CPU",
-      "value": "Intel Core i7"
-    }
-  ],
-  "totalElements": 2
-}', '{
-  "content": [
-    {
-      "id": 1,
-      "code": "size",
-      "name": "Kích cỡ",
-      "value": [
-        "S",
-        "M",
-        "L"
-      ]
-    },
-    {
-      "id": 2,
-      "code": "color",
-      "name": "Màu sắc",
-      "value": [
-        "Đỏ",
-        "Xanh dương"
-      ]
-    }
-  ],
-  "totalElements": 2
-}', 602, 2);
+    "content": [
+      {
+        "id": 1,
+        "code": "screen-size",
+        "name": "Cỡ màn hình",
+        "value": "15 inch"
+      },
+      {
+        "id": 2,
+        "code": "cpu",
+        "name": "CPU",
+        "value": "Intel Core i7"
+      }
+    ],
+    "totalElements": 2
+  }', '{
+    "content": [
+      {
+        "id": 1,
+        "code": "size",
+        "name": "Kích cỡ",
+        "value": [
+          "S",
+          "M",
+          "L"
+        ]
+      },
+      {
+        "id": 2,
+        "code": "color",
+        "name": "Màu sắc",
+        "value": [
+          "Đỏ",
+          "Xanh dương"
+        ]
+      }
+    ],
+    "totalElements": 2
+  }', 602, 2);
 INSERT INTO product (id, created_at, updated_at, created_by, updated_by, name, code, slug, short_description,
                      description, status, category_id, brand_id, supplier_id, unit_id, specifications, properties,
                      weight, guarantee_id)
@@ -466,45 +466,45 @@ VALUES (2, '2022-04-04 12:24:24', '2021-08-22 19:25:02', null, null, 'Microsoft 
         'Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices, erat tortor sollicitudin mi, sit amet lobortis sapien sapien non mi. Integer ac neque. Duis bibendum.',
         'Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
         1, 1, 5, 5, 2, '{
-  "content": [
-    {
-      "id": 1,
-      "code": "screen-size",
-      "name": "Cỡ màn hình",
-      "value": "15 inch"
-    },
-    {
-      "id": 2,
-      "code": "cpu",
-      "name": "CPU",
-      "value": "Intel Core i7"
-    }
-  ],
-  "totalElements": 2
-}', '{
-  "content": [
-    {
-      "id": 1,
-      "code": "size",
-      "name": "Kích cỡ",
-      "value": [
-        "S",
-        "M",
-        "L"
-      ]
-    },
-    {
-      "id": 2,
-      "code": "color",
-      "name": "Màu sắc",
-      "value": [
-        "Đỏ",
-        "Xanh dương"
-      ]
-    }
-  ],
-  "totalElements": 2
-}', 851, 1);
+    "content": [
+      {
+        "id": 1,
+        "code": "screen-size",
+        "name": "Cỡ màn hình",
+        "value": "15 inch"
+      },
+      {
+        "id": 2,
+        "code": "cpu",
+        "name": "CPU",
+        "value": "Intel Core i7"
+      }
+    ],
+    "totalElements": 2
+  }', '{
+    "content": [
+      {
+        "id": 1,
+        "code": "size",
+        "name": "Kích cỡ",
+        "value": [
+          "S",
+          "M",
+          "L"
+        ]
+      },
+      {
+        "id": 2,
+        "code": "color",
+        "name": "Màu sắc",
+        "value": [
+          "Đỏ",
+          "Xanh dương"
+        ]
+      }
+    ],
+    "totalElements": 2
+  }', 851, 1);
 INSERT INTO product (id, created_at, updated_at, created_by, updated_by, name, code, slug, short_description,
                      description, status, category_id, brand_id, supplier_id, unit_id, specifications, properties,
                      weight, guarantee_id)
@@ -513,90 +513,90 @@ VALUES (3, '2022-01-20 03:49:30', '2022-04-12 10:55:49', null, null, 'Lenovo Thi
         'Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti.',
         'Curabitur in libero ut massa volutpat convallis. Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo. Maecenas pulvinar lobortis est.',
         1, 1, 3, 3, 2, '{
-  "content": [
-    {
-      "id": 1,
-      "code": "screen-size",
-      "name": "Cỡ màn hình",
-      "value": "15 inch"
-    },
-    {
-      "id": 2,
-      "code": "cpu",
-      "name": "CPU",
-      "value": "Intel Core i7"
-    }
-  ],
-  "totalElements": 2
-}', '{
-  "content": [
-    {
-      "id": 1,
-      "code": "size",
-      "name": "Kích cỡ",
-      "value": [
-        "S",
-        "M",
-        "L"
-      ]
-    },
-    {
-      "id": 2,
-      "code": "color",
-      "name": "Màu sắc",
-      "value": [
-        "Đỏ",
-        "Xanh dương"
-      ]
-    }
-  ],
-  "totalElements": 2
-}', 874, 1);
+    "content": [
+      {
+        "id": 1,
+        "code": "screen-size",
+        "name": "Cỡ màn hình",
+        "value": "15 inch"
+      },
+      {
+        "id": 2,
+        "code": "cpu",
+        "name": "CPU",
+        "value": "Intel Core i7"
+      }
+    ],
+    "totalElements": 2
+  }', '{
+    "content": [
+      {
+        "id": 1,
+        "code": "size",
+        "name": "Kích cỡ",
+        "value": [
+          "S",
+          "M",
+          "L"
+        ]
+      },
+      {
+        "id": 2,
+        "code": "color",
+        "name": "Màu sắc",
+        "value": [
+          "Đỏ",
+          "Xanh dương"
+        ]
+      }
+    ],
+    "totalElements": 2
+  }', 874, 1);
 INSERT INTO product (id, created_at, updated_at, created_by, updated_by, name, code, slug, short_description,
                      description, status, category_id, brand_id, supplier_id, unit_id, specifications, properties,
                      weight, guarantee_id)
 VALUES (4, '2022-03-17 11:32:13', '2021-09-30 21:24:13', null, null, 'Dell Precision 15 5560', '11822-0590',
         'jsauvage3', 'In congue. Etiam justo.',
         'Suspendisse potenti. In eleifend quam a odio. In hac habitasse platea dictumst.', 1, 1, 4, 4, 1, '{
-  "content": [
-    {
-      "id": 1,
-      "code": "screen-size",
-      "name": "Cỡ màn hình",
-      "value": "15 inch"
-    },
-    {
-      "id": 2,
-      "code": "cpu",
-      "name": "CPU",
-      "value": "Intel Core i7"
-    }
-  ],
-  "totalElements": 2
-}', '{
-  "content": [
-    {
-      "id": 1,
-      "code": "size",
-      "name": "Kích cỡ",
-      "value": [
-        "S",
-        "M",
-        "L"
-      ]
-    },
-    {
-      "id": 2,
-      "code": "color",
-      "name": "Màu sắc",
-      "value": [
-        "Đỏ",
-        "Xanh dương"
-      ]
-    }
-  ],
-  "totalElements": 2
-}', 553, 2);
+    "content": [
+      {
+        "id": 1,
+        "code": "screen-size",
+        "name": "Cỡ màn hình",
+        "value": "15 inch"
+      },
+      {
+        "id": 2,
+        "code": "cpu",
+        "name": "CPU",
+        "value": "Intel Core i7"
+      }
+    ],
+    "totalElements": 2
+  }', '{
+    "content": [
+      {
+        "id": 1,
+        "code": "size",
+        "name": "Kích cỡ",
+        "value": [
+          "S",
+          "M",
+          "L"
+        ]
+      },
+      {
+        "id": 2,
+        "code": "color",
+        "name": "Màu sắc",
+        "value": [
+          "Đỏ",
+          "Xanh dương"
+        ]
+      }
+    ],
+    "totalElements": 2
+  }', 553, 2);
 INSERT INTO product (id, created_at, updated_at, created_by, updated_by, name, code, slug, short_description,
                      description, status, category_id, brand_id, supplier_id, unit_id, specifications, properties,
                      weight, guarantee_id)
@@ -604,45 +604,45 @@ VALUES (5, '2021-09-10 05:01:45', '2022-01-12 21:36:14', null, null, 'New Inspir
         'gphuprate4',
         'Vivamus vel nulla eget eros elementum pellentesque. Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla.',
         'Duis aliquam convallis nunc. Proin at turpis a pede posuere nonummy. Integer non velit.', 1, 1, 1, 3, 1, '{
-  "content": [
-    {
-      "id": 1,
-      "code": "screen-size",
-      "name": "Cỡ màn hình",
-      "value": "15 inch"
-    },
-    {
-      "id": 2,
-      "code": "cpu",
-      "name": "CPU",
-      "value": "Intel Core i7"
-    }
-  ],
-  "totalElements": 2
-}', '{
-  "content": [
-    {
-      "id": 1,
-      "code": "size",
-      "name": "Kích cỡ",
-      "value": [
-        "S",
-        "M",
-        "L"
-      ]
-    },
-    {
-      "id": 2,
-      "code": "color",
-      "name": "Màu sắc",
-      "value": [
-        "Đỏ",
-        "Xanh dương"
-      ]
-    }
-  ],
-  "totalElements": 2
-}', 751, 2);
+    "content": [
+      {
+        "id": 1,
+        "code": "screen-size",
+        "name": "Cỡ màn hình",
+        "value": "15 inch"
+      },
+      {
+        "id": 2,
+        "code": "cpu",
+        "name": "CPU",
+        "value": "Intel Core i7"
+      }
+    ],
+    "totalElements": 2
+  }', '{
+    "content": [
+      {
+        "id": 1,
+        "code": "size",
+        "name": "Kích cỡ",
+        "value": [
+          "S",
+          "M",
+          "L"
+        ]
+      },
+      {
+        "id": 2,
+        "code": "color",
+        "name": "Màu sắc",
+        "value": [
+          "Đỏ",
+          "Xanh dương"
+        ]
+      }
+    ],
+    "totalElements": 2
+  }', 751, 2);
 INSERT INTO product (id, created_at, updated_at, created_by, updated_by, name, code, slug, short_description,
                      description, status, category_id, brand_id, supplier_id, unit_id, specifications, properties,
                      weight, guarantee_id)
@@ -650,45 +650,45 @@ VALUES (6, '2021-09-10 05:01:45', '2022-01-12 21:36:14', null, null, 'Loa Harman
         'harman',
         'Vivamus vel nulla eget eros elementum pellentesque. Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla.',
         'Duis aliquam convallis nunc. Proin at turpis a pede posuere nonummy. Integer non velit.', 1, 2, 5, 3, 1, '{
-  "content": [
-    {
-      "id": 1,
-      "code": "screen-size",
-      "name": "Cỡ màn hình",
-      "value": "15 inch"
-    },
-    {
-      "id": 2,
-      "code": "cpu",
-      "name": "CPU",
-      "value": "Intel Core i7"
-    }
-  ],
-  "totalElements": 2
-}', '{
-  "content": [
-    {
-      "id": 1,
-      "code": "size",
-      "name": "Kích cỡ",
-      "value": [
-        "S",
-        "M",
-        "L"
-      ]
-    },
-    {
-      "id": 2,
-      "code": "color",
-      "name": "Màu sắc",
-      "value": [
-        "Đỏ",
-        "Xanh dương"
-      ]
-    }
-  ],
-  "totalElements": 2
-}', 751, 2);
+    "content": [
+      {
+        "id": 1,
+        "code": "screen-size",
+        "name": "Cỡ màn hình",
+        "value": "15 inch"
+      },
+      {
+        "id": 2,
+        "code": "cpu",
+        "name": "CPU",
+        "value": "Intel Core i7"
+      }
+    ],
+    "totalElements": 2
+  }', '{
+    "content": [
+      {
+        "id": 1,
+        "code": "size",
+        "name": "Kích cỡ",
+        "value": [
+          "S",
+          "M",
+          "L"
+        ]
+      },
+      {
+        "id": 2,
+        "code": "color",
+        "name": "Màu sắc",
+        "value": [
+          "Đỏ",
+          "Xanh dương"
+        ]
+      }
+    ],
+    "totalElements": 2
+  }', 751, 2);
 INSERT INTO product (id, created_at, updated_at, created_by, updated_by, name, code, slug, short_description,
                      description, status, category_id, brand_id, supplier_id, unit_id, specifications, properties,
                      weight, guarantee_id)
@@ -696,45 +696,45 @@ VALUES (7, '2021-09-10 05:01:45', '2022-01-12 21:36:14', null, null, 'Loa di đ�
         'beosound',
         'Vivamus vel nulla eget eros elementum pellentesque. Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla.',
         'Duis aliquam convallis nunc. Proin at turpis a pede posuere nonummy. Integer non velit.', 1, 2, 7, 3, 1, '{
-  "content": [
-    {
-      "id": 1,
-      "code": "screen-size",
-      "name": "Cỡ màn hình",
-      "value": "15 inch"
-    },
-    {
-      "id": 2,
-      "code": "cpu",
-      "name": "CPU",
-      "value": "Intel Core i7"
-    }
-  ],
-  "totalElements": 2
-}', '{
-  "content": [
-    {
-      "id": 1,
-      "code": "size",
-      "name": "Kích cỡ",
-      "value": [
-        "S",
-        "M",
-        "L"
-      ]
-    },
-    {
-      "id": 2,
-      "code": "color",
-      "name": "Màu sắc",
-      "value": [
-        "Đỏ",
-        "Xanh dương"
-      ]
-    }
-  ],
-  "totalElements": 2
-}', 751, 2);
+    "content": [
+      {
+        "id": 1,
+        "code": "screen-size",
+        "name": "Cỡ màn hình",
+        "value": "15 inch"
+      },
+      {
+        "id": 2,
+        "code": "cpu",
+        "name": "CPU",
+        "value": "Intel Core i7"
+      }
+    ],
+    "totalElements": 2
+  }', '{
+    "content": [
+      {
+        "id": 1,
+        "code": "size",
+        "name": "Kích cỡ",
+        "value": [
+          "S",
+          "M",
+          "L"
+        ]
+      },
+      {
+        "id": 2,
+        "code": "color",
+        "name": "Màu sắc",
+        "value": [
+          "Đỏ",
+          "Xanh dương"
+        ]
+      }
+    ],
+    "totalElements": 2
+  }', 751, 2);
 INSERT INTO product (id, created_at, updated_at, created_by, updated_by, name, code, slug, short_description,
                      description, status, category_id, brand_id, supplier_id, unit_id, specifications, properties,
                      weight, guarantee_id)
@@ -742,90 +742,90 @@ VALUES (8, '2021-09-10 05:01:45', '2022-01-12 21:36:14', null, null, 'Bàn phím
         '32323-3937', 'logitech',
         'Vivamus vel nulla eget eros elementum pellentesque. Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla.',
         'Duis aliquam convallis nunc. Proin at turpis a pede posuere nonummy. Integer non velit.', 1, 3, 7, 3, 1, '{
-  "content": [
-    {
-      "id": 1,
-      "code": "screen-size",
-      "name": "Cỡ màn hình",
-      "value": "15 inch"
-    },
-    {
-      "id": 2,
-      "code": "cpu",
-      "name": "CPU",
-      "value": "Intel Core i7"
-    }
-  ],
-  "totalElements": 2
-}', '{
-  "content": [
-    {
-      "id": 1,
-      "code": "size",
-      "name": "Kích cỡ",
-      "value": [
-        "S",
-        "M",
-        "L"
-      ]
-    },
-    {
-      "id": 2,
-      "code": "color",
-      "name": "Màu sắc",
-      "value": [
-        "Đỏ",
-        "Xanh dương"
-      ]
-    }
-  ],
-  "totalElements": 2
-}', 751, 2);
+    "content": [
+      {
+        "id": 1,
+        "code": "screen-size",
+        "name": "Cỡ màn hình",
+        "value": "15 inch"
+      },
+      {
+        "id": 2,
+        "code": "cpu",
+        "name": "CPU",
+        "value": "Intel Core i7"
+      }
+    ],
+    "totalElements": 2
+  }', '{
+    "content": [
+      {
+        "id": 1,
+        "code": "size",
+        "name": "Kích cỡ",
+        "value": [
+          "S",
+          "M",
+          "L"
+        ]
+      },
+      {
+        "id": 2,
+        "code": "color",
+        "name": "Màu sắc",
+        "value": [
+          "Đỏ",
+          "Xanh dương"
+        ]
+      }
+    ],
+    "totalElements": 2
+  }', 751, 2);
 INSERT INTO product (id, created_at, updated_at, created_by, updated_by, name, code, slug, short_description,
                      description, status, category_id, brand_id, supplier_id, unit_id, specifications, properties,
                      weight, guarantee_id)
 VALUES (9, '2021-09-10 05:01:45', '2022-01-12 21:36:14', null, null, 'Máy chơi game Xbox S', '23231-3937', 'xbox-s',
         'Vivamus vel nulla eget eros elementum pellentesque. Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla.',
         'Duis aliquam convallis nunc. Proin at turpis a pede posuere nonummy. Integer non velit.', 1, 4, 3, 3, 1, '{
-  "content": [
-    {
-      "id": 1,
-      "code": "screen-size",
-      "name": "Cỡ màn hình",
-      "value": "15 inch"
-    },
-    {
-      "id": 2,
-      "code": "cpu",
-      "name": "CPU",
-      "value": "Intel Core i7"
-    }
-  ],
-  "totalElements": 2
-}', '{
-  "content": [
-    {
-      "id": 1,
-      "code": "size",
-      "name": "Kích cỡ",
-      "value": [
-        "S",
-        "M",
-        "L"
-      ]
-    },
-    {
-      "id": 2,
-      "code": "color",
-      "name": "Màu sắc",
-      "value": [
-        "Đỏ",
-        "Xanh dương"
-      ]
-    }
-  ],
-  "totalElements": 2
-}', 751, 2);
+    "content": [
+      {
+        "id": 1,
+        "code": "screen-size",
+        "name": "Cỡ màn hình",
+        "value": "15 inch"
+      },
+      {
+        "id": 2,
+        "code": "cpu",
+        "name": "CPU",
+        "value": "Intel Core i7"
+      }
+    ],
+    "totalElements": 2
+  }', '{
+    "content": [
+      {
+        "id": 1,
+        "code": "size",
+        "name": "Kích cỡ",
+        "value": [
+          "S",
+          "M",
+          "L"
+        ]
+      },
+      {
+        "id": 2,
+        "code": "color",
+        "name": "Màu sắc",
+        "value": [
+          "Đỏ",
+          "Xanh dương"
+        ]
+      }
+    ],
+    "totalElements": 2
+  }', 751, 2);
 INSERT INTO product (id, created_at, updated_at, created_by, updated_by, name, code, slug, short_description,
                      description, status, category_id, brand_id, supplier_id, unit_id, specifications, properties,
                      weight, guarantee_id)
@@ -833,135 +833,135 @@ VALUES (10, '2021-09-10 05:01:45', '2022-01-12 21:36:14', null, null, 'Chuột L
         'logi-mx',
         'Vivamus vel nulla eget eros elementum pellentesque. Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla.',
         'Duis aliquam convallis nunc. Proin at turpis a pede posuere nonummy. Integer non velit.', 1, 5, 2, 3, 1, '{
-  "content": [
-    {
-      "id": 1,
-      "code": "screen-size",
-      "name": "Cỡ màn hình",
-      "value": "15 inch"
-    },
-    {
-      "id": 2,
-      "code": "cpu",
-      "name": "CPU",
-      "value": "Intel Core i7"
-    }
-  ],
-  "totalElements": 2
-}', '{
-  "content": [
-    {
-      "id": 1,
-      "code": "size",
-      "name": "Kích cỡ",
-      "value": [
-        "S",
-        "M",
-        "L"
-      ]
-    },
-    {
-      "id": 2,
-      "code": "color",
-      "name": "Màu sắc",
-      "value": [
-        "Đỏ",
-        "Xanh dương"
-      ]
-    }
-  ],
-  "totalElements": 2
-}', 751, 2);
+    "content": [
+      {
+        "id": 1,
+        "code": "screen-size",
+        "name": "Cỡ màn hình",
+        "value": "15 inch"
+      },
+      {
+        "id": 2,
+        "code": "cpu",
+        "name": "CPU",
+        "value": "Intel Core i7"
+      }
+    ],
+    "totalElements": 2
+  }', '{
+    "content": [
+      {
+        "id": 1,
+        "code": "size",
+        "name": "Kích cỡ",
+        "value": [
+          "S",
+          "M",
+          "L"
+        ]
+      },
+      {
+        "id": 2,
+        "code": "color",
+        "name": "Màu sắc",
+        "value": [
+          "Đỏ",
+          "Xanh dương"
+        ]
+      }
+    ],
+    "totalElements": 2
+  }', 751, 2);
 INSERT INTO product (id, created_at, updated_at, created_by, updated_by, name, code, slug, short_description,
                      description, status, category_id, brand_id, supplier_id, unit_id, specifications, properties,
                      weight, guarantee_id)
 VALUES (11, '2021-09-10 05:01:45', '2022-01-12 21:36:14', null, null, 'Intel Core i9-13900K', '22344-3937', 'i9-13900',
         'Vivamus vel nulla eget eros elementum pellentesque. Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla.',
         'Duis aliquam convallis nunc. Proin at turpis a pede posuere nonummy. Integer non velit.', 1, 6, 4, 3, 1, '{
-  "content": [
-    {
-      "id": 1,
-      "code": "screen-size",
-      "name": "Cỡ màn hình",
-      "value": "15 inch"
-    },
-    {
-      "id": 2,
-      "code": "cpu",
-      "name": "CPU",
-      "value": "Intel Core i7"
-    }
-  ],
-  "totalElements": 2
-}', '{
-  "content": [
-    {
-      "id": 1,
-      "code": "size",
-      "name": "Kích cỡ",
-      "value": [
-        "S",
-        "M",
-        "L"
-      ]
-    },
-    {
-      "id": 2,
-      "code": "color",
-      "name": "Màu sắc",
-      "value": [
-        "Đỏ",
-        "Xanh dương"
-      ]
-    }
-  ],
-  "totalElements": 2
-}', 751, 2);
+    "content": [
+      {
+        "id": 1,
+        "code": "screen-size",
+        "name": "Cỡ màn hình",
+        "value": "15 inch"
+      },
+      {
+        "id": 2,
+        "code": "cpu",
+        "name": "CPU",
+        "value": "Intel Core i7"
+      }
+    ],
+    "totalElements": 2
+  }', '{
+    "content": [
+      {
+        "id": 1,
+        "code": "size",
+        "name": "Kích cỡ",
+        "value": [
+          "S",
+          "M",
+          "L"
+        ]
+      },
+      {
+        "id": 2,
+        "code": "color",
+        "name": "Màu sắc",
+        "value": [
+          "Đỏ",
+          "Xanh dương"
+        ]
+      }
+    ],
+    "totalElements": 2
+  }', 751, 2);
 INSERT INTO product (id, created_at, updated_at, created_by, updated_by, name, code, slug, short_description,
                      description, status, category_id, brand_id, supplier_id, unit_id, specifications, properties,
                      weight, guarantee_id)
 VALUES (12, '2021-09-10 05:01:45', '2022-01-12 21:36:14', null, null, 'Dell Gaming G5 5000', '56555-3937', 'dell-g5',
         'Vivamus vel nulla eget eros elementum pellentesque. Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla.',
         'Duis aliquam convallis nunc. Proin at turpis a pede posuere nonummy. Integer non velit.', 1, 7, 5, 3, 1, '{
-  "content": [
-    {
-      "id": 1,
-      "code": "screen-size",
-      "name": "Cỡ màn hình",
-      "value": "15 inch"
-    },
-    {
-      "id": 2,
-      "code": "cpu",
-      "name": "CPU",
-      "value": "Intel Core i7"
-    }
-  ],
-  "totalElements": 2
-}', '{
-  "content": [
-    {
-      "id": 1,
-      "code": "size",
-      "name": "Kích cỡ",
-      "value": [
-        "S",
-        "M",
-        "L"
-      ]
-    },
-    {
-      "id": 2,
-      "code": "color",
-      "name": "Màu sắc",
-      "value": [
-        "Đỏ",
-        "Xanh dương"
-      ]
-    }
-  ],
-  "totalElements": 2
-}', 751, 2);
+    "content": [
+      {
+        "id": 1,
+        "code": "screen-size",
+        "name": "Cỡ màn hình",
+        "value": "15 inch"
+      },
+      {
+        "id": 2,
+        "code": "cpu",
+        "name": "CPU",
+        "value": "Intel Core i7"
+      }
+    ],
+    "totalElements": 2
+  }', '{
+    "content": [
+      {
+        "id": 1,
+        "code": "size",
+        "name": "Kích cỡ",
+        "value": [
+          "S",
+          "M",
+          "L"
+        ]
+      },
+      {
+        "id": 2,
+        "code": "color",
+        "name": "Màu sắc",
+        "value": [
+          "Đỏ",
+          "Xanh dương"
+        ]
+      }
+    ],
+    "totalElements": 2
+  }', 751, 2);
 INSERT INTO product (id, created_at, updated_at, created_by, updated_by, name, code, slug, short_description,
                      description, status, category_id, brand_id, supplier_id, unit_id, specifications, properties,
                      weight, guarantee_id)
@@ -969,45 +969,45 @@ VALUES (13, '2021-09-10 05:01:45', '2022-01-12 21:36:14', null, null, 'Túi Lapt
         '55544-3937', 'ree-yee',
         'Vivamus vel nulla eget eros elementum pellentesque. Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla.',
         'Duis aliquam convallis nunc. Proin at turpis a pede posuere nonummy. Integer non velit.', 1, 8, 11, 3, 1, '{
-  "content": [
-    {
-      "id": 1,
-      "code": "screen-size",
-      "name": "Cỡ màn hình",
-      "value": "15 inch"
-    },
-    {
-      "id": 2,
-      "code": "cpu",
-      "name": "CPU",
-      "value": "Intel Core i7"
-    }
-  ],
-  "totalElements": 2
-}', '{
-  "content": [
-    {
-      "id": 1,
-      "code": "size",
-      "name": "Kích cỡ",
-      "value": [
-        "S",
-        "M",
-        "L"
-      ]
-    },
-    {
-      "id": 2,
-      "code": "color",
-      "name": "Màu sắc",
-      "value": [
-        "Đỏ",
-        "Xanh dương"
-      ]
-    }
-  ],
-  "totalElements": 2
-}', 751, 2);
+    "content": [
+      {
+        "id": 1,
+        "code": "screen-size",
+        "name": "Cỡ màn hình",
+        "value": "15 inch"
+      },
+      {
+        "id": 2,
+        "code": "cpu",
+        "name": "CPU",
+        "value": "Intel Core i7"
+      }
+    ],
+    "totalElements": 2
+  }', '{
+    "content": [
+      {
+        "id": 1,
+        "code": "size",
+        "name": "Kích cỡ",
+        "value": [
+          "S",
+          "M",
+          "L"
+        ]
+      },
+      {
+        "id": 2,
+        "code": "color",
+        "name": "Màu sắc",
+        "value": [
+          "Đỏ",
+          "Xanh dương"
+        ]
+      }
+    ],
+    "totalElements": 2
+  }', 751, 2);
 INSERT INTO product (id, created_at, updated_at, created_by, updated_by, name, code, slug, short_description,
                      description, status, category_id, brand_id, supplier_id, unit_id, specifications, properties,
                      weight, guarantee_id)
@@ -3150,9 +3150,15 @@ VALUES ('2021-10-03 21:16:01', '2021-11-18 00:55:52', 4, 1, 1);
 
 -- review TABLE: 1 records
 INSERT INTO review (created_at, updated_at, user_id, product_id, rating_score, content, status)
-VALUES ('2021-10-03 21:16:01', '2021-11-18 00:55:52', 4, 1, 4,
+VALUES ('2021-10-03 21:16:01', '2021-11-18 00:55:52', 1, 1, 4,
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec posuere felis sed justo finibus, eget maximus diam rhoncus. Integer posuere tempor magna, ut dictum massa suscipit vel. Sed quis placerat neque. Etiam urna sapien, accumsan nec nulla in, condimentum venenatis ex.',
-        2);
+        2),
+       ('2021-11-15 09:30:00', '2021-11-15 09:30:00', 4, 2, 5,
+        'Sản phẩm chất lượng tốt, đóng gói cẩn thận, giao hàng nhanh. Sẽ ủng hộ shop lần sau', 1),
+       ('2021-12-20 14:45:00', '2021-12-20 14:45:00', 1, 2, 3,
+        'Sản phẩm tạm ổn, giao hàng hơi chậm. Cần cải thiện thêm về dịch vụ giao hàng', 1),
+       ('2022-01-05 11:20:00', '2022-01-05 11:20:00', 2, 3, 5,
+        'Rất hài lòng với sản phẩm. Chất lượng tuyệt vời, giá cả hợp lý. Nhân viên tư vấn nhiệt tình', 1);
 
 -- cart TABLE: 1 records
 INSERT INTO cart (created_at, updated_at, user_id, status)

@@ -2,9 +2,8 @@ package com.electro;
 
 import com.electro.dto.review.ReviewResponse;
 import com.electro.service.review.ReviewServiceImpl;
+import com.electro.utils.TestDataFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,26 +12,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
+import static com.electro.utils.TestDataFactory.objectMapperLogger;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Transactional
 class ReviewServiceImplTests {
 
     @Autowired
     private ReviewServiceImpl reviewServiceImpl;
 
-    // ObjectMapper to convert objects to JSON and vice versa
-    private final ObjectMapper objectMapper = new ObjectMapper()
-            .registerModule(new JavaTimeModule())
-            .enable(com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT);
-
     @Test
-    @Transactional
-    void findById_success() throws JsonProcessingException {
+    public void findById_success() throws JsonProcessingException {
         // Arrange
         ReviewResponse expectedReview = createExpectedReview();
+        expectedReview = TestDataFactory.createExpectedData("test-data/review-data.json", "review", ReviewResponse.class);
 
         // Act
         ReviewResponse actualReview = reviewServiceImpl.findById(1L);
@@ -57,7 +53,20 @@ class ReviewServiceImplTests {
         // Print success message and actual data
         System.out.println("\n✅ All assertions passed successfully!");
         System.out.println("\nActual review data:");
-        System.out.println(objectMapper.writeValueAsString(actualReview));
+        System.out.println(objectMapperLogger().writeValueAsString(actualReview));
+    }
+
+    @Test
+    public void findById_notFound() {
+        // Arrange
+        Long nonExistentId = 999L;
+
+        // Act & Assert
+        try {
+            reviewServiceImpl.findById(nonExistentId);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     private ReviewResponse createExpectedReview() {

@@ -1,4 +1,4 @@
-package com.electro;
+package com.electro.Long;
 
 import com.electro.controller.order.OrderController;
 import com.electro.controller.order.OrderVariantController;
@@ -11,13 +11,11 @@ import com.electro.dto.order.OrderVariantKeyRequest;
 import com.electro.entity.order.Order;
 import com.electro.entity.order.OrderVariantKey;
 import com.electro.repository.order.OrderRepository;
-import com.electro.service.CrudService;
 import com.electro.service.GenericService;
 import com.electro.service.inventory.OrderVariantService;
 import com.electro.service.order.OrderService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

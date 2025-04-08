@@ -1,4 +1,4 @@
-package com.electro;
+package com.electro.Long;
 
 import com.electro.dto.cashbook.ClientPaymentMethodResponse;
 import com.electro.dto.client.ClientConfirmedOrderResponse;

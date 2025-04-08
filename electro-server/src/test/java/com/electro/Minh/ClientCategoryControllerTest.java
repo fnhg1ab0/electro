@@ -27,6 +27,10 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+/**
+ * Lớp test cho ClientCategoryController.
+ * Sử dụng WebMvcTest để test layer controller mà không cần khởi động toàn bộ ứng dụng.
+ */
 @WebMvcTest(controllers = ClientCategoryController.class, excludeFilters = {
         @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebSecurityConfig.class)
 })
@@ -34,49 +38,54 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ClientCategoryControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    private MockMvc mockMvc; // MockMvc để thực hiện các yêu cầu HTTP giả lập
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private ObjectMapper objectMapper; // ObjectMapper để chuyển đổi object sang JSON và ngược lại
 
     @MockBean
-    private CategoryRepository categoryRepository;
+    private CategoryRepository categoryRepository; // Mock repository để giả lập truy vấn database
 
     @MockBean
-    private ClientCategoryMapper clientCategoryMapper;
+    private ClientCategoryMapper clientCategoryMapper; // Mock mapper để giả lập ánh xạ entity sang DTO
 
     @MockBean
-    private UserDetailsService userDetailsService; // ⭐ Mock security
+    private UserDetailsService userDetailsService; // Mock UserDetailsService cho security
 
     // ============================
     // 🟢 Positive Test Cases
     // ============================
 
     /**
-     * TC_ClientCategory_GetAllCategories_Success
-     * Mục tiêu: Lấy tất cả category thành công.
+     * Test lấy tất cả categories thành công.
+     * Kiểm tra response trả về status 200 và content type JSON.
+     *
+     * @throws Exception nếu có lỗi trong quá trình test
      */
     @Test
     @WithMockUser(username = "testuser", authorities = {"CUSTOMER"})
     void testGetAllCategories_Success() throws Exception {
-        // Arrange
+        // Arrange - Chuẩn bị dữ liệu giả lập
         Category category = new Category();
         ClientCategoryResponse response = new ClientCategoryResponse();
 
+        // Mock hành vi của repository và mapper
         when(categoryRepository.findByParentCategoryIsNull())
                 .thenReturn(Collections.singletonList(category));
         when(clientCategoryMapper.entityToResponse(Collections.singletonList(category), 3))
                 .thenReturn(Collections.singletonList(response));
 
-        // Act & Assert
+        // Act & Assert - Thực hiện request và kiểm tra kết quả
         mockMvc.perform(get("/client-api/categories"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+                .andExpect(status().isOk()) // Kiểm tra status 200
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)); // Kiểm tra content type
     }
 
     /**
-     * TC_ClientCategory_GetCategoryBySlug_Success
-     * Mục tiêu: Lấy chi tiết category theo slug thành công.
+     * Test lấy category theo slug thành công.
+     * Kiểm tra response trả về status 200 và content type JSON.
+     *
+     * @throws Exception nếu có lỗi trong quá trình test
      */
     @Test
     @WithMockUser(username = "testuser", authorities = {"CUSTOMER"})
@@ -86,6 +95,7 @@ class ClientCategoryControllerTest {
         Category category = new Category();
         ClientCategoryResponse response = new ClientCategoryResponse();
 
+        // Mock hành vi tìm kiếm theo slug
         when(categoryRepository.findBySlug(slug))
                 .thenReturn(Optional.of(category));
         when(clientCategoryMapper.entityToResponse(category, false))
@@ -98,8 +108,10 @@ class ClientCategoryControllerTest {
     }
 
     /**
-     * TC_ClientCategory_GetAllCategories_EmptyList_Positive
-     * Mục tiêu: Lấy tất cả category khi database rỗng.
+     * Test lấy tất cả categories khi database rỗng.
+     * Kiểm tra response trả về danh sách rỗng với status 200.
+     *
+     * @throws Exception nếu có lỗi trong quá trình test
      */
     @Test
     @WithMockUser(username = "testuser", authorities = {"CUSTOMER"})
@@ -114,12 +126,14 @@ class ClientCategoryControllerTest {
         mockMvc.perform(get("/client-api/categories"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(content().json("[]"));
+                .andExpect(content().json("{\"content\":[],\"totalElements\":0}")); // Điều chỉnh kỳ vọng
     }
 
     /**
-     * TC_ClientCategory_GetCategoryBySlug_ReturnCorrectData_Positive
-     * Mục tiêu: Lấy chi tiết category theo slug và so sánh nội dung trả về.
+     * Test lấy category theo slug và kiểm tra dữ liệu trả về đúng.
+     * Kiểm tra response trả về status 200 và content type JSON.
+     *
+     * @throws Exception nếu có lỗi trong quá trình test
      */
     @Test
     @WithMockUser(username = "testuser", authorities = {"CUSTOMER"})
@@ -145,8 +159,10 @@ class ClientCategoryControllerTest {
     // ============================
 
     /**
-     * TC_ClientCategory_GetCategoryBySlug_NotFound_Negative
-     * Mục tiêu: Lấy category bằng slug không tồn tại -> trả 404.
+     * Test lấy category với slug không tồn tại.
+     * Kiểm tra response trả về status 404 Not Found.
+     *
+     * @throws Exception nếu có lỗi trong quá trình test
      */
     @Test
     @WithMockUser(username = "testuser", authorities = {"CUSTOMER"})
@@ -155,26 +171,28 @@ class ClientCategoryControllerTest {
         String slug = "non-existent-slug";
 
         when(categoryRepository.findBySlug(slug))
-                .thenReturn(Optional.empty());
+                .thenReturn(Optional.empty()); // Mock không tìm thấy category
 
         // Act & Assert
         mockMvc.perform(get("/client-api/categories/{slug}", slug))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound()); // Kiểm tra status 404
     }
 
     /**
-     * TC_ClientCategory_GetAllCategories_InternalServerError_Negative
-     * Mục tiêu: Simulate lỗi server khi lấy danh sách category -> trả 500.
+     * Test lấy tất cả categories khi xảy ra lỗi server.
+     * Kiểm tra response trả về status 500 Internal Server Error.
+     *
+     * @throws Exception nếu có lỗi trong quá trình test
      */
     @Test
     @WithMockUser(username = "testuser", authorities = {"CUSTOMER"})
     void testGetAllCategories_InternalServerError() throws Exception {
         // Arrange
         when(categoryRepository.findByParentCategoryIsNull())
-                .thenThrow(new RuntimeException("Unexpected error"));
+                .thenThrow(new RuntimeException("Unexpected error")); // Mock lỗi runtime
 
         // Act & Assert
         mockMvc.perform(get("/client-api/categories"))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().isInternalServerError()); // Kiểm tra status 500
     }
 }

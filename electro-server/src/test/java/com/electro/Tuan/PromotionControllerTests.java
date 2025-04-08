@@ -3,6 +3,7 @@ package com.electro.Tuan;
 import com.electro.controller.promotion.PromotionController;
 import com.electro.dto.promotion.PromotionCheckingResponse;
 import com.electro.service.promotion.PromotionService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
+import static com.electro.utils.TestDataFactory.objectMapperLogger;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -67,17 +69,19 @@ public class PromotionControllerTests {
      * Expected Output: ResponseEntity với status 200 và body chứa PromotionCheckingResponse với promotionable = false.
      */
     @Test
-    public void testCheckCanCreatePromotionForProduct_PromotionNotAllowed_TC002() {
-        Long productId = 999L;
+    public void testCheckCanCreatePromotionForProduct_PromotionNotAllowed_TC002() throws JsonProcessingException {
+        Long productId = 9999L;
         Instant startDate = Instant.now();
         Instant endDate = startDate.plusSeconds(3600);
 
         ResponseEntity<PromotionCheckingResponse> response =
                 promotionController.checkCanCreatePromotionForProduct(productId, startDate, endDate);
 
+        System.out.println("Response: " + objectMapperLogger().writeValueAsString(response));
+
         assertEquals(200, response.getStatusCodeValue(), "Expected HTTP status 200 OK");
         assertNotNull(response.getBody(), "Response body should not be null");
-        assertTrue(response.getBody().isPromotionable(), "Promotion should not be allowed (false)");
+        assertFalse(response.getBody().isPromotionable(), "Promotion should not be allowed (false)");
     }
 
     /**
@@ -168,15 +172,15 @@ public class PromotionControllerTests {
      */
     @Test
     public void testCheckCanCreatePromotionForProduct_ExistingActivePromotion_TC007() {
-        Long productId = 2L; // Giả sử product id 2 đang có khuyến mãi
-        Instant startDate = Instant.now();
-        Instant endDate = startDate.plusSeconds(3600);
+        Long productId = 1L; // Giả sử product id 2 đang có khuyến mãi
+        Instant startDate = Instant.parse("2023-03-08T00:00:00Z");
+        Instant endDate = Instant.parse("2023-03-19T00:00:00Z");
 
         ResponseEntity<PromotionCheckingResponse> response =
                 promotionController.checkCanCreatePromotionForProduct(productId, startDate, endDate);
 
         assertEquals(200, response.getStatusCodeValue(), "Expected HTTP status 200 OK");
         assertNotNull(response.getBody(), "Response body should not be null");
-        assertTrue(response.getBody().isPromotionable(), "Promotion should not be allowed for product with active promotion");
+        assertFalse(response.getBody().isPromotionable(), "Promotion should not be allowed for product with active promotion");
     }
 }

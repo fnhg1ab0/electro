@@ -3,7 +3,6 @@ package com.electro.Tuan;
 import com.electro.controller.client.ClientFilterController;
 import com.electro.dto.client.ClientBrandResponse;
 import com.electro.dto.client.ClientFilterResponse;
-import com.electro.repository.product.BrandRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +37,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ClientFilterControllerTests {
 
     @Autowired
-    private BrandRepository brandRepository; // Inject đối tượng repository
-
-    @Autowired
     private ClientFilterController clientFilterController; // Inject controller
 
     /**
@@ -63,7 +59,7 @@ public class ClientFilterControllerTests {
         assertNotNull(clientFilterResponse, "Response body should not be null");
         List<ClientBrandResponse> filterBrands = clientFilterResponse.getFilterBrands();
         assertNotNull(filterBrands, "Filter brands should not be null");
-        assertEquals(brandSize, filterBrands.size(), "Expected 2 brands in the response");
+        assertEquals(brandSize, filterBrands.size(), "Expected 5 brands in the response");
     }
 
     /**
@@ -131,7 +127,7 @@ public class ClientFilterControllerTests {
         assertNotNull(clientFilterResponse, "Response body should not be null");
         List<ClientBrandResponse> filterBrands = clientFilterResponse.getFilterBrands();
         assertNotNull(filterBrands, "Filter brands should not be null");
-        assertEquals(brandSize, filterBrands.size(), "Expected 1 brand in the response");
+        assertEquals(brandSize, filterBrands.size(), "Expected 3 brand in the response");
     }
 
     /**

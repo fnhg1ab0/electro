@@ -48,6 +48,14 @@ class ClientCategoryControllerTest {
     @MockBean
     private UserDetailsService userDetailsService; // ⭐ Mock security
 
+    // ============================
+    // 🟢 Positive Test Cases
+    // ============================
+
+    /**
+     * TC_ClientCategory_GetAllCategories_Success
+     * Mục tiêu: Lấy tất cả category thành công.
+     */
     @Test
     @WithMockUser(username = "testuser", authorities = {"CUSTOMER"})
     void testGetAllCategories_Success() throws Exception {
@@ -66,6 +74,10 @@ class ClientCategoryControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
 
+    /**
+     * TC_ClientCategory_GetCategoryBySlug_Success
+     * Mục tiêu: Lấy chi tiết category theo slug thành công.
+     */
     @Test
     @WithMockUser(username = "testuser", authorities = {"CUSTOMER"})
     void testGetCategoryBySlug_Success() throws Exception {
@@ -83,5 +95,86 @@ class ClientCategoryControllerTest {
         mockMvc.perform(get("/client-api/categories/{slug}", slug))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+    }
+
+    /**
+     * TC_ClientCategory_GetAllCategories_EmptyList_Positive
+     * Mục tiêu: Lấy tất cả category khi database rỗng.
+     */
+    @Test
+    @WithMockUser(username = "testuser", authorities = {"CUSTOMER"})
+    void testGetAllCategories_EmptyList_Success() throws Exception {
+        // Arrange
+        when(categoryRepository.findByParentCategoryIsNull())
+                .thenReturn(Collections.emptyList());
+        when(clientCategoryMapper.entityToResponse(Collections.emptyList(), 3))
+                .thenReturn(Collections.emptyList());
+
+        // Act & Assert
+        mockMvc.perform(get("/client-api/categories"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("[]"));
+    }
+
+    /**
+     * TC_ClientCategory_GetCategoryBySlug_ReturnCorrectData_Positive
+     * Mục tiêu: Lấy chi tiết category theo slug và so sánh nội dung trả về.
+     */
+    @Test
+    @WithMockUser(username = "testuser", authorities = {"CUSTOMER"})
+    void testGetCategoryBySlug_ReturnCorrectData_Success() throws Exception {
+        // Arrange
+        String slug = "electronics";
+        Category category = new Category();
+        ClientCategoryResponse expectedResponse = new ClientCategoryResponse();
+
+        when(categoryRepository.findBySlug(slug))
+                .thenReturn(Optional.of(category));
+        when(clientCategoryMapper.entityToResponse(category, false))
+                .thenReturn(expectedResponse);
+
+        // Act & Assert
+        mockMvc.perform(get("/client-api/categories/{slug}", slug))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+    }
+
+    // ============================
+    // 🔴 Negative Test Cases
+    // ============================
+
+    /**
+     * TC_ClientCategory_GetCategoryBySlug_NotFound_Negative
+     * Mục tiêu: Lấy category bằng slug không tồn tại -> trả 404.
+     */
+    @Test
+    @WithMockUser(username = "testuser", authorities = {"CUSTOMER"})
+    void testGetCategoryBySlug_NotFound() throws Exception {
+        // Arrange
+        String slug = "non-existent-slug";
+
+        when(categoryRepository.findBySlug(slug))
+                .thenReturn(Optional.empty());
+
+        // Act & Assert
+        mockMvc.perform(get("/client-api/categories/{slug}", slug))
+                .andExpect(status().isNotFound());
+    }
+
+    /**
+     * TC_ClientCategory_GetAllCategories_InternalServerError_Negative
+     * Mục tiêu: Simulate lỗi server khi lấy danh sách category -> trả 500.
+     */
+    @Test
+    @WithMockUser(username = "testuser", authorities = {"CUSTOMER"})
+    void testGetAllCategories_InternalServerError() throws Exception {
+        // Arrange
+        when(categoryRepository.findByParentCategoryIsNull())
+                .thenThrow(new RuntimeException("Unexpected error"));
+
+        // Act & Assert
+        mockMvc.perform(get("/client-api/categories"))
+                .andExpect(status().isInternalServerError());
     }
 }

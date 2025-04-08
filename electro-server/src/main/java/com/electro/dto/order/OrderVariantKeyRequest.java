@@ -6,4 +6,7 @@ import lombok.Data;
 public class OrderVariantKeyRequest {
     private Long orderId;
     private Long variantId;
+
+    public OrderVariantKeyRequest(long l, long l1) {
+    }
 }

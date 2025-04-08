@@ -56,7 +56,7 @@ public class ClientPreorderControllerTest {
     private Authentication authentication;
 
     /**
-     * Test Case ID: TC-CPO-001
+     * Test Case ID: CPO001
      * Test Name: testGetAllPreorders
      * Objective: Verify that the controller correctly retrieves all preorders for a user
      * Input: Page=1, Size=10, Sort="updatedAt,desc", Filter=status==1, Username="testuser"
@@ -93,7 +93,7 @@ public class ClientPreorderControllerTest {
     }
 
     /**
-     * Test Case ID: TC-CPO-002
+     * Test Case ID: CPO002
      * Test Name: testCreatePreorderNew
      * Objective: Verify that the controller correctly creates a new preorder
      * Input: ClientPreorderRequest with userId=1L and productId=2L
@@ -128,7 +128,7 @@ public class ClientPreorderControllerTest {
     }
 
     /**
-     * Test Case ID: TC-CPO-003
+     * Test Case ID: CPO003
      * Test Name: testCreatePreorderExistingInactive
      * Objective: Verify reactivation of an inactive preorder
      * Input: ClientPreorderRequest for a preorder that exists but is inactive
@@ -163,7 +163,7 @@ public class ClientPreorderControllerTest {
     }
 
     /**
-     * Test Case ID: TC-CPO-004
+     * Test Case ID: CPO004
      * Test Name: testCreatePreorderDuplicate
      * Objective: Verify error handling when attempting to create a duplicate active preorder
      * Input: ClientPreorderRequest for a preorder that already exists and is active
@@ -189,7 +189,7 @@ public class ClientPreorderControllerTest {
     }
 
     /**
-     * Test Case ID: TC-CPO-005
+     * Test Case ID: CPO005
      * Test Name: testUpdatePreorder
      * Objective: Verify that the controller correctly updates an existing preorder
      * Input: ClientPreorderRequest with updated preorder information
@@ -225,7 +225,7 @@ public class ClientPreorderControllerTest {
     }
 
     /**
-     * Test Case ID: TC-CPO-006
+     * Test Case ID: CPO006
      * Test Name: testUpdatePreorderNotFound
      * Objective: Verify error handling when attempting to update a non-existent preorder
      * Input: ClientPreorderRequest for a preorder that doesn't exist
@@ -247,7 +247,7 @@ public class ClientPreorderControllerTest {
     }
 
     /**
-     * Test Case ID: TC-CPO-007
+     * Test Case ID: CPO007
      * Test Name: testDeletePreorders
      * Objective: Verify that the controller correctly deletes multiple preorders
      * Input: List of preorder IDs to delete

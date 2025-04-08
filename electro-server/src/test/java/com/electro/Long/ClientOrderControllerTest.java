@@ -77,7 +77,7 @@ public class ClientOrderControllerTest {
     private HttpServletRequest httpServletRequest;
 
     /**
-     * Test Case ID: TC-CO-001
+     * Test Case ID: CRO001
      * Test Name: testGetAllOrders
      * Objective: Verify that the controller correctly retrieves all orders for a user
      * Input: Page=1, Size=10, Sort="id,desc", Filter="status==1", Username="testuser"
@@ -112,7 +112,7 @@ public class ClientOrderControllerTest {
     }
 
     /**
-     * Test Case ID: TC-CO-002
+     * Test Case ID: CRO002
      * Test Name: testGetOrder
      * Objective: Verify that the controller correctly retrieves a specific order by code
      * Input: orderCode="ORDER123"
@@ -140,7 +140,7 @@ public class ClientOrderControllerTest {
     }
 
     /**
-     * Test Case ID: TC-CO-003
+     * Test Case ID: CRO003
      * Test Name: testGetOrderNotFound
      * Objective: Verify that the controller throws ResourceNotFoundException when order not found
      * Input: orderCode="NONEXISTENT"
@@ -159,7 +159,7 @@ public class ClientOrderControllerTest {
     }
 
     /**
-     * Test Case ID: TC-CO-004
+     * Test Case ID: CRO004
      * Test Name: testCancelOrder
      * Objective: Verify that the controller correctly cancels an order
      * Input: orderCode="ORDER123"
@@ -181,7 +181,7 @@ public class ClientOrderControllerTest {
     }
 
     /**
-     * Test Case ID: TC-CO-005
+     * Test Case ID: CRO005
      * Test Name: testCreateClientOrder
      * Objective: Verify that the controller correctly creates a new client order
      * Input: ClientSimpleOrderRequest object
@@ -206,7 +206,7 @@ public class ClientOrderControllerTest {
     }
 
     /**
-     * Test Case ID: TC-CO-006
+     * Test Case ID: CRO006
      * Test Name: testPaymentSuccessAndCaptureTransaction
      * Objective: Verify handling of successful PayPal payments
      * Input: PayPal token="PAY123", PayerID="PAYER456"
@@ -232,7 +232,7 @@ public class ClientOrderControllerTest {
     }
 
     /**
-     * Test Case ID: TC-CO-007
+     * Test Case ID: CRO007
      * Test Name: testPaymentCancel
      * Objective: Verify handling of cancelled PayPal payments
      * Input: PayPal token="PAY123"
@@ -275,7 +275,7 @@ public class ClientOrderControllerTest {
     }
 
     /**
-     * Test Case ID: TC-CO-008
+     * Test Case ID: CRO008
      * Test Name: testPaymentCancelOrderNotFound
      * Objective: Verify error handling when cancelled order is not found
      * Input: PayPal token="NONEXISTENT"

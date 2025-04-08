@@ -36,7 +36,7 @@ public class ClientPaymentMethodControllerTest {
     private ClientPaymentMethodController clientPaymentMethodController;
 
     /**
-     * Test Case ID: TC-CPM-001
+     * Test Case ID: CPM001
      * Test Name: testGetAllPaymentMethods
      * Objective: Verify that the controller correctly retrieves all active payment methods
      * Input: None

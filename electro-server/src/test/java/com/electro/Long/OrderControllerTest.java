@@ -77,7 +77,7 @@ public class OrderControllerTest {
     }
 
     /**
-     * Test Case ID: TC-OS-001
+     * Test Case ID: ORS001
      * Test Name: testCancelOrder
      * Objective: Verify that OrderService correctly processes order cancellation
      * Input: Order code "ORD123456"
@@ -98,7 +98,7 @@ public class OrderControllerTest {
     }
 
     /**
-     * Test Case ID: TC-OS-002
+     * Test Case ID: ORS002
      * Test Name: testCreateClientOrder
      * Objective: Verify that OrderService correctly creates client orders
      * Input: ClientSimpleOrderRequest object
@@ -121,7 +121,7 @@ public class OrderControllerTest {
     }
 
     /**
-     * Test Case ID: TC-OS-003
+     * Test Case ID: ORS003
      * Test Name: testCaptureTransactionPaypal
      * Objective: Verify that OrderService correctly processes PayPal payment captures
      * Input: PayPal order ID "PAY123456" and payer ID "PAYER789"
@@ -143,7 +143,7 @@ public class OrderControllerTest {
     }
 
     /**
-     * Test Case ID: TC-OVS-001
+     * Test Case ID: OVS001
      * Test Name: testDeleteOrderVariant
      * Objective: Verify that OrderVariantService correctly deletes a single order variant
      * Input: OrderVariantKey with orderId=1L and variantId=2L
@@ -166,7 +166,7 @@ public class OrderControllerTest {
     }
 
     /**
-     * Test Case ID: TC-OVS-002
+     * Test Case ID: OVS002
      * Test Name: testDeleteMultipleOrderVariants
      * Objective: Verify that OrderVariantService correctly deletes multiple order variants
      * Input: List of OrderVariantKeyRequest objects
@@ -196,7 +196,7 @@ public class OrderControllerTest {
     }
 
     /**
-     * Test Case ID: TC-OC-001
+     * Test Case ID: ORC001
      * Test Name: testCancelOrderController
      * Objective: Verify that OrderController correctly cancels an order
      * Input: Order code "ORD123456"
@@ -219,7 +219,7 @@ public class OrderControllerTest {
     }
 
     /**
-     * Test Case ID: TC-OVC-001
+     * Test Case ID: OVC001
      * Test Name: testDeleteOrderVariantController
      * Objective: Verify that OrderVariantController correctly deletes a single order variant
      * Input: orderId=1L and variantId=2L
@@ -248,7 +248,7 @@ public class OrderControllerTest {
     }
 
     /**
-     * Test Case ID: TC-OVC-002
+     * Test Case ID: OVC002
      * Test Name: testDeleteOrderVariantsController
      * Objective: Verify that OrderVariantController correctly deletes multiple order variants
      * Input: List of OrderVariantKeyRequest objects
@@ -275,7 +275,7 @@ public class OrderControllerTest {
     }
 
     /**
-     * Test Case ID: TC-GS-001
+     * Test Case ID: OGS001
      * Test Name: testGenericFindAllOrders
      * Objective: Verify that GenericService correctly fetches all orders with pagination and filtering
      * Input: Pagination, sorting, filtering, and search parameters
@@ -309,7 +309,7 @@ public class OrderControllerTest {
     }
 
     /**
-     * Test Case ID: TC-GS-002
+     * Test Case ID: OGS002
      * Test Name: testGenericFindOrderById
      * Objective: Verify that GenericService correctly fetches a single order by ID
      * Input: Order ID 1L
@@ -334,7 +334,7 @@ public class OrderControllerTest {
     }
 
     /**
-     * Test Case ID: TC-GS-003
+     * Test Case ID: OGS003
      * Test Name: testGenericCreateOrder
      * Objective: Verify that GenericService correctly creates a new order
      * Input: JsonNode representing order request data
@@ -361,7 +361,7 @@ public class OrderControllerTest {
     }
 
     /**
-     * Test Case ID: TC-GS-004
+     * Test Case ID: OGS004
      * Test Name: testGenericUpdateOrder
      * Objective: Verify that GenericService correctly updates an existing order
      * Input: Order ID 1L and JsonNode representing updated order data
@@ -389,7 +389,7 @@ public class OrderControllerTest {
     }
 
     /**
-     * Test Case ID: TC-GS-005
+     * Test Case ID: OGS005
      * Test Name: testGenericDeleteOrder
      * Objective: Verify that GenericService correctly deletes an order
      * Input: Order ID 1L
@@ -410,7 +410,7 @@ public class OrderControllerTest {
     }
 
     /**
-     * Test Case ID: TC-GS-006
+     * Test Case ID: OGS006
      * Test Name: testGenericBulkDeleteOrders
      * Objective: Verify that GenericService correctly deletes multiple orders
      * Input: List of order IDs [1L, 2L, 3L]

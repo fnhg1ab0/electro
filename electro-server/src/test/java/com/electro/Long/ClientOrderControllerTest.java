@@ -76,6 +76,14 @@ public class ClientOrderControllerTest {
     @Mock
     private HttpServletRequest httpServletRequest;
 
+    /**
+     * Test Case ID: TC-CO-001
+     * Test Name: testGetAllOrders
+     * Objective: Verify that the controller correctly retrieves all orders for a user
+     * Input: Page=1, Size=10, Sort="id,desc", Filter="status==1", Username="testuser"
+     * Expected Output: HTTP 200 OK with a ListResponse containing orders
+     * Note: Tests pagination and filtering functionality for client orders
+     */
     @Test
     public void testGetAllOrders() {
         // Given
@@ -103,6 +111,14 @@ public class ClientOrderControllerTest {
         verify(orderRepository).findAllByUsername(eq(username), eq(sort), eq(filter), any(PageRequest.class));
     }
 
+    /**
+     * Test Case ID: TC-CO-002
+     * Test Name: testGetOrder
+     * Objective: Verify that the controller correctly retrieves a specific order by code
+     * Input: orderCode="ORDER123"
+     * Expected Output: HTTP 200 OK with order details
+     * Note: Tests the retrieval of a single order's details
+     */
     @Test
     public void testGetOrder() {
         // Given
@@ -123,6 +139,14 @@ public class ClientOrderControllerTest {
         verify(clientOrderMapper).entityToDetailResponse(order);
     }
 
+    /**
+     * Test Case ID: TC-CO-003
+     * Test Name: testGetOrderNotFound
+     * Objective: Verify that the controller throws ResourceNotFoundException when order not found
+     * Input: orderCode="NONEXISTENT"
+     * Expected Output: ResourceNotFoundException
+     * Note: Tests error handling for non-existent orders
+     */
     @Test
     public void testGetOrderNotFound() {
         // Given
@@ -134,6 +158,14 @@ public class ClientOrderControllerTest {
         verify(orderRepository).findByCode(orderCode);
     }
 
+    /**
+     * Test Case ID: TC-CO-004
+     * Test Name: testCancelOrder
+     * Objective: Verify that the controller correctly cancels an order
+     * Input: orderCode="ORDER123"
+     * Expected Output: HTTP 200 OK with empty response body
+     * Note: Tests order cancellation functionality
+     */
     @Test
     public void testCancelOrder() {
         // Given
@@ -148,6 +180,14 @@ public class ClientOrderControllerTest {
         verify(orderService).cancelOrder(orderCode);
     }
 
+    /**
+     * Test Case ID: TC-CO-005
+     * Test Name: testCreateClientOrder
+     * Objective: Verify that the controller correctly creates a new client order
+     * Input: ClientSimpleOrderRequest object
+     * Expected Output: HTTP 201 CREATED with order confirmation details
+     * Note: Tests order creation functionality
+     */
     @Test
     public void testCreateClientOrder() {
         // Given
@@ -165,6 +205,14 @@ public class ClientOrderControllerTest {
         verify(orderService).createClientOrder(request);
     }
 
+    /**
+     * Test Case ID: TC-CO-006
+     * Test Name: testPaymentSuccessAndCaptureTransaction
+     * Objective: Verify handling of successful PayPal payments
+     * Input: PayPal token="PAY123", PayerID="PAYER456"
+     * Expected Output: Redirect to success page
+     * Note: Tests the PayPal payment success flow
+     */
     @Test
     public void testPaymentSuccessAndCaptureTransaction() {
         // Given
@@ -183,6 +231,14 @@ public class ClientOrderControllerTest {
         verify(orderService).captureTransactionPaypal(paypalOrderId, payerId);
     }
 
+    /**
+     * Test Case ID: TC-CO-007
+     * Test Name: testPaymentCancel
+     * Objective: Verify handling of cancelled PayPal payments
+     * Input: PayPal token="PAY123"
+     * Expected Output: Redirect to cancel page and notification creation
+     * Note: Tests PayPal payment cancellation flow and notification generation
+     */
     @Test
     public void testPaymentCancel() {
         // Given
@@ -218,6 +274,14 @@ public class ClientOrderControllerTest {
                 any(com.electro.dto.general.NotificationResponse.class));
     }
 
+    /**
+     * Test Case ID: TC-CO-008
+     * Test Name: testPaymentCancelOrderNotFound
+     * Objective: Verify error handling when cancelled order is not found
+     * Input: PayPal token="NONEXISTENT"
+     * Expected Output: ResourceNotFoundException
+     * Note: Tests error handling for non-existent orders during payment cancellation
+     */
     @Test
     public void testPaymentCancelOrderNotFound() {
         // Given

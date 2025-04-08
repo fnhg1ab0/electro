@@ -35,6 +35,14 @@ public class ClientPaymentMethodControllerTest {
     @InjectMocks
     private ClientPaymentMethodController clientPaymentMethodController;
 
+    /**
+     * Test Case ID: TC-CPM-001
+     * Test Name: testGetAllPaymentMethods
+     * Objective: Verify that the controller correctly retrieves all active payment methods
+     * Input: None
+     * Expected Output: HTTP 200 OK with a collection of payment methods
+     * Note: Tests retrieval of payment methods with status = 1
+     */
     @Test
     public void testGetAllPaymentMethods() {
         // Given

@@ -40,6 +40,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Test class for OrderController and OrderVariantController
+ * Tests functionality of order management and order-variant relationship operations
+ */
 @ExtendWith(MockitoExtension.class)
 public class OrderControllerTest {
 
@@ -63,12 +67,23 @@ public class OrderControllerTest {
 
     private ObjectMapper objectMapper;
 
+    /**
+     * Setup method executed before each test
+     * Initializes the ObjectMapper for JSON processing
+     */
     @BeforeEach
     public void setup() {
         objectMapper = new ObjectMapper();
     }
 
-    // OrderService direct method tests
+    /**
+     * Test Case ID: ORS001
+     * Test Name: testCancelOrder
+     * Objective: Verify that OrderService correctly processes order cancellation
+     * Input: Order code "ORD123456"
+     * Expected Output: Service method called with correct order code
+     * Note: Tests direct interaction with OrderService
+     */
     @Test
     public void testCancelOrder() {
         // Given
@@ -82,6 +97,14 @@ public class OrderControllerTest {
         verify(orderService).cancelOrder(eq(orderCode));
     }
 
+    /**
+     * Test Case ID: ORS002
+     * Test Name: testCreateClientOrder
+     * Objective: Verify that OrderService correctly creates client orders
+     * Input: ClientSimpleOrderRequest object
+     * Expected Output: ClientConfirmedOrderResponse with order details
+     * Note: Tests client order creation functionality
+     */
     @Test
     public void testCreateClientOrder() {
         // Given
@@ -97,6 +120,14 @@ public class OrderControllerTest {
         verify(orderService).createClientOrder(any(ClientSimpleOrderRequest.class));
     }
 
+    /**
+     * Test Case ID: ORS003
+     * Test Name: testCaptureTransactionPaypal
+     * Objective: Verify that OrderService correctly processes PayPal payment captures
+     * Input: PayPal order ID "PAY123456" and payer ID "PAYER789"
+     * Expected Output: Service method called with correct parameters
+     * Note: Tests PayPal payment processing
+     */
     @Test
     public void testCaptureTransactionPaypal() {
         // Given
@@ -111,7 +142,14 @@ public class OrderControllerTest {
         verify(orderService).captureTransactionPaypal(eq(paypalOrderId), eq(payerId));
     }
 
-    // OrderVariantService tests
+    /**
+     * Test Case ID: OVS001
+     * Test Name: testDeleteOrderVariant
+     * Objective: Verify that OrderVariantService correctly deletes a single order variant
+     * Input: OrderVariantKey with orderId=1L and variantId=2L
+     * Expected Output: Service method called with correct key
+     * Note: Tests deletion of a single order-variant relationship
+     */
     @Test
     public void testDeleteOrderVariant() {
         // Given
@@ -127,6 +165,14 @@ public class OrderControllerTest {
         verify(orderVariantService).delete(any(OrderVariantKey.class));
     }
 
+    /**
+     * Test Case ID: OVS002
+     * Test Name: testDeleteMultipleOrderVariants
+     * Objective: Verify that OrderVariantService correctly deletes multiple order variants
+     * Input: List of OrderVariantKeyRequest objects
+     * Expected Output: Service method called with correct keys
+     * Note: Tests bulk deletion of order-variant relationships
+     */
     @Test
     public void testDeleteMultipleOrderVariants() {
         // Given
@@ -149,7 +195,14 @@ public class OrderControllerTest {
         verify(orderVariantService).delete(keysCaptor.capture());
     }
 
-    // OrderController specific method tests
+    /**
+     * Test Case ID: ORC001
+     * Test Name: testCancelOrderController
+     * Objective: Verify that OrderController correctly cancels an order
+     * Input: Order code "ORD123456"
+     * Expected Output: HTTP 200 OK and empty ObjectNode response
+     * Note: Tests controller endpoint for order cancellation
+     */
     @Test
     public void testCancelOrderController() {
         // Given
@@ -165,7 +218,14 @@ public class OrderControllerTest {
         verify(orderService).cancelOrder(eq(orderCode));
     }
 
-    // OrderVariantController specific method tests
+    /**
+     * Test Case ID: OVC001
+     * Test Name: testDeleteOrderVariantController
+     * Objective: Verify that OrderVariantController correctly deletes a single order variant
+     * Input: orderId=1L and variantId=2L
+     * Expected Output: HTTP 204 NO CONTENT
+     * Note: Tests controller endpoint for deleting a single order-variant relationship
+     */
     @Test
     public void testDeleteOrderVariantController() {
         // Given
@@ -187,6 +247,14 @@ public class OrderControllerTest {
         assertEquals(variantId, capturedKey.getVariantId());
     }
 
+    /**
+     * Test Case ID: OVC002
+     * Test Name: testDeleteOrderVariantsController
+     * Objective: Verify that OrderVariantController correctly deletes multiple order variants
+     * Input: List of OrderVariantKeyRequest objects
+     * Expected Output: HTTP 204 NO CONTENT
+     * Note: Tests controller endpoint for bulk deletion of order-variant relationships
+     */
     @Test
     public void testDeleteOrderVariantsController() {
         // Given
@@ -206,7 +274,14 @@ public class OrderControllerTest {
         verify(orderVariantService).delete(keysCaptor.capture());
     }
 
-    // Generic CRUD tests for Order
+    /**
+     * Test Case ID: OGS001
+     * Test Name: testGenericFindAllOrders
+     * Objective: Verify that GenericService correctly fetches all orders with pagination and filtering
+     * Input: Pagination, sorting, filtering, and search parameters
+     * Expected Output: ListResponse with order details
+     * Note: Tests generic service for retrieving paginated order lists
+     */
     @Test
     public void testGenericFindAllOrders() {
         // Given
@@ -233,6 +308,14 @@ public class OrderControllerTest {
         verify(genericOrderService).findAll(page, size, sort, filter, search, all);
     }
 
+    /**
+     * Test Case ID: OGS002
+     * Test Name: testGenericFindOrderById
+     * Objective: Verify that GenericService correctly fetches a single order by ID
+     * Input: Order ID 1L
+     * Expected Output: OrderResponse with order details
+     * Note: Tests generic service for retrieving a specific order
+     */
     @Test
     public void testGenericFindOrderById() {
         // Given
@@ -250,6 +333,14 @@ public class OrderControllerTest {
         verify(genericOrderService).findById(orderId);
     }
 
+    /**
+     * Test Case ID: OGS003
+     * Test Name: testGenericCreateOrder
+     * Objective: Verify that GenericService correctly creates a new order
+     * Input: JsonNode representing order request data
+     * Expected Output: OrderResponse with created order details
+     * Note: Tests generic service for order creation
+     */
     @Test
     public void testGenericCreateOrder() {
         // Given
@@ -269,6 +360,14 @@ public class OrderControllerTest {
         verify(genericOrderService).save(any(JsonNode.class), eq(OrderRequest.class));
     }
 
+    /**
+     * Test Case ID: OGS004
+     * Test Name: testGenericUpdateOrder
+     * Objective: Verify that GenericService correctly updates an existing order
+     * Input: Order ID 1L and JsonNode representing updated order data
+     * Expected Output: OrderResponse with updated order details
+     * Note: Tests generic service for order updates
+     */
     @Test
     public void testGenericUpdateOrder() {
         // Given
@@ -289,6 +388,14 @@ public class OrderControllerTest {
         verify(genericOrderService).save(eq(orderId), any(JsonNode.class), eq(OrderRequest.class));
     }
 
+    /**
+     * Test Case ID: OGS005
+     * Test Name: testGenericDeleteOrder
+     * Objective: Verify that GenericService correctly deletes an order
+     * Input: Order ID 1L
+     * Expected Output: Service method called with correct ID
+     * Note: Tests generic service for order deletion
+     */
     @Test
     public void testGenericDeleteOrder() {
         // Given
@@ -302,6 +409,14 @@ public class OrderControllerTest {
         verify(genericOrderService).delete(orderId);
     }
 
+    /**
+     * Test Case ID: OGS006
+     * Test Name: testGenericBulkDeleteOrders
+     * Objective: Verify that GenericService correctly deletes multiple orders
+     * Input: List of order IDs [1L, 2L, 3L]
+     * Expected Output: Service method called with correct list of IDs
+     * Note: Tests generic service for bulk order deletion
+     */
     @Test
     public void testGenericBulkDeleteOrders() {
         // Given

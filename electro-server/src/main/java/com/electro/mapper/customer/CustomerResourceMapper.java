@@ -7,6 +7,6 @@ import com.electro.mapper.GenericMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE,disableSubMappingMethodsGeneration = true)
 public interface CustomerResourceMapper extends GenericMapper<CustomerResource, CustomerResourceRequest, CustomerResourceResponse> {
 }

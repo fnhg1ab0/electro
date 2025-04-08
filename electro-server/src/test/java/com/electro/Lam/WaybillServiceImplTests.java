@@ -92,7 +92,7 @@ public class WaybillServiceImplTests {
         ReflectionTestUtils.setField(waybillService, "ghnShopId", "123");
     }
 
-    // Test method for finding all waybills
+
     @Test
     public void testFindAll() {
         Waybill waybill = new Waybill();
@@ -116,7 +116,7 @@ public class WaybillServiceImplTests {
         verify(waybillMapper, times(1)).entityToResponse(anyList());
     }
 
-    // Test method for finding a waybill by ID
+
     @Test
     public void testFindById() {
         Waybill waybill = new Waybill();
@@ -139,7 +139,7 @@ public class WaybillServiceImplTests {
         verify(waybillMapper, times(1)).entityToResponse(any(Waybill.class));
     }
 
-    // Test method for finding a waybill by ID when not found
+
     @Test
     public void testFindById_NotFound() {
         // Mock repository method
@@ -157,8 +157,7 @@ public class WaybillServiceImplTests {
         verify(waybillMapper, times(0)).entityToResponse(any(Waybill.class));
     }
 
-    // Test method for saving a new waybill
-    @Test
+        @Test
     public void testSave() {
         // Set up the absolute URL for ghnApiPath
         ReflectionTestUtils.setField(waybillService, "ghnApiPath", "https://dev-online-gateway.ghn.vn/shiip/public-api/v2");
@@ -207,8 +206,7 @@ public class WaybillServiceImplTests {
         verify(waybillMapper, times(1)).entityToResponse(waybill);
     }
 
-    // Test method for updating an existing waybill
-    @Test
+       @Test
     public void testSave_Update() {
         // Set up the absolute URL for ghnApiPath
         ReflectionTestUtils.setField(waybillService, "ghnApiPath", "https://dev-online-gateway.ghn.vn/shiip/public-api/v2");
@@ -238,7 +236,7 @@ public class WaybillServiceImplTests {
         verify(waybillMapper, times(1)).entityToResponse(waybill);
     }
 
-    // Test method for updating a waybill when not found
+
     @Test
     public void testSave_Update_NotFound() {
         Long id = 1L;
@@ -259,7 +257,7 @@ public class WaybillServiceImplTests {
         verify(waybillRepository, times(0)).save(any(Waybill.class));
     }
 
-    // Test method for deleting a waybill by ID
+
     @Test
     public void testDelete() {
         // Call the service method
@@ -272,7 +270,7 @@ public class WaybillServiceImplTests {
         verify(waybillRepository, times(1)).deleteById(1L);
     }
 
-    // Test method for deleting multiple waybills by IDs
+
     @Test
     public void testDeleteMultiple() {
         // Call the service method
@@ -285,7 +283,7 @@ public class WaybillServiceImplTests {
         verify(waybillRepository, times(1)).deleteAllById(List.of(1L, 2L));
     }
 
-    // Test method for handling callback status from GHN
+
     @Test
     public void testCallbackStatusWaybillFromGHN() {
         // Set up the absolute URL for ghnApiPath
@@ -330,8 +328,7 @@ public class WaybillServiceImplTests {
         verify(notificationService, times(1)).pushNotification(anyString(), any());
     }
 
-    // Test method for handling callback status from GHN when waybill not found
-    @Test
+        @Test
     public void testCallbackStatusWaybillFromGHN_WaybillNotFound() {
         GhnCallbackOrderRequest ghnCallbackOrderRequest = new GhnCallbackOrderRequest();
         ghnCallbackOrderRequest.setShopID(123);

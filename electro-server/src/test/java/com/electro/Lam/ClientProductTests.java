@@ -49,7 +49,12 @@ public class ClientProductTests {
     @InjectMocks
     private ClientProductController clientProductController;
 
-    // Test case to get a list of products
+
+    // Mã kiểm thử: CPT_001
+    // Mục tiêu kiểm thử: Xác minh rằng getAllProducts trả về danh sách sản phẩm với trạng thái OK.
+    // Đầu vào: page = 1, size = 10, sortBy = null, sortDirection = null, categorySlug = null, saleable = false, active = false
+    // Đầu ra mong đợi: ResponseEntity với HttpStatus.OK và một ListResponse chứa một ClientListedProductResponse.
+    // Ghi chú: Mock repository sản phẩm để trả về một sản phẩm duy nhất và đảm bảo mapper và projection repository hoạt động như mong đợi.
     @Test
     public void testGetAllProducts() {
         Product product = new Product();  // Create a mock product
@@ -75,7 +80,11 @@ public class ClientProductTests {
         assertEquals(1, result.getBody().getContent().size());
     }
 
-    // Test case to get details of a specific product by its slug
+    // Mã kiểm thử: CPT_002
+    // Mục tiêu kiểm thử: Xác minh rằng getProduct trả về thông tin chi tiết sản phẩm chính xác với trạng thái OK cho một slug nhất định.
+    // Đầu vào: slug = "test-slug"
+    // Đầu ra mong đợi: ResponseEntity với HttpStatus.OK và một ClientProductResponse chứa thông tin chi tiết của sản phẩm với slug đã cho.
+    // Ghi chú: Mock repository sản phẩm để trả về một sản phẩm với slug được chỉ định và xác minh rằng mapper, projection và review repository được gọi đúng cách.
     @Test
     public void testGetProduct() {
         String slug = "test-slug";  // Define a test product slug
@@ -124,6 +133,13 @@ public class ClientProductTests {
     }
 
     // Test case to handle the scenario when the requested product is not found
+
+    // Mã kiểm thử: CPT_003
+    // Mục tiêu kiểm thử: Xác minh rằng getProduct ném ra ResourceNotFoundException khi sản phẩm với slug đã cho không tồn tại.
+    // Đầu vào: slug = "non-existent-slug"
+    // Đầu ra mong đợi: ResourceNotFoundException được ném ra.
+    // Ghi chú: Mock repository sản phẩm để trả về một Optional rỗng cho slug đã cho.
+
     @Test
     public void testGetProduct_NotFound() {
         String slug = "non-existent-slug";  // Define a non-existent product slug

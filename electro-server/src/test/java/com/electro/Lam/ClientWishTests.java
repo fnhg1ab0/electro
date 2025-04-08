@@ -46,8 +46,12 @@ public class ClientWishTests {
     @InjectMocks
     private ClientWishController clientWishController;
 
-    // Test case to get all wishes for a specific user
-    @Test
+    /**
+     * Test Case ID: CWT001
+     * Mục tiêu: Kiểm tra getAllWishes trả về danh sách các wish của người dùng với dữ liệu hợp lệ.
+     * Input: username = "testuser" và wishRepository trả về danh sách không rỗng.
+     * Expected Output: ResponseEntity với status 200, body chứa ListResponse có danh sách ClientWishResponse đúng.
+     */    @Test
     public void testGetAllWishes() {
         String username = "testuser";  // Simulate a test username
         when(authentication.getName()).thenReturn(username);  // Mock the Authentication to return the test username
@@ -75,8 +79,12 @@ public class ClientWishTests {
         assertEquals(1, result.getBody().getContent().size());  // Check that the response body has one wish
     }
 
-    // Test case to create a new wish for a user
-    @Test
+    /**
+     * Test Case ID: CWT002
+     * Mục tiêu: Kiểm tra createWish tạo mới một wish cho người dùng với dữ liệu hợp lệ.
+     * Input: userId = 1, productId = 1 và wishRepository trả về Optional rỗng.
+     * Expected Output: ResponseEntity với status 201, body chứa ClientWishResponse đúng.
+     */    @Test
     public void testCreateWish() throws Exception {
         ClientWishRequest request = new ClientWishRequest();
         request.setUserId(1L);  // Set user ID in the request
@@ -126,8 +134,12 @@ public class ClientWishTests {
         assertEquals(response, result.getBody());  // Check that the response body matches the expected response
     }
 
-    // Test case to delete multiple wishes
-    @Test
+    /**
+     * Test Case ID: CWT003
+     * Mục tiêu: Kiểm tra deleteWishes xóa danh sách các wish với dữ liệu hợp lệ.
+     * Input: ids = [1] và wishRepository thực hiện xóa thành công.
+     * Expected Output: ResponseEntity với status 204, không có nội dung trả về.
+     */    @Test
     public void testDeleteWishes() {
         List<Long> ids = Collections.singletonList(1L);  // Simulate a list of wish IDs to delete
 

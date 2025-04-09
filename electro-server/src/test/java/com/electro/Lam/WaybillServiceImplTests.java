@@ -92,7 +92,12 @@ public class WaybillServiceImplTests {
         ReflectionTestUtils.setField(waybillService, "ghnShopId", "123");
     }
 
-
+    /**
+     * Test Case ID: WCT001
+     * Mục tiêu: Xác minh rằng `findAll` trả về danh sách các vận đơn với dữ liệu hợp lệ.
+     * Input: `waybillRepository` trả về danh sách không rỗng.
+     * Expected Output: `ListResponse` chứa danh sách `WaybillResponse`.
+     */
     @Test
     public void testFindAll() {
         Waybill waybill = new Waybill();
@@ -117,6 +122,12 @@ public class WaybillServiceImplTests {
     }
 
 
+    /**
+     * Test Case ID: WCT002
+     * Mục tiêu: Xác minh rằng `findById` trả về chi tiết vận đơn với dữ liệu hợp lệ.
+     * Input: `id = 1` và `waybillRepository` trả về một vận đơn.
+     * Expected Output: `WaybillResponse` chứa thông tin chi tiết chính xác.
+     */
     @Test
     public void testFindById() {
         Waybill waybill = new Waybill();
@@ -140,6 +151,12 @@ public class WaybillServiceImplTests {
     }
 
 
+    /**
+     * Test Case ID: WCT003
+     * Mục tiêu: Xác minh rằng `findById` ném ra `ResourceNotFoundException` khi vận đơn không tồn tại.
+     * Input: `id = 1` và `waybillRepository` trả về một `Optional` rỗng.
+     * Expected Output: `ResourceNotFoundException` được ném ra.
+     */
     @Test
     public void testFindById_NotFound() {
         // Mock repository method
@@ -157,6 +174,12 @@ public class WaybillServiceImplTests {
         verify(waybillMapper, times(0)).entityToResponse(any(Waybill.class));
     }
 
+    /**
+     * Test Case ID: WCT004
+     * Mục tiêu: Xác minh rằng `save` tạo mới một vận đơn với dữ liệu hợp lệ.
+     * Input: `WaybillRequest` hợp lệ.
+     * Expected Output: `WaybillResponse` chứa thông tin chi tiết chính xác.
+     */
         @Test
     public void testSave() {
         // Set up the absolute URL for ghnApiPath
@@ -206,6 +229,13 @@ public class WaybillServiceImplTests {
         verify(waybillMapper, times(1)).entityToResponse(waybill);
     }
 
+
+    /**
+     * Test Case ID: WCT005
+     * Mục tiêu: Xác minh rằng `save` cập nhật một vận đơn hiện có với dữ liệu hợp lệ.
+     * Input: `id = 1` và `WaybillRequest` hợp lệ.
+     * Expected Output: `WaybillResponse` chứa thông tin chi tiết đã được cập nhật.
+     */
        @Test
     public void testSave_Update() {
         // Set up the absolute URL for ghnApiPath
@@ -236,7 +266,12 @@ public class WaybillServiceImplTests {
         verify(waybillMapper, times(1)).entityToResponse(waybill);
     }
 
-
+    /**
+     * Test Case ID: WCT006
+     * Mục tiêu: Xác minh rằng `save` ném ra `ResourceNotFoundException` khi cập nhật một vận đơn không tồn tại.
+     * Input: `id = 1` và `waybillRepository` trả về một `Optional` rỗng.
+     * Expected Output: `ResourceNotFoundException` được ném ra.
+     */
     @Test
     public void testSave_Update_NotFound() {
         Long id = 1L;
@@ -258,6 +293,12 @@ public class WaybillServiceImplTests {
     }
 
 
+    /**
+     * Test Case ID: WCT007
+     * Mục tiêu: Xác minh rằng `delete` xóa một vận đơn với dữ liệu hợp lệ.
+     * Input: `id = 1`.
+     * Expected Output: `waybillRepository` được gọi để xóa vận đơn.
+     */
     @Test
     public void testDelete() {
         // Call the service method
@@ -271,6 +312,12 @@ public class WaybillServiceImplTests {
     }
 
 
+    /**
+     * Test Case ID: WCT008
+     * Mục tiêu: Xác minh rằng `delete` xóa nhiều vận đơn với dữ liệu hợp lệ.
+     * Input: `ids = [1, 2]`.
+     * Expected Output: `waybillRepository` được gọi để xóa danh sách vận đơn.
+     */
     @Test
     public void testDeleteMultiple() {
         // Call the service method
@@ -284,6 +331,12 @@ public class WaybillServiceImplTests {
     }
 
 
+    /**
+     * Test Case ID: WCT009
+     * Mục tiêu: Xác minh rằng `callbackStatusWaybillFromGHN` xử lý trạng thái callback từ GHN với dữ liệu hợp lệ.
+     * Input: `GhnCallbackOrderRequest` hợp lệ.
+     * Expected Output: Trạng thái thay đổi và thông báo được xử lý chính xác.
+     */
     @Test
     public void testCallbackStatusWaybillFromGHN() {
         // Set up the absolute URL for ghnApiPath
@@ -328,6 +381,12 @@ public class WaybillServiceImplTests {
         verify(notificationService, times(1)).pushNotification(anyString(), any());
     }
 
+    /**
+     * Test Case ID: WCT010
+     * Mục tiêu: Xác minh rằng `callbackStatusWaybillFromGHN` ném ra `ResourceNotFoundException` khi vận đơn không tồn tại.
+     * Input: `GhnCallbackOrderRequest` với mã vận đơn không tồn tại.
+     * Expected Output: `ResourceNotFoundException` được ném ra.
+     */
         @Test
     public void testCallbackStatusWaybillFromGHN_WaybillNotFound() {
         GhnCallbackOrderRequest ghnCallbackOrderRequest = new GhnCallbackOrderRequest();

@@ -1,12 +1,12 @@
 package com.electro.Minh;
 
-import com.electro.TestSecurityConfig;
-import com.electro.controller.client.ClientCategoryController;
 import com.electro.config.security.WebSecurityConfig;
+import com.electro.controller.client.ClientCategoryController;
 import com.electro.dto.client.ClientCategoryResponse;
 import com.electro.entity.product.Category;
 import com.electro.mapper.client.ClientCategoryMapper;
 import com.electro.repository.product.CategoryRepository;
+import com.electro.utils.TestSecurityConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,8 @@ import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Lớp test cho ClientCategoryController.

@@ -1,0 +1,173 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ClientReviewMapper</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.mapper.client</a>
+</div>
+
+<h1>Coverage Summary for Class: ClientReviewMapper (com.electro.mapper.client)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ClientReviewMapper</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (35/35)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.mapper.client;
+&nbsp;
+&nbsp;import com.electro.dto.client.ClientReviewRequest;
+&nbsp;import com.electro.dto.client.ClientReviewResponse;
+&nbsp;import com.electro.dto.client.ClientSimpleReviewResponse;
+&nbsp;import com.electro.entity.review.Review;
+&nbsp;import com.electro.repository.authentication.UserRepository;
+&nbsp;import com.electro.repository.product.ProductRepository;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;
+&nbsp;import java.util.Collections;
+&nbsp;
+&nbsp;@Component
+<b class="fc">&nbsp;@AllArgsConstructor</b>
+&nbsp;public class ClientReviewMapper {
+&nbsp;
+&nbsp;    private UserRepository userRepository;
+&nbsp;    private ProductRepository productRepository;
+&nbsp;    private ClientProductMapper clientProductMapper;
+&nbsp;
+&nbsp;    public Review requestToEntity(ClientReviewRequest request) {
+<b class="fc">&nbsp;        Review entity = new Review();</b>
+<b class="fc">&nbsp;        entity.setUser(userRepository.getById(request.getUserId()));</b>
+<b class="fc">&nbsp;        entity.setProduct(productRepository.getById(request.getProductId()));</b>
+<b class="fc">&nbsp;        entity.setRatingScore(request.getRatingScore());</b>
+<b class="fc">&nbsp;        entity.setContent(request.getContent());</b>
+<b class="fc">&nbsp;        entity.setStatus(request.getStatus());</b>
+<b class="fc">&nbsp;        return entity;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ClientReviewResponse entityToResponse(Review entity) {
+<b class="fc">&nbsp;        ClientReviewResponse response = new ClientReviewResponse();</b>
+<b class="fc">&nbsp;        response.setReviewId(entity.getId());</b>
+<b class="fc">&nbsp;        response.setReviewCreatedAt(entity.getCreatedAt());</b>
+<b class="fc">&nbsp;        response.setReviewUpdatedAt(entity.getUpdatedAt());</b>
+&nbsp;        // TODO: Triển khai `saleable` cho productResponse ở đây
+<b class="fc">&nbsp;        response.setReviewProduct(clientProductMapper.entityToListedResponse(entity.getProduct(), Collections.emptyList()));</b>
+<b class="fc">&nbsp;        response.setReviewRatingScore(entity.getRatingScore());</b>
+<b class="fc">&nbsp;        response.setReviewContent(entity.getContent());</b>
+<b class="fc">&nbsp;        response.setReviewReply(entity.getReply());</b>
+<b class="fc">&nbsp;        response.setReviewStatus(entity.getStatus());</b>
+<b class="fc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ClientSimpleReviewResponse entityToSimpleResponse(Review entity) {
+<b class="fc">&nbsp;        ClientSimpleReviewResponse response = new ClientSimpleReviewResponse();</b>
+<b class="fc">&nbsp;        response.setReviewId(entity.getId());</b>
+<b class="fc">&nbsp;        response.setReviewCreatedAt(entity.getCreatedAt());</b>
+<b class="fc">&nbsp;        response.setReviewUpdatedAt(entity.getUpdatedAt());</b>
+<b class="fc">&nbsp;        response.setReviewUser(new ClientSimpleReviewResponse.UserResponse()</b>
+<b class="fc">&nbsp;                .setUserId(entity.getUser().getId())</b>
+<b class="fc">&nbsp;                .setUserUsername(entity.getUser().getUsername())</b>
+<b class="fc">&nbsp;                .setUserFullname(entity.getUser().getFullname()));</b>
+<b class="fc">&nbsp;        response.setReviewRatingScore(entity.getRatingScore());</b>
+<b class="fc">&nbsp;        response.setReviewContent(entity.getContent());</b>
+<b class="fc">&nbsp;        response.setReviewReply(entity.getReply());</b>
+<b class="fc">&nbsp;        response.setReviewStatus(entity.getStatus());</b>
+<b class="fc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Review partialUpdate(Review entity, ClientReviewRequest request) {
+<b class="fc">&nbsp;        entity.setRatingScore(request.getRatingScore());</b>
+<b class="fc">&nbsp;        entity.setContent(request.getContent());</b>
+<b class="fc">&nbsp;        entity.setStatus(request.getStatus());</b>
+<b class="fc">&nbsp;        return entity;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-09 20:31</div>
+</div>
+</body>
+</html>

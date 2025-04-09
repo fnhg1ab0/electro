@@ -1,0 +1,177 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MessageServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.service.chat</a>
+</div>
+
+<h1>Coverage Summary for Class: MessageServiceImpl (com.electro.service.chat)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MessageServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    12.5%
+  </span>
+  <span class="absValue">
+    (1/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    6.7%
+  </span>
+  <span class="absValue">
+    (1/15)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.service.chat;
+&nbsp;
+&nbsp;import com.electro.constant.ResourceName;
+&nbsp;import com.electro.constant.SearchFields;
+&nbsp;import com.electro.dto.ListResponse;
+&nbsp;import com.electro.dto.chat.MessageRequest;
+&nbsp;import com.electro.dto.chat.MessageResponse;
+&nbsp;import com.electro.entity.chat.Message;
+&nbsp;import com.electro.mapper.chat.MessageMapper;
+&nbsp;import com.electro.repository.authentication.UserRepository;
+&nbsp;import com.electro.repository.chat.MessageRepository;
+&nbsp;import com.electro.repository.chat.RoomRepository;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.time.Instant;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;@AllArgsConstructor</b>
+&nbsp;public class MessageServiceImpl implements MessageService {
+&nbsp;
+&nbsp;    private MessageRepository messageRepository;
+&nbsp;    private RoomRepository roomRepository;
+&nbsp;    private UserRepository userRepository;
+&nbsp;    private MessageMapper messageMapper;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ListResponse&lt;MessageResponse&gt; findAll(int page, int size, String sort, String filter, String search, boolean all) {
+<b class="nc">&nbsp;        return defaultFindAll(page, size, sort, filter, search, all, SearchFields.MESSAGE, messageRepository, messageMapper);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public MessageResponse findById(Long id) {
+<b class="nc">&nbsp;        return defaultFindById(id, messageRepository, messageMapper, ResourceName.MESSAGE);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public MessageResponse save(MessageRequest request) {
+<b class="nc">&nbsp;        Message message = messageMapper.requestToEntity(request);</b>
+&nbsp;
+<b class="nc">&nbsp;        userRepository.findById(request.getUserId()).ifPresent(message::setUser);</b>
+&nbsp;
+&nbsp;        // (1) Save message
+<b class="nc">&nbsp;        Message messageAfterSave = messageRepository.save(message);</b>
+&nbsp;
+&nbsp;        // (2) Save room
+<b class="nc">&nbsp;        roomRepository.findById(request.getRoomId())</b>
+<b class="nc">&nbsp;                .ifPresent(room -&gt; {</b>
+<b class="nc">&nbsp;                    room.setUpdatedAt(Instant.now());</b>
+<b class="nc">&nbsp;                    room.setLastMessage(messageAfterSave);</b>
+<b class="nc">&nbsp;                    roomRepository.save(room);</b>
+&nbsp;                });
+&nbsp;
+<b class="nc">&nbsp;        return messageMapper.entityToResponse(messageAfterSave);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public MessageResponse save(Long id, MessageRequest request) {
+<b class="nc">&nbsp;        return defaultSave(id, request, messageRepository, messageMapper, ResourceName.MESSAGE);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void delete(Long id) {
+<b class="nc">&nbsp;        messageRepository.deleteById(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void delete(List&lt;Long&gt; ids) {
+<b class="nc">&nbsp;        messageRepository.deleteAllById(ids);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-09 20:31</div>
+</div>
+</body>
+</html>

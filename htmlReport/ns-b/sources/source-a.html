@@ -1,0 +1,197 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ClientReviewController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.controller.client</a>
+</div>
+
+<h1>Coverage Summary for Class: ClientReviewController (com.electro.controller.client)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ClientReviewController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (18/18)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.controller.client;
+&nbsp;
+&nbsp;import com.electro.constant.AppConstants;
+&nbsp;import com.electro.constant.FieldName;
+&nbsp;import com.electro.constant.ResourceName;
+&nbsp;import com.electro.dto.ListResponse;
+&nbsp;import com.electro.dto.client.ClientReviewRequest;
+&nbsp;import com.electro.dto.client.ClientReviewResponse;
+&nbsp;import com.electro.dto.client.ClientSimpleReviewResponse;
+&nbsp;import com.electro.entity.review.Review;
+&nbsp;import com.electro.exception.ResourceNotFoundException;
+&nbsp;import com.electro.mapper.client.ClientReviewMapper;
+&nbsp;import com.electro.repository.review.ReviewRepository;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.PageRequest;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.lang.Nullable;
+&nbsp;import org.springframework.security.core.Authentication;
+&nbsp;import org.springframework.web.bind.annotation.CrossOrigin;
+&nbsp;import org.springframework.web.bind.annotation.DeleteMapping;
+&nbsp;import org.springframework.web.bind.annotation.GetMapping;
+&nbsp;import org.springframework.web.bind.annotation.PathVariable;
+&nbsp;import org.springframework.web.bind.annotation.PostMapping;
+&nbsp;import org.springframework.web.bind.annotation.PutMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestBody;
+&nbsp;import org.springframework.web.bind.annotation.RequestMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestParam;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/client-api/reviews&quot;)
+<b class="fc">&nbsp;@AllArgsConstructor</b>
+&nbsp;@CrossOrigin(AppConstants.FRONTEND_HOST)
+&nbsp;public class ClientReviewController {
+&nbsp;
+&nbsp;    private ReviewRepository reviewRepository;
+&nbsp;    private ClientReviewMapper clientReviewMapper;
+&nbsp;
+&nbsp;    @GetMapping(&quot;/products/{productSlug}&quot;)
+&nbsp;    public ResponseEntity&lt;ListResponse&lt;ClientSimpleReviewResponse&gt;&gt; getAllReviewsByProduct(
+&nbsp;            @PathVariable String productSlug,
+&nbsp;            @RequestParam(name = &quot;page&quot;, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
+&nbsp;            @RequestParam(name = &quot;size&quot;, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size,
+&nbsp;            @RequestParam(name = &quot;sort&quot;, defaultValue = AppConstants.DEFAULT_SORT) String sort,
+&nbsp;            @RequestParam(name = &quot;filter&quot;, required = false) @Nullable String filter
+&nbsp;    ) {
+<b class="fc">&nbsp;        Page&lt;Review&gt; reviews = reviewRepository.findAllByProductSlug(productSlug, sort, filter, PageRequest.of(page - 1, size));</b>
+<b class="fc">&nbsp;        List&lt;ClientSimpleReviewResponse&gt; clientReviewResponses = reviews.map(clientReviewMapper::entityToSimpleResponse).toList();</b>
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.OK).body(ListResponse.of(clientReviewResponses, reviews));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping
+&nbsp;    public ResponseEntity&lt;ListResponse&lt;ClientReviewResponse&gt;&gt; getAllReviewsByUser(
+&nbsp;            Authentication authentication,
+&nbsp;            @RequestParam(name = &quot;page&quot;, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
+&nbsp;            @RequestParam(name = &quot;size&quot;, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size,
+&nbsp;            @RequestParam(name = &quot;sort&quot;, defaultValue = AppConstants.DEFAULT_SORT) String sort,
+&nbsp;            @RequestParam(name = &quot;filter&quot;, required = false) @Nullable String filter
+&nbsp;    ) {
+<b class="fc">&nbsp;        String username = authentication.getName();</b>
+<b class="fc">&nbsp;        Page&lt;Review&gt; reviews = reviewRepository.findAllByUsername(username, sort, filter, PageRequest.of(page - 1, size));</b>
+<b class="fc">&nbsp;        List&lt;ClientReviewResponse&gt; clientReviewResponses = reviews.map(clientReviewMapper::entityToResponse).toList();</b>
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.OK).body(ListResponse.of(clientReviewResponses, reviews));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping
+&nbsp;    public ResponseEntity&lt;ClientReviewResponse&gt; createReview(@RequestBody ClientReviewRequest request) {
+<b class="fc">&nbsp;        Review entity = reviewRepository.save(clientReviewMapper.requestToEntity(request));</b>
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.CREATED).body(clientReviewMapper.entityToResponse(entity));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;ClientReviewResponse&gt; updateReview(@PathVariable Long id,
+&nbsp;                                                             @RequestBody ClientReviewRequest request) {
+<b class="fc">&nbsp;        ClientReviewResponse clientReviewResponse = reviewRepository.findById(id)</b>
+<b class="fc">&nbsp;                .map(existingEntity -&gt; clientReviewMapper.partialUpdate(existingEntity, request))</b>
+<b class="fc">&nbsp;                .map(reviewRepository::save)</b>
+<b class="fc">&nbsp;                .map(clientReviewMapper::entityToResponse)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new ResourceNotFoundException(ResourceName.REVIEW, FieldName.ID, id));</b>
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.OK).body(clientReviewResponse);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping
+&nbsp;    public ResponseEntity&lt;Void&gt; deleteReviews(@RequestBody List&lt;Long&gt; ids) {
+<b class="fc">&nbsp;        reviewRepository.deleteAllById(ids);</b>
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-09 20:31</div>
+</div>
+</body>
+</html>

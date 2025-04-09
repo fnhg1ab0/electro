@@ -1,0 +1,230 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ClientOrderController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.controller.client</a>
+</div>
+
+<h1>Coverage Summary for Class: ClientOrderController (com.electro.controller.client)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ClientOrderController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (33/33)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.controller.client;
+&nbsp;
+&nbsp;import com.electro.constant.AppConstants;
+&nbsp;import com.electro.constant.FieldName;
+&nbsp;import com.electro.constant.ResourceName;
+&nbsp;import com.electro.dto.ListResponse;
+&nbsp;import com.electro.dto.client.ClientConfirmedOrderResponse;
+&nbsp;import com.electro.dto.client.ClientOrderDetailResponse;
+&nbsp;import com.electro.dto.client.ClientSimpleOrderRequest;
+&nbsp;import com.electro.dto.client.ClientSimpleOrderResponse;
+&nbsp;import com.electro.entity.general.Notification;
+&nbsp;import com.electro.entity.general.NotificationType;
+&nbsp;import com.electro.entity.order.Order;
+&nbsp;import com.electro.exception.ResourceNotFoundException;
+&nbsp;import com.electro.mapper.client.ClientOrderMapper;
+&nbsp;import com.electro.mapper.general.NotificationMapper;
+&nbsp;import com.electro.repository.general.NotificationRepository;
+&nbsp;import com.electro.repository.order.OrderRepository;
+&nbsp;import com.electro.service.general.NotificationService;
+&nbsp;import com.electro.service.order.OrderService;
+&nbsp;import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+&nbsp;import com.fasterxml.jackson.databind.node.ObjectNode;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.PageRequest;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.lang.Nullable;
+&nbsp;import org.springframework.security.core.Authentication;
+&nbsp;import org.springframework.web.bind.annotation.CrossOrigin;
+&nbsp;import org.springframework.web.bind.annotation.GetMapping;
+&nbsp;import org.springframework.web.bind.annotation.PathVariable;
+&nbsp;import org.springframework.web.bind.annotation.PostMapping;
+&nbsp;import org.springframework.web.bind.annotation.PutMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestBody;
+&nbsp;import org.springframework.web.bind.annotation.RequestMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestParam;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;import org.springframework.web.servlet.view.RedirectView;
+&nbsp;
+&nbsp;import javax.servlet.http.HttpServletRequest;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/client-api/orders&quot;)
+<b class="fc">&nbsp;@AllArgsConstructor</b>
+&nbsp;@CrossOrigin(AppConstants.FRONTEND_HOST)
+&nbsp;public class ClientOrderController {
+&nbsp;
+&nbsp;    private OrderRepository orderRepository;
+&nbsp;    private ClientOrderMapper clientOrderMapper;
+&nbsp;    private OrderService orderService;
+&nbsp;    private NotificationRepository notificationRepository;
+&nbsp;    private NotificationService notificationService;
+&nbsp;    private NotificationMapper notificationMapper;
+&nbsp;
+&nbsp;    @GetMapping
+&nbsp;    public ResponseEntity&lt;ListResponse&lt;ClientSimpleOrderResponse&gt;&gt; getAllOrders(
+&nbsp;            Authentication authentication,
+&nbsp;            @RequestParam(name = &quot;page&quot;, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
+&nbsp;            @RequestParam(name = &quot;size&quot;, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size,
+&nbsp;            @RequestParam(name = &quot;sort&quot;, defaultValue = AppConstants.DEFAULT_SORT) String sort,
+&nbsp;            @RequestParam(name = &quot;filter&quot;, required = false) @Nullable String filter
+&nbsp;    ) {
+<b class="fc">&nbsp;        String username = authentication.getName();</b>
+<b class="fc">&nbsp;        Page&lt;Order&gt; orders = orderRepository.findAllByUsername(username, sort, filter, PageRequest.of(page - 1, size));</b>
+<b class="fc">&nbsp;        List&lt;ClientSimpleOrderResponse&gt; clientReviewResponses = orders.map(clientOrderMapper::entityToResponse).toList();</b>
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.OK).body(ListResponse.of(clientReviewResponses, orders));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/{code}&quot;)
+&nbsp;    public ResponseEntity&lt;ClientOrderDetailResponse&gt; getOrder(@PathVariable String code) {
+<b class="fc">&nbsp;        ClientOrderDetailResponse clientOrderDetailResponse = orderRepository.findByCode(code)</b>
+<b class="fc">&nbsp;                .map(clientOrderMapper::entityToDetailResponse)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new ResourceNotFoundException(ResourceName.ORDER, FieldName.ORDER_CODE, code));</b>
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.OK).body(clientOrderDetailResponse);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/cancel/{code}&quot;)
+&nbsp;    public ResponseEntity&lt;ObjectNode&gt; cancelOrder(@PathVariable String code) {
+<b class="fc">&nbsp;        orderService.cancelOrder(code);</b>
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.OK).body(new ObjectNode(JsonNodeFactory.instance));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping
+&nbsp;    public ResponseEntity&lt;ClientConfirmedOrderResponse&gt; createClientOrder(@RequestBody ClientSimpleOrderRequest request) {
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.createClientOrder(request));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(value = &quot;/success&quot;)
+&nbsp;    public RedirectView paymentSuccessAndCaptureTransaction(HttpServletRequest request) {
+<b class="fc">&nbsp;        String paypalOrderId = request.getParameter(&quot;token&quot;);</b>
+<b class="fc">&nbsp;        String payerId = request.getParameter(&quot;PayerID&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        orderService.captureTransactionPaypal(paypalOrderId, payerId);</b>
+&nbsp;
+<b class="fc">&nbsp;        RedirectView redirectView = new RedirectView();</b>
+<b class="fc">&nbsp;        redirectView.setUrl(AppConstants.FRONTEND_HOST + &quot;/payment/success&quot;);</b>
+<b class="fc">&nbsp;        return redirectView;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(value = &quot;/cancel&quot;)
+&nbsp;    public RedirectView paymentCancel(HttpServletRequest request) {
+<b class="fc">&nbsp;        String paypalOrderId = request.getParameter(&quot;token&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        Order order = orderRepository.findByPaypalOrderId(paypalOrderId)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new ResourceNotFoundException(ResourceName.ORDER, FieldName.PAYPAL_ORDER_ID, paypalOrderId));</b>
+&nbsp;
+<b class="fc">&nbsp;        Notification notification = new Notification()</b>
+<b class="fc">&nbsp;                .setUser(order.getUser())</b>
+<b class="fc">&nbsp;                .setType(NotificationType.CHECKOUT_PAYPAL_CANCEL)</b>
+<b class="fc">&nbsp;                .setMessage(String.format(&quot;Bạn đã hủy thanh toán PayPal cho đơn hàng %s.&quot;, order.getCode()))</b>
+<b class="fc">&nbsp;                .setAnchor(&quot;/order/detail/&quot; + order.getCode())</b>
+<b class="fc">&nbsp;                .setStatus(1);</b>
+&nbsp;
+<b class="fc">&nbsp;        notificationRepository.save(notification);</b>
+&nbsp;
+<b class="fc">&nbsp;        notificationService.pushNotification(order.getUser().getUsername(),</b>
+<b class="fc">&nbsp;                notificationMapper.entityToResponse(notification));</b>
+&nbsp;
+<b class="fc">&nbsp;        RedirectView redirectView = new RedirectView();</b>
+<b class="fc">&nbsp;        redirectView.setUrl(AppConstants.FRONTEND_HOST + &quot;/payment/cancel&quot;);</b>
+<b class="fc">&nbsp;        return redirectView;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-09 20:31</div>
+</div>
+</body>
+</html>

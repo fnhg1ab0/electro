@@ -1,0 +1,176 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Review</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.entity.review</a>
+</div>
+
+<h1>Coverage Summary for Class: Review (com.electro.entity.review)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Review</td>
+<td class="coverageStat">
+  <span class="percent">
+    88.9%
+  </span>
+  <span class="absValue">
+    (8/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    88.9%
+  </span>
+  <span class="absValue">
+    (8/9)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Review$HibernateProxy$JWdx2GwR</td>
+  </tr>
+  <tr>
+    <td class="name">Review$HibernateProxy$qQScbO1x</td>
+  </tr>
+  <tr>
+    <td class="name">Review$HibernateProxy$vsWUMm4Q</td>
+  </tr>
+  <tr>
+    <td class="name">Review$HibernateProxy$xhDL4Had</td>
+  </tr>
+  <tr>
+    <td class="name">Review$HibernateProxy$zCEuY4wf</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    88.9%
+  </span>
+  <span class="absValue">
+    (8/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    88.9%
+  </span>
+  <span class="absValue">
+    (8/9)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.entity.review;
+&nbsp;
+&nbsp;import com.electro.entity.BaseEntity;
+&nbsp;import com.electro.entity.authentication.User;
+&nbsp;import com.electro.entity.product.Product;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import lombok.Getter;
+&nbsp;import lombok.NoArgsConstructor;
+&nbsp;import lombok.Setter;
+&nbsp;import lombok.experimental.Accessors;
+&nbsp;
+&nbsp;import javax.persistence.Column;
+&nbsp;import javax.persistence.Entity;
+&nbsp;import javax.persistence.FetchType;
+&nbsp;import javax.persistence.JoinColumn;
+&nbsp;import javax.persistence.ManyToOne;
+&nbsp;import javax.persistence.Table;
+&nbsp;import javax.persistence.UniqueConstraint;
+&nbsp;
+<b class="nc">&nbsp;@AllArgsConstructor</b>
+<b class="fc">&nbsp;@NoArgsConstructor</b>
+&nbsp;@Getter
+<b class="fc">&nbsp;@Setter</b>
+&nbsp;@Accessors(chain = true)
+&nbsp;@Entity
+&nbsp;@Table(name = &quot;review&quot;, uniqueConstraints = @UniqueConstraint(name = &quot;uc_review&quot;, columnNames = {&quot;user_id&quot;, &quot;product_id&quot;}))
+&nbsp;public class Review extends BaseEntity {
+&nbsp;    @ManyToOne(fetch = FetchType.LAZY)
+&nbsp;    @JoinColumn(name = &quot;user_id&quot;, nullable = false)
+<b class="fc">&nbsp;    private User user;</b>
+&nbsp;
+&nbsp;    @ManyToOne(fetch = FetchType.LAZY)
+&nbsp;    @JoinColumn(name = &quot;product_id&quot;, nullable = false)
+<b class="fc">&nbsp;    private Product product;</b>
+&nbsp;
+&nbsp;    // 5 mức đánh giá: 1, 2, 3, 4, 5
+&nbsp;    @Column(name = &quot;rating_score&quot;, nullable = false, columnDefinition = &quot;TINYINT&quot;)
+<b class="fc">&nbsp;    private Integer ratingScore;</b>
+&nbsp;
+&nbsp;    // Reference: https://stackoverflow.com/a/31610134
+&nbsp;    @Column(name = &quot;content&quot;, nullable = false, columnDefinition = &quot;TEXT&quot;)
+<b class="fc">&nbsp;    private String content;</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;reply&quot;, columnDefinition = &quot;TEXT&quot;)
+<b class="fc">&nbsp;    private String reply;</b>
+&nbsp;
+&nbsp;    // TODO: 6 trạng thái: Chưa duyệt, Đã duyệt, Không duyệt, Cập nhật chưa duyệt, Cập nhật đã duyệt, Cập nhật không duyệt
+&nbsp;    @Column(name = &quot;status&quot;, nullable = false, columnDefinition = &quot;TINYINT&quot;)
+<b class="fc">&nbsp;    private Integer status;</b>
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-09 20:31</div>
+</div>
+</body>
+</html>

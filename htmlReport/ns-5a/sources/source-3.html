@@ -1,0 +1,101 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > EmployeeMapper</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.mapper.employee</a>
+</div>
+
+<h1>Coverage Summary for Class: EmployeeMapper (com.electro.mapper.employee)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">EmployeeMapper</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.mapper.employee;
+&nbsp;
+&nbsp;import com.electro.dto.employee.EmployeeRequest;
+&nbsp;import com.electro.dto.employee.EmployeeResponse;
+&nbsp;import com.electro.entity.employee.Employee;
+&nbsp;import com.electro.mapper.GenericMapper;
+&nbsp;import com.electro.mapper.authentication.UserMapper;
+&nbsp;import com.electro.utils.MapperUtils;
+&nbsp;import org.mapstruct.Mapper;
+&nbsp;import org.mapstruct.Mapping;
+&nbsp;import org.mapstruct.MappingTarget;
+&nbsp;import org.mapstruct.ReportingPolicy;
+&nbsp;
+&nbsp;@Mapper(componentModel = &quot;spring&quot;, unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = {MapperUtils.class, UserMapper.class})
+&nbsp;public interface EmployeeMapper extends GenericMapper&lt;Employee, EmployeeRequest, EmployeeResponse&gt; {
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Mapping(source = &quot;officeId&quot;, target = &quot;office&quot;)
+&nbsp;    @Mapping(source = &quot;departmentId&quot;, target = &quot;department&quot;)
+&nbsp;    @Mapping(source = &quot;jobTypeId&quot;, target = &quot;jobType&quot;)
+&nbsp;    @Mapping(source = &quot;jobLevelId&quot;, target = &quot;jobLevel&quot;)
+&nbsp;    @Mapping(source = &quot;jobTitleId&quot;, target = &quot;jobTitle&quot;)
+&nbsp;    Employee requestToEntity(EmployeeRequest request);
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Mapping(source = &quot;officeId&quot;, target = &quot;office&quot;)
+&nbsp;    @Mapping(source = &quot;departmentId&quot;, target = &quot;department&quot;)
+&nbsp;    @Mapping(source = &quot;jobTypeId&quot;, target = &quot;jobType&quot;)
+&nbsp;    @Mapping(source = &quot;jobLevelId&quot;, target = &quot;jobLevel&quot;)
+&nbsp;    @Mapping(source = &quot;jobTitleId&quot;, target = &quot;jobTitle&quot;)
+&nbsp;    Employee partialUpdate(@MappingTarget Employee entity, EmployeeRequest request);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-09 20:31</div>
+</div>
+</body>
+</html>

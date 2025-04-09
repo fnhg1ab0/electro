@@ -1,0 +1,203 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PayPalHttpClient</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.config.payment.paypal</a>
+</div>
+
+<h1>Coverage Summary for Class: PayPalHttpClient (com.electro.config.payment.paypal)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PayPalHttpClient</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    28.6%
+  </span>
+  <span class="absValue">
+    (2/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    6.1%
+  </span>
+  <span class="absValue">
+    (3/49)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.config.payment.paypal;
+&nbsp;
+&nbsp;import com.electro.dto.payment.AccessTokenResponse;
+&nbsp;import com.electro.dto.payment.ClientTokenResponse;
+&nbsp;import com.electro.dto.payment.PaypalRequest;
+&nbsp;import com.electro.dto.payment.PaypalResponse;
+&nbsp;import com.fasterxml.jackson.databind.ObjectMapper;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.http.HttpHeaders;
+&nbsp;import org.springframework.http.MediaType;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;
+&nbsp;import java.net.URI;
+&nbsp;import java.net.http.HttpClient;
+&nbsp;import java.net.http.HttpRequest;
+&nbsp;import java.net.http.HttpResponse;
+&nbsp;import java.nio.charset.StandardCharsets;
+&nbsp;import java.util.Base64;
+&nbsp;
+&nbsp;@Component
+<b class="fc">&nbsp;@AllArgsConstructor</b>
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;public class PayPalHttpClient {
+&nbsp;
+<b class="fc">&nbsp;    private final HttpClient httpClient = HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).build();</b>
+&nbsp;    private final PaypalConfig paypalConfig;
+&nbsp;    private final ObjectMapper objectMapper;
+&nbsp;
+&nbsp;    public AccessTokenResponse getPaypalAccessToken() throws Exception {
+<b class="nc">&nbsp;        var request = HttpRequest.newBuilder()</b>
+<b class="nc">&nbsp;                .uri(URI.create(PayPalEndpoints.createUrl(paypalConfig.getBaseUrl(), PayPalEndpoints.GET_ACCESS_TOKEN)))</b>
+<b class="nc">&nbsp;                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)</b>
+<b class="nc">&nbsp;                .header(HttpHeaders.AUTHORIZATION, encodeBasicCredentials())</b>
+<b class="nc">&nbsp;                .header(HttpHeaders.ACCEPT_LANGUAGE, &quot;en_US&quot;)</b>
+<b class="nc">&nbsp;                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)</b>
+<b class="nc">&nbsp;                .POST(HttpRequest.BodyPublishers.ofString(&quot;grant_type=client_credentials&quot;))</b>
+<b class="nc">&nbsp;                .build();</b>
+<b class="nc">&nbsp;        var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());</b>
+<b class="nc">&nbsp;        var content = response.body();</b>
+&nbsp;
+<b class="nc">&nbsp;        return objectMapper.readValue(content, AccessTokenResponse.class);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ClientTokenResponse getClientToken() throws Exception {
+<b class="nc">&nbsp;        var accessTokenResponse = getPaypalAccessToken();</b>
+&nbsp;
+<b class="nc">&nbsp;        var request = HttpRequest.newBuilder()</b>
+<b class="nc">&nbsp;                .uri(URI.create(PayPalEndpoints.createUrl(paypalConfig.getBaseUrl(), PayPalEndpoints.GET_CLIENT_TOKEN)))</b>
+<b class="nc">&nbsp;                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)</b>
+<b class="nc">&nbsp;                .header(HttpHeaders.AUTHORIZATION, &quot;Bearer &quot; + accessTokenResponse.getAccessToken())</b>
+<b class="nc">&nbsp;                .header(HttpHeaders.ACCEPT_LANGUAGE, &quot;en_US&quot;)</b>
+<b class="nc">&nbsp;                .POST(HttpRequest.BodyPublishers.noBody())</b>
+<b class="nc">&nbsp;                .build();</b>
+<b class="nc">&nbsp;        var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());</b>
+<b class="nc">&nbsp;        var content = response.body();</b>
+&nbsp;
+<b class="nc">&nbsp;        return objectMapper.readValue(content, ClientTokenResponse.class);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public PaypalResponse createPaypalTransaction(PaypalRequest paypalRequest) throws Exception {
+<b class="nc">&nbsp;        var accessTokenResponse = getPaypalAccessToken();</b>
+<b class="nc">&nbsp;        var payload = objectMapper.writeValueAsString(paypalRequest);</b>
+&nbsp;
+<b class="nc">&nbsp;        var request = HttpRequest.newBuilder()</b>
+<b class="nc">&nbsp;                .uri(URI.create(PayPalEndpoints.createUrl(paypalConfig.getBaseUrl(), PayPalEndpoints.ORDER_CHECKOUT)))</b>
+<b class="nc">&nbsp;                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)</b>
+<b class="nc">&nbsp;                .header(HttpHeaders.AUTHORIZATION, &quot;Bearer &quot; + accessTokenResponse.getAccessToken())</b>
+<b class="nc">&nbsp;                .header(&quot;Prefer&quot;, &quot;return=representation&quot;)</b>
+<b class="nc">&nbsp;                .POST(HttpRequest.BodyPublishers.ofString(payload))</b>
+<b class="nc">&nbsp;                .build();</b>
+<b class="nc">&nbsp;        var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());</b>
+<b class="nc">&nbsp;        var content = response.body();</b>
+&nbsp;
+<b class="nc">&nbsp;        return objectMapper.readValue(content, PaypalResponse.class);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void capturePaypalTransaction(String paypalOrderId, String payerId) throws Exception {
+<b class="nc">&nbsp;        var accessTokenResponse = getPaypalAccessToken();</b>
+&nbsp;
+<b class="nc">&nbsp;        var request = HttpRequest.newBuilder()</b>
+<b class="nc">&nbsp;                .uri(URI.create(PayPalEndpoints.createCaptureUrl(paypalConfig.getBaseUrl(), PayPalEndpoints.ORDER_CHECKOUT, paypalOrderId)))</b>
+<b class="nc">&nbsp;                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)</b>
+<b class="nc">&nbsp;                .header(HttpHeaders.AUTHORIZATION, &quot;Bearer &quot; + accessTokenResponse.getAccessToken())</b>
+<b class="nc">&nbsp;                .header(&quot;Prefer&quot;, &quot;return=representation&quot;)</b>
+<b class="nc">&nbsp;                .header(&quot;PayPal-Request-Id&quot;, payerId)</b>
+<b class="nc">&nbsp;                .POST(HttpRequest.BodyPublishers.noBody())</b>
+<b class="nc">&nbsp;                .build();</b>
+<b class="nc">&nbsp;        httpClient.send(request, HttpResponse.BodyHandlers.ofString());</b>
+&nbsp;
+&nbsp;        // TODO: Convert response to object if we need (Using debugger to check propeties response)
+&nbsp;    }
+&nbsp;
+&nbsp;    private String encodeBasicCredentials() {
+<b class="nc">&nbsp;        var input = paypalConfig.getClientId() + &quot;:&quot; + paypalConfig.getSecret();</b>
+<b class="nc">&nbsp;        return &quot;Basic &quot; + Base64.getEncoder().encodeToString(input.getBytes(StandardCharsets.UTF_8));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-09 20:31</div>
+</div>
+</body>
+</html>

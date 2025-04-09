@@ -1,0 +1,203 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ClientCategoryMapper</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.mapper.client</a>
+</div>
+
+<h1>Coverage Summary for Class: ClientCategoryMapper (com.electro.mapper.client)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ClientCategoryMapper</td>
+<td class="coverageStat">
+  <span class="percent">
+    25%
+  </span>
+  <span class="absValue">
+    (1/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    5%
+  </span>
+  <span class="absValue">
+    (1/20)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ClientCategoryMapper$MockitoMock$2080583316</td>
+  </tr>
+  <tr>
+    <td class="name">ClientCategoryMapper$MockitoMock$2080583316$auxiliary$DYp1fRA5</td>
+  </tr>
+  <tr>
+    <td class="name">ClientCategoryMapper$MockitoMock$2080583316$auxiliary$eQjFEdC4</td>
+  </tr>
+  <tr>
+    <td class="name">ClientCategoryMapper$MockitoMock$2080583316$auxiliary$ncWVzlNv</td>
+  </tr>
+  <tr>
+    <td class="name">ClientCategoryMapper$MockitoMock$2080583316$auxiliary$SvJBU796</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    25%
+  </span>
+  <span class="absValue">
+    (1/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    5%
+  </span>
+  <span class="absValue">
+    (1/20)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.mapper.client;
+&nbsp;
+&nbsp;import com.electro.dto.client.ClientCategoryResponse;
+&nbsp;import com.electro.entity.product.Category;
+&nbsp;import org.springframework.lang.Nullable;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;
+&nbsp;import java.util.Collections;
+&nbsp;import java.util.List;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;import java.util.stream.Stream;
+&nbsp;
+&nbsp;@Component
+<b class="fc">&nbsp;public class ClientCategoryMapper {</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Thông tin category gồm có name, slug và danh sách con cấp 3
+&nbsp;     */
+&nbsp;    public List&lt;ClientCategoryResponse&gt; entityToResponse(List&lt;Category&gt; categories, int maxLevel) {
+<b class="nc">&nbsp;        if (maxLevel == 0) {</b>
+<b class="nc">&nbsp;            return Collections.emptyList();</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return categories.stream()</b>
+<b class="nc">&nbsp;                .flatMap(category -&gt; Stream.of(new ClientCategoryResponse()</b>
+<b class="nc">&nbsp;                        .setCategoryName(category.getName())</b>
+<b class="nc">&nbsp;                        .setCategorySlug(category.getSlug())</b>
+<b class="nc">&nbsp;                        .setCategoryChildren(entityToResponse(category.getCategories(), maxLevel - 1))))</b>
+<b class="nc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Thông tin category gồm có name, slug, danh sách con cấp 1 và cha xa nhất (tạo breadcrumb)
+&nbsp;     */
+&nbsp;    public ClientCategoryResponse entityToResponse(@Nullable Category category, boolean isParent) {
+<b class="nc">&nbsp;        if (category == null) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        ClientCategoryResponse categoryResponse = new ClientCategoryResponse();</b>
+&nbsp;
+<b class="nc">&nbsp;        categoryResponse</b>
+<b class="nc">&nbsp;                .setCategoryName(category.getName())</b>
+<b class="nc">&nbsp;                .setCategorySlug(category.getSlug());</b>
+&nbsp;
+<b class="nc">&nbsp;        if (!isParent) {</b>
+<b class="nc">&nbsp;            categoryResponse.setCategoryChildren(entityToResponse(category.getCategories(), 1));</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (category.getParentCategory() == null) {</b>
+<b class="nc">&nbsp;            return categoryResponse;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return categoryResponse.setCategoryParent(entityToResponse(category.getParentCategory(), true));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-09 20:31</div>
+</div>
+</body>
+</html>

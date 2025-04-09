@@ -1,0 +1,163 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ClientWishMapper</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.mapper.client</a>
+</div>
+
+<h1>Coverage Summary for Class: ClientWishMapper (com.electro.mapper.client)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ClientWishMapper</td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (1/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    10%
+  </span>
+  <span class="absValue">
+    (1/10)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ClientWishMapper$MockitoMock$356919571</td>
+  </tr>
+  <tr>
+    <td class="name">ClientWishMapper$MockitoMock$356919571$auxiliary$aruwPUwC</td>
+  </tr>
+  <tr>
+    <td class="name">ClientWishMapper$MockitoMock$356919571$auxiliary$HhYlXPbt</td>
+  </tr>
+  <tr>
+    <td class="name">ClientWishMapper$MockitoMock$356919571$auxiliary$LEE5DdTZ</td>
+  </tr>
+  <tr>
+    <td class="name">ClientWishMapper$MockitoMock$356919571$auxiliary$YzuLUF0u</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (1/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    10%
+  </span>
+  <span class="absValue">
+    (1/10)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.mapper.client;
+&nbsp;
+&nbsp;import com.electro.dto.client.ClientWishRequest;
+&nbsp;import com.electro.dto.client.ClientWishResponse;
+&nbsp;import com.electro.entity.client.Wish;
+&nbsp;import com.electro.repository.authentication.UserRepository;
+&nbsp;import com.electro.repository.product.ProductRepository;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;
+&nbsp;import java.util.Collections;
+&nbsp;
+&nbsp;@Component
+<b class="fc">&nbsp;@AllArgsConstructor</b>
+&nbsp;public class ClientWishMapper {
+&nbsp;
+&nbsp;    private UserRepository userRepository;
+&nbsp;    private ProductRepository productRepository;
+&nbsp;    private ClientProductMapper clientProductMapper;
+&nbsp;
+&nbsp;    public Wish requestToEntity(ClientWishRequest request) {
+<b class="nc">&nbsp;        Wish entity = new Wish();</b>
+<b class="nc">&nbsp;        entity.setUser(userRepository.getById(request.getUserId()));</b>
+<b class="nc">&nbsp;        entity.setProduct(productRepository.getById(request.getProductId()));</b>
+<b class="nc">&nbsp;        return entity;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ClientWishResponse entityToResponse(Wish entity) {
+<b class="nc">&nbsp;        ClientWishResponse response = new ClientWishResponse();</b>
+<b class="nc">&nbsp;        response.setWishId(entity.getId());</b>
+<b class="nc">&nbsp;        response.setWishCreatedAt(entity.getCreatedAt());</b>
+&nbsp;        // TODO: Triển khai `saleable` cho productResponse ở đây
+<b class="nc">&nbsp;        response.setWishProduct(clientProductMapper.entityToListedResponse(entity.getProduct(), Collections.emptyList()));</b>
+<b class="nc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-09 20:31</div>
+</div>
+</body>
+</html>

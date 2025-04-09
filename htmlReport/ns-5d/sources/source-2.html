@@ -1,0 +1,110 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserMapper</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.mapper.authentication</a>
+</div>
+
+<h1>Coverage Summary for Class: UserMapper (com.electro.mapper.authentication)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">UserMapper</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.mapper.authentication;
+&nbsp;
+&nbsp;import com.electro.dto.authentication.UserRequest;
+&nbsp;import com.electro.dto.authentication.UserResponse;
+&nbsp;import com.electro.dto.client.ClientEmailSettingUserRequest;
+&nbsp;import com.electro.dto.client.ClientPersonalSettingUserRequest;
+&nbsp;import com.electro.dto.client.ClientPhoneSettingUserRequest;
+&nbsp;import com.electro.entity.authentication.User;
+&nbsp;import com.electro.mapper.GenericMapper;
+&nbsp;import com.electro.mapper.address.AddressMapper;
+&nbsp;import com.electro.utils.MapperUtils;
+&nbsp;import org.mapstruct.BeanMapping;
+&nbsp;import org.mapstruct.Mapper;
+&nbsp;import org.mapstruct.Mapping;
+&nbsp;import org.mapstruct.MappingTarget;
+&nbsp;import org.mapstruct.NullValuePropertyMappingStrategy;
+&nbsp;import org.mapstruct.ReportingPolicy;
+&nbsp;
+&nbsp;@Mapper(componentModel = &quot;spring&quot;, unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = {MapperUtils.class, AddressMapper.class})
+&nbsp;public interface UserMapper extends GenericMapper&lt;User, UserRequest, UserResponse&gt; {
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @BeanMapping(qualifiedByName = &quot;attachUser&quot;)
+&nbsp;    @Mapping(source = &quot;password&quot;, target = &quot;password&quot;, qualifiedByName = &quot;hashPassword&quot;)
+&nbsp;    User requestToEntity(UserRequest request);
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @BeanMapping(qualifiedByName = &quot;attachUser&quot;)
+&nbsp;    @Mapping(source = &quot;password&quot;, target = &quot;password&quot;, qualifiedByName = &quot;hashPassword&quot;,
+&nbsp;            nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+&nbsp;    User partialUpdate(@MappingTarget User entity, UserRequest request);
+&nbsp;
+&nbsp;    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+&nbsp;    User partialUpdate(@MappingTarget User entity, ClientPersonalSettingUserRequest request);
+&nbsp;
+&nbsp;    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+&nbsp;    User partialUpdate(@MappingTarget User entity, ClientPhoneSettingUserRequest request);
+&nbsp;
+&nbsp;    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+&nbsp;    User partialUpdate(@MappingTarget User entity, ClientEmailSettingUserRequest request);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-09 20:31</div>
+</div>
+</body>
+</html>

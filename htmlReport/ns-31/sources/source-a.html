@@ -1,0 +1,210 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Variant</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.entity.product</a>
+</div>
+
+<h1>Coverage Summary for Class: Variant (com.electro.entity.product)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Variant</td>
+<td class="coverageStat">
+  <span class="percent">
+    26.7%
+  </span>
+  <span class="absValue">
+    (4/15)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    40%
+  </span>
+  <span class="absValue">
+    (8/20)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Variant$HibernateProxy$0MWgSiVe</td>
+  </tr>
+  <tr>
+    <td class="name">Variant$HibernateProxy$9C8DzfVU</td>
+  </tr>
+  <tr>
+    <td class="name">Variant$HibernateProxy$gaPpXP9E</td>
+  </tr>
+  <tr>
+    <td class="name">Variant$HibernateProxy$jGuYm5ho</td>
+  </tr>
+  <tr>
+    <td class="name">Variant$HibernateProxy$ZrVItKh6</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    26.7%
+  </span>
+  <span class="absValue">
+    (4/15)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    40%
+  </span>
+  <span class="absValue">
+    (8/20)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.entity.product;
+&nbsp;
+&nbsp;import com.electro.entity.BaseEntity;
+&nbsp;import com.electro.entity.cart.CartVariant;
+&nbsp;import com.electro.entity.inventory.CountVariant;
+&nbsp;import com.electro.entity.inventory.DocketVariant;
+&nbsp;import com.electro.entity.inventory.PurchaseOrderVariant;
+&nbsp;import com.electro.entity.order.OrderVariant;
+&nbsp;import com.electro.utils.JsonNodeConverter;
+&nbsp;import com.fasterxml.jackson.annotation.JsonBackReference;
+&nbsp;import com.fasterxml.jackson.databind.JsonNode;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import lombok.Getter;
+&nbsp;import lombok.NoArgsConstructor;
+&nbsp;import lombok.Setter;
+&nbsp;import lombok.experimental.Accessors;
+&nbsp;
+&nbsp;import javax.persistence.CascadeType;
+&nbsp;import javax.persistence.Column;
+&nbsp;import javax.persistence.Convert;
+&nbsp;import javax.persistence.Entity;
+&nbsp;import javax.persistence.FetchType;
+&nbsp;import javax.persistence.JoinColumn;
+&nbsp;import javax.persistence.ManyToOne;
+&nbsp;import javax.persistence.OneToMany;
+&nbsp;import javax.persistence.Table;
+&nbsp;import java.util.HashSet;
+&nbsp;import java.util.Set;
+&nbsp;
+<b class="nc">&nbsp;@AllArgsConstructor</b>
+<b class="fc">&nbsp;@NoArgsConstructor</b>
+&nbsp;@Getter
+<b class="nc">&nbsp;@Setter</b>
+&nbsp;@Accessors(chain = true)
+&nbsp;@Entity
+&nbsp;@Table(name = &quot;variant&quot;)
+&nbsp;public class Variant extends BaseEntity {
+&nbsp;    @ManyToOne(fetch = FetchType.LAZY)
+&nbsp;    @JoinColumn(name = &quot;product_id&quot;, nullable = false)
+&nbsp;    @JsonBackReference
+<b class="nc">&nbsp;    private Product product;</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;sku&quot;, nullable = false, unique = true)
+<b class="nc">&nbsp;    private String sku;</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;cost&quot;, nullable = false)
+<b class="nc">&nbsp;    private Double cost;</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;price&quot;, nullable = false)
+<b class="fc">&nbsp;    private Double price;</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;properties&quot;, columnDefinition = &quot;JSON&quot;)
+&nbsp;    @Convert(converter = JsonNodeConverter.class)
+<b class="fc">&nbsp;    private JsonNode properties;</b>
+&nbsp;
+&nbsp;    @Deprecated
+&nbsp;    @Column(name = &quot;images&quot;, columnDefinition = &quot;JSON&quot;)
+&nbsp;    @Convert(converter = JsonNodeConverter.class)
+<b class="nc">&nbsp;    private JsonNode images;</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;status&quot;, nullable = false, columnDefinition = &quot;TINYINT&quot;)
+<b class="nc">&nbsp;    private Integer status;</b>
+&nbsp;
+&nbsp;//    @OneToOne(mappedBy = &quot;variant&quot;, cascade = CascadeType.ALL)
+&nbsp;//    private StorageLocation storageLocation;
+&nbsp;//
+&nbsp;//    @OneToOne(mappedBy = &quot;variant&quot;, cascade = CascadeType.ALL)
+&nbsp;//    private VariantInventoryLimit variantInventoryLimit;
+&nbsp;
+<b class="fc">&nbsp;    @OneToMany(mappedBy = &quot;variant&quot;, cascade = CascadeType.ALL)</b>
+<b class="nc">&nbsp;    private Set&lt;CountVariant&gt; countVariants = new HashSet&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;    @OneToMany(mappedBy = &quot;variant&quot;, cascade = CascadeType.ALL)</b>
+<b class="nc">&nbsp;    private Set&lt;DocketVariant&gt; docketVariants = new HashSet&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;    @OneToMany(mappedBy = &quot;variant&quot;, cascade = CascadeType.ALL)</b>
+<b class="nc">&nbsp;    private Set&lt;PurchaseOrderVariant&gt; purchaseOrderVariants = new HashSet&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;    @OneToMany(mappedBy = &quot;variant&quot;, cascade = CascadeType.ALL)</b>
+<b class="nc">&nbsp;    private Set&lt;OrderVariant&gt; orderVariants = new HashSet&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;    @OneToMany(mappedBy = &quot;variant&quot;, cascade = CascadeType.ALL)</b>
+<b class="nc">&nbsp;    private Set&lt;CartVariant&gt; cartVariants = new HashSet&lt;&gt;();</b>
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-09 20:31</div>
+</div>
+</body>
+</html>

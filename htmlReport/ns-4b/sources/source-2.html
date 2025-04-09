@@ -1,0 +1,212 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ImageServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.service.general</a>
+</div>
+
+<h1>Coverage Summary for Class: ImageServiceImpl (com.electro.service.general)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ImageServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    40%
+  </span>
+  <span class="absValue">
+    (2/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    16.7%
+  </span>
+  <span class="absValue">
+    (2/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    12.9%
+  </span>
+  <span class="absValue">
+    (4/31)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.service.general;
+&nbsp;
+&nbsp;import com.electro.dto.general.UploadedImageResponse;
+&nbsp;import com.electro.exception.FileStorageException;
+&nbsp;import com.electro.exception.StorageFileNotFoundException;
+&nbsp;import org.springframework.core.io.Resource;
+&nbsp;import org.springframework.core.io.UrlResource;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.util.StringUtils;
+&nbsp;import org.springframework.web.multipart.MultipartFile;
+&nbsp;import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.io.InputStream;
+&nbsp;import java.net.MalformedURLException;
+&nbsp;import java.nio.file.Files;
+&nbsp;import java.nio.file.Path;
+&nbsp;import java.nio.file.Paths;
+&nbsp;import java.nio.file.StandardCopyOption;
+&nbsp;import java.util.Objects;
+&nbsp;
+&nbsp;@Service
+&nbsp;public class ImageServiceImpl implements ImageService {
+&nbsp;
+<b class="fc">&nbsp;    private static final Path IMAGE_DIR = Paths.get(System.getProperty(&quot;user.dir&quot;)).resolve(&quot;image-dir&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;    public ImageServiceImpl() {</b>
+<b class="fc">&nbsp;        if (!Files.exists(IMAGE_DIR)) {</b>
+&nbsp;            try {
+<b class="fc">&nbsp;                Files.createDirectories(IMAGE_DIR);</b>
+&nbsp;            } catch (IOException e) {
+<b class="nc">&nbsp;                throw new FileStorageException(&quot;Could not create the directory where the uploaded files will be stored.&quot;, e);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public UploadedImageResponse store(MultipartFile image) {
+<b class="nc">&nbsp;        String imageName = StringUtils.cleanPath(Objects.requireNonNull(image.getOriginalFilename()));</b>
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            if (imageName.contains(&quot;..&quot;)) {</b>
+<b class="nc">&nbsp;                throw new FileStorageException(&quot;Sorry! Filename contains invalid path sequence &quot; + imageName);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            Path targetLocation = Files.createTempFile(IMAGE_DIR, &quot;img-&quot;, &quot;.jpg&quot;);</b>
+<b class="nc">&nbsp;            try (InputStream fileContent = image.getInputStream()) {</b>
+<b class="nc">&nbsp;                Files.copy(fileContent, targetLocation, StandardCopyOption.REPLACE_EXISTING);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            String uploadedImageName = targetLocation.getFileName().toString();</b>
+&nbsp;
+<b class="nc">&nbsp;            String uploadedImagePath = ServletUriComponentsBuilder.fromCurrentContextPath()</b>
+<b class="nc">&nbsp;                    .path(&quot;/images/&quot;)</b>
+<b class="nc">&nbsp;                    .path(uploadedImageName)</b>
+<b class="nc">&nbsp;                    .toUriString();</b>
+&nbsp;
+<b class="nc">&nbsp;            return new UploadedImageResponse(uploadedImageName, uploadedImagePath, image.getContentType(), image.getSize());</b>
+&nbsp;        } catch (IOException e) {
+<b class="nc">&nbsp;            throw new FileStorageException(&quot;Could not store file &quot; + imageName + &quot;. Please try again!&quot;, e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Resource load(String imageName) {
+&nbsp;        try {
+<b class="nc">&nbsp;            Path imagePath = IMAGE_DIR.resolve(imageName).normalize();</b>
+<b class="nc">&nbsp;            Resource resource = new UrlResource(imagePath.toUri());</b>
+<b class="nc">&nbsp;            if (resource.exists() || resource.isReadable()) {</b>
+<b class="nc">&nbsp;                return resource;</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                throw new StorageFileNotFoundException(&quot;File not found &quot; + imageName);</b>
+&nbsp;            }
+&nbsp;        } catch (MalformedURLException e) {
+<b class="nc">&nbsp;            throw new StorageFileNotFoundException(&quot;File not found &quot; + imageName, e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void delete(String imageName) {
+&nbsp;        try {
+<b class="nc">&nbsp;            Path imagePath = IMAGE_DIR.resolve(imageName).normalize();</b>
+<b class="nc">&nbsp;            Resource resource = new UrlResource(imagePath.toUri());</b>
+<b class="nc">&nbsp;            if (resource.exists() || resource.isReadable()) {</b>
+<b class="nc">&nbsp;                Files.delete(imagePath);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                throw new StorageFileNotFoundException(&quot;File not found &quot; + imageName);</b>
+&nbsp;            }
+&nbsp;        } catch (MalformedURLException e) {
+<b class="nc">&nbsp;            throw new StorageFileNotFoundException(&quot;File not found &quot; + imageName, e);</b>
+&nbsp;        } catch (IOException e) {
+<b class="nc">&nbsp;            throw new FileStorageException(&quot;File not found &quot; + imageName + &quot;. Please try again!&quot;, e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-09 20:31</div>
+</div>
+</body>
+</html>

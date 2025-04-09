@@ -1,0 +1,205 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > InMemoryEmitterRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.repository.general</a>
+</div>
+
+<h1>Coverage Summary for Class: InMemoryEmitterRepository (com.electro.repository.general)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">InMemoryEmitterRepository</td>
+<td class="coverageStat">
+  <span class="percent">
+    28.6%
+  </span>
+  <span class="absValue">
+    (2/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    20%
+  </span>
+  <span class="absValue">
+    (4/20)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">InMemoryEmitterRepository$$EnhancerBySpringCGLIB$$4963ad12</td>
+  </tr>
+  <tr>
+    <td class="name">InMemoryEmitterRepository$$EnhancerBySpringCGLIB$$58b8535e</td>
+  </tr>
+  <tr>
+    <td class="name">InMemoryEmitterRepository$$EnhancerBySpringCGLIB$$986314a1</td>
+  </tr>
+  <tr>
+    <td class="name">InMemoryEmitterRepository$$EnhancerBySpringCGLIB$$9f5d6d9a</td>
+  </tr>
+  <tr>
+    <td class="name">InMemoryEmitterRepository$$EnhancerBySpringCGLIB$$cdac9862</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    28.6%
+  </span>
+  <span class="absValue">
+    (2/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    20%
+  </span>
+  <span class="absValue">
+    (4/20)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.repository.general;
+&nbsp;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+&nbsp;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.Objects;
+&nbsp;import java.util.Optional;
+&nbsp;import java.util.concurrent.ConcurrentHashMap;
+&nbsp;
+&nbsp;@Repository
+<b class="fc">&nbsp;@RequiredArgsConstructor</b>
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;public class InMemoryEmitterRepository implements EmitterRepository {
+&nbsp;
+<b class="fc">&nbsp;    private final Map&lt;String, String&gt; uuidEmitterMap = new ConcurrentHashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;    private final Map&lt;String, SseEmitter&gt; emitterMap = new ConcurrentHashMap&lt;&gt;();</b>
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void addOrReplaceEmitter(String uuid, String uniqueKey, SseEmitter emitter) {
+<b class="nc">&nbsp;        uuidEmitterMap.put(uuid, uniqueKey);</b>
+<b class="nc">&nbsp;        emitterMap.put(uniqueKey, emitter);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void remove(String uniqueKey) {
+<b class="nc">&nbsp;        if (emitterMap.containsKey(uniqueKey)) {</b>
+<b class="nc">&nbsp;            log.debug(&quot;Removing emitter for key: {}&quot;, uniqueKey);</b>
+<b class="nc">&nbsp;            uuidEmitterMap.values().remove(uniqueKey);</b>
+<b class="nc">&nbsp;            emitterMap.remove(uniqueKey);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            log.debug(&quot;No emitter to remove for key: {}&quot;, uniqueKey);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Optional&lt;SseEmitter&gt; getByUniqueKey(String uniqueKey) {
+<b class="nc">&nbsp;        return Optional.ofNullable(emitterMap.get(uniqueKey));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Optional&lt;SseEmitter&gt; getByUuid(String uuid) {
+<b class="nc">&nbsp;        return Optional.ofNullable(uuidEmitterMap.get(uuid)).map(emitterMap::get);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public String getUuidByUniqueKey(String uniqueKey) {
+<b class="nc">&nbsp;        return uuidEmitterMap</b>
+<b class="nc">&nbsp;                .entrySet()</b>
+<b class="nc">&nbsp;                .stream()</b>
+<b class="nc">&nbsp;                .filter(entry -&gt; Objects.equals(entry.getValue(), uniqueKey))</b>
+<b class="nc">&nbsp;                .map(Map.Entry::getKey)</b>
+<b class="nc">&nbsp;                .findFirst()</b>
+<b class="nc">&nbsp;                .orElseThrow(() -&gt; new RuntimeException(String.format(&quot;Cannot get emitter UUID by key: %s&quot;, uniqueKey)));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-09 20:31</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,149 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > DocketVariantController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.controller.inventory</a>
+</div>
+
+<h1>Coverage Summary for Class: DocketVariantController (com.electro.controller.inventory)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DocketVariantController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (9/9)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.controller.inventory;
+&nbsp;
+&nbsp;import com.electro.constant.AppConstants;
+&nbsp;import com.electro.dto.inventory.DocketVariantKeyRequest;
+&nbsp;import com.electro.entity.inventory.DocketVariantKey;
+&nbsp;import com.electro.service.inventory.DocketVariantService;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.CrossOrigin;
+&nbsp;import org.springframework.web.bind.annotation.DeleteMapping;
+&nbsp;import org.springframework.web.bind.annotation.PathVariable;
+&nbsp;import org.springframework.web.bind.annotation.RequestBody;
+&nbsp;import org.springframework.web.bind.annotation.RequestMapping;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/api/docket-variants&quot;)
+<b class="fc">&nbsp;@AllArgsConstructor</b>
+&nbsp;@CrossOrigin(AppConstants.FRONTEND_HOST)
+&nbsp;public class DocketVariantController {
+&nbsp;
+&nbsp;    private DocketVariantService docketVariantService;
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/{docketId}/{variantId}&quot;)
+&nbsp;    public ResponseEntity&lt;Void&gt; deleteDocketVariant(@PathVariable(&quot;docketId&quot;) Long docketId,
+&nbsp;                                                    @PathVariable(&quot;variantId&quot;) Long variantId) {
+<b class="fc">&nbsp;        DocketVariantKey id = new DocketVariantKey(docketId, variantId);</b>
+<b class="fc">&nbsp;        docketVariantService.delete(id);</b>
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping
+&nbsp;    public ResponseEntity&lt;Void&gt; deleteDocketVariants(@RequestBody List&lt;DocketVariantKeyRequest&gt; idRequests) {
+<b class="fc">&nbsp;        List&lt;DocketVariantKey&gt; ids = idRequests.stream()</b>
+<b class="fc">&nbsp;                .map(idRequest -&gt; new DocketVariantKey(idRequest.getDocketId(), idRequest.getVariantId()))</b>
+<b class="fc">&nbsp;                .collect(Collectors.toList());</b>
+<b class="fc">&nbsp;        docketVariantService.delete(ids);</b>
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-09 20:31</div>
+</div>
+</body>
+</html>

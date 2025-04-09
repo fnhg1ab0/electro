@@ -1,0 +1,523 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > SearchFields</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.constant</a>
+</div>
+
+<h1>Coverage Summary for Class: SearchFields (com.electro.constant)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SearchFields</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (52/52)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.constant;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public interface SearchFields {
+<b class="fc">&nbsp;    List&lt;String&gt; PROVINCE = List.of(</b>
+&nbsp;            &quot;name&quot;,
+&nbsp;            &quot;code&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; DISTRICT = List.of(</b>
+&nbsp;            &quot;name&quot;,
+&nbsp;            &quot;code&quot;,
+&nbsp;            &quot;province.name&quot;,
+&nbsp;            &quot;province.code&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; WARD = List.of(</b>
+&nbsp;            &quot;name&quot;,
+&nbsp;            &quot;code&quot;,
+&nbsp;            &quot;district.name&quot;,
+&nbsp;            &quot;district.code&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; ADDRESS = List.of(</b>
+&nbsp;            &quot;line&quot;,
+&nbsp;            &quot;province.name&quot;,
+&nbsp;            &quot;province.code&quot;,
+&nbsp;            &quot;district.name&quot;,
+&nbsp;            &quot;district.code&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; USER = List.of(</b>
+&nbsp;            &quot;username&quot;,
+&nbsp;            &quot;fullname&quot;,
+&nbsp;            &quot;email&quot;,
+&nbsp;            &quot;phone&quot;,
+&nbsp;            &quot;address.line&quot;,
+&nbsp;            &quot;address.province.name&quot;,
+&nbsp;            &quot;address.province.code&quot;,
+&nbsp;            &quot;address.district.name&quot;,
+&nbsp;            &quot;address.district.code&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; ROLE = List.of(</b>
+&nbsp;            &quot;code&quot;,
+&nbsp;            &quot;name&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; OFFICE = List.of(</b>
+&nbsp;            &quot;name&quot;,
+&nbsp;            &quot;address.line&quot;,
+&nbsp;            &quot;address.province.name&quot;,
+&nbsp;            &quot;address.province.code&quot;,
+&nbsp;            &quot;address.district.name&quot;,
+&nbsp;            &quot;address.district.code&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; DEPARTMENT = List.of(</b>
+&nbsp;            &quot;name&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; JOB_TITLE = List.of(</b>
+&nbsp;            &quot;name&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; JOB_LEVEL = List.of(</b>
+&nbsp;            &quot;name&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; JOB_TYPE = List.of(</b>
+&nbsp;            &quot;name&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; EMPLOYEE = List.of(</b>
+&nbsp;            &quot;user.username&quot;,
+&nbsp;            &quot;user.fullname&quot;,
+&nbsp;            &quot;user.email&quot;,
+&nbsp;            &quot;user.phone&quot;,
+&nbsp;            &quot;user.address.line&quot;,
+&nbsp;            &quot;user.address.province.name&quot;,
+&nbsp;            &quot;user.address.province.code&quot;,
+&nbsp;            &quot;user.address.district.name&quot;,
+&nbsp;            &quot;user.address.district.code&quot;,
+&nbsp;            &quot;office.name&quot;,
+&nbsp;            &quot;office.address.line&quot;,
+&nbsp;            &quot;office.address.province.name&quot;,
+&nbsp;            &quot;office.address.province.code&quot;,
+&nbsp;            &quot;office.address.district.name&quot;,
+&nbsp;            &quot;office.address.district.code&quot;,
+&nbsp;            &quot;department.name&quot;,
+&nbsp;            &quot;jobType.name&quot;,
+&nbsp;            &quot;jobLevel.name&quot;,
+&nbsp;            &quot;jobTitle.name&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; CUSTOMER_GROUP = List.of(</b>
+&nbsp;            &quot;code&quot;,
+&nbsp;            &quot;name&quot;,
+&nbsp;            &quot;description&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; CUSTOMER_RESOURCE = List.of(</b>
+&nbsp;            &quot;code&quot;,
+&nbsp;            &quot;name&quot;,
+&nbsp;            &quot;description&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; CUSTOMER_STATUS = List.of(</b>
+&nbsp;            &quot;code&quot;,
+&nbsp;            &quot;name&quot;,
+&nbsp;            &quot;description&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; CUSTOMER = List.of(</b>
+&nbsp;            &quot;user.username&quot;,
+&nbsp;            &quot;user.fullname&quot;,
+&nbsp;            &quot;user.email&quot;,
+&nbsp;            &quot;user.phone&quot;,
+&nbsp;            &quot;user.address.line&quot;,
+&nbsp;            &quot;user.address.province.name&quot;,
+&nbsp;            &quot;user.address.province.code&quot;,
+&nbsp;            &quot;user.address.district.name&quot;,
+&nbsp;            &quot;user.address.district.code&quot;,
+&nbsp;            &quot;customerGroup.code&quot;,
+&nbsp;            &quot;customerGroup.name&quot;,
+&nbsp;            &quot;customerResource.code&quot;,
+&nbsp;            &quot;customerResource.name&quot;,
+&nbsp;            &quot;customerStatus.code&quot;,
+&nbsp;            &quot;customerStatus.name&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; PROPERTY = List.of(</b>
+&nbsp;            &quot;name&quot;,
+&nbsp;            &quot;code&quot;,
+&nbsp;            &quot;description&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; CATEGORY = List.of(</b>
+&nbsp;            &quot;name&quot;,
+&nbsp;            &quot;slug&quot;,
+&nbsp;            &quot;description&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; TAG = List.of(</b>
+&nbsp;            &quot;name&quot;,
+&nbsp;            &quot;slug&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; GUARANTEE = List.of(</b>
+&nbsp;            &quot;name&quot;,
+&nbsp;            &quot;description&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; UNIT = List.of(</b>
+&nbsp;            &quot;name&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; SUPPLIER = List.of(</b>
+&nbsp;            &quot;displayName&quot;,
+&nbsp;            &quot;code&quot;,
+&nbsp;            &quot;contactFullname&quot;,
+&nbsp;            &quot;contactEmail&quot;,
+&nbsp;            &quot;contactPhone&quot;,
+&nbsp;            &quot;companyName&quot;,
+&nbsp;            &quot;taxCode&quot;,
+&nbsp;            &quot;email&quot;,
+&nbsp;            &quot;phone&quot;,
+&nbsp;            &quot;fax&quot;,
+&nbsp;            &quot;website&quot;,
+&nbsp;            &quot;address.line&quot;,
+&nbsp;            &quot;address.province.name&quot;,
+&nbsp;            &quot;address.province.code&quot;,
+&nbsp;            &quot;address.district.name&quot;,
+&nbsp;            &quot;address.district.code&quot;,
+&nbsp;            &quot;description&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; BRAND = List.of(</b>
+&nbsp;            &quot;name&quot;,
+&nbsp;            &quot;code&quot;,
+&nbsp;            &quot;description&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; SPECIFICATION = List.of(</b>
+&nbsp;            &quot;name&quot;,
+&nbsp;            &quot;code&quot;,
+&nbsp;            &quot;description&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; PRODUCT = List.of(</b>
+&nbsp;            &quot;name&quot;,
+&nbsp;            &quot;code&quot;,
+&nbsp;            &quot;slug&quot;,
+&nbsp;            &quot;shortDescription&quot;,
+&nbsp;            &quot;description&quot;,
+&nbsp;            &quot;category.name&quot;,
+&nbsp;            &quot;brand.name&quot;,
+&nbsp;            &quot;brand.code&quot;,
+&nbsp;            &quot;supplier.displayName&quot;,
+&nbsp;            &quot;supplier.code&quot;,
+&nbsp;            &quot;supplier.contactFullname&quot;,
+&nbsp;            &quot;supplier.contactEmail&quot;,
+&nbsp;            &quot;supplier.contactPhone&quot;,
+&nbsp;            &quot;supplier.companyName&quot;,
+&nbsp;            &quot;supplier.taxCode&quot;,
+&nbsp;            &quot;supplier.email&quot;,
+&nbsp;            &quot;supplier.phone&quot;,
+&nbsp;            &quot;unit.name&quot;,
+&nbsp;            &quot;guarantee.name&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; VARIANT = List.of(</b>
+&nbsp;            &quot;product.name&quot;,
+&nbsp;            &quot;product.code&quot;,
+&nbsp;            &quot;sku&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; IMAGE = List.of(</b>
+&nbsp;            &quot;name&quot;,
+&nbsp;            &quot;contentType&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; PRODUCT_INVENTORY_LIMIT = List.of(</b>
+&nbsp;            &quot;product.name&quot;,
+&nbsp;            &quot;product.code&quot;,
+&nbsp;            &quot;product.category.name&quot;,
+&nbsp;            &quot;minimumLimit&quot;,
+&nbsp;            &quot;maximumLimit&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; VARIANT_INVENTORY_LIMIT = List.of(</b>
+&nbsp;            &quot;variant.product.name&quot;,
+&nbsp;            &quot;variant.product.code&quot;,
+&nbsp;            &quot;variant.sku&quot;,
+&nbsp;            &quot;variant.cost&quot;,
+&nbsp;            &quot;variant.price&quot;,
+&nbsp;            &quot;minimumLimit&quot;,
+&nbsp;            &quot;maximumLimit&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; COUNT_VARIANT = List.of(</b>
+&nbsp;            &quot;count.code&quot;,
+&nbsp;            &quot;variant.product.name&quot;,
+&nbsp;            &quot;variant.product.code&quot;,
+&nbsp;            &quot;variant.sku&quot;,
+&nbsp;            &quot;variant.cost&quot;,
+&nbsp;            &quot;variant.price&quot;,
+&nbsp;            &quot;inventory&quot;,
+&nbsp;            &quot;actualInventory&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; WAREHOUSE = List.of(</b>
+&nbsp;            &quot;code&quot;,
+&nbsp;            &quot;name&quot;,
+&nbsp;            &quot;address.line&quot;,
+&nbsp;            &quot;address.province.name&quot;,
+&nbsp;            &quot;address.province.code&quot;,
+&nbsp;            &quot;address.district.name&quot;,
+&nbsp;            &quot;address.district.code&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; COUNT = List.of(</b>
+&nbsp;            &quot;code&quot;,
+&nbsp;            &quot;warehouse.code&quot;,
+&nbsp;            &quot;warehouse.name&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; DESTINATION = List.of(</b>
+&nbsp;            &quot;contactFullname&quot;,
+&nbsp;            &quot;contactEmail&quot;,
+&nbsp;            &quot;contactPhone&quot;,
+&nbsp;            &quot;address.line&quot;,
+&nbsp;            &quot;address.province.name&quot;,
+&nbsp;            &quot;address.province.code&quot;,
+&nbsp;            &quot;address.district.name&quot;,
+&nbsp;            &quot;address.district.code&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; DOCKET_REASON = List.of(</b>
+&nbsp;            &quot;name&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; TRANSFER = List.of(</b>
+&nbsp;            &quot;code&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; DOCKET = List.of(</b>
+&nbsp;            &quot;code&quot;,
+&nbsp;            &quot;reason.name&quot;,
+&nbsp;            &quot;warehouse.code&quot;,
+&nbsp;            &quot;warehouse.name&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; STORAGE_LOCATION = List.of(</b>
+&nbsp;            &quot;name&quot;,
+&nbsp;            &quot;warehouse.code&quot;,
+&nbsp;            &quot;warehouse.name&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; DOCKET_VARIANT = List.of(</b>
+&nbsp;            &quot;docket.code&quot;,
+&nbsp;            &quot;variant.product.name&quot;,
+&nbsp;            &quot;variant.product.code&quot;,
+&nbsp;            &quot;variant.sku&quot;,
+&nbsp;            &quot;variant.cost&quot;,
+&nbsp;            &quot;variant.price&quot;,
+&nbsp;            &quot;quantity&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; PURCHASE_ORDER = List.of(</b>
+&nbsp;            &quot;code&quot;,
+&nbsp;            &quot;supplier.displayName&quot;,
+&nbsp;            &quot;supplier.code&quot;,
+&nbsp;            &quot;supplier.contactFullname&quot;,
+&nbsp;            &quot;supplier.contactEmail&quot;,
+&nbsp;            &quot;supplier.contactPhone&quot;,
+&nbsp;            &quot;supplier.companyName&quot;,
+&nbsp;            &quot;destination.contactFullname&quot;,
+&nbsp;            &quot;destination.contactEmail&quot;,
+&nbsp;            &quot;destination.contactPhone&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; PURCHASE_ORDER_VARIANT = List.of(</b>
+&nbsp;            &quot;purchaseOrder.code&quot;,
+&nbsp;            &quot;variant.product.name&quot;,
+&nbsp;            &quot;variant.product.code&quot;,
+&nbsp;            &quot;variant.sku&quot;,
+&nbsp;            &quot;variant.cost&quot;,
+&nbsp;            &quot;variant.price&quot;,
+&nbsp;            &quot;cost&quot;,
+&nbsp;            &quot;quantity&quot;,
+&nbsp;            &quot;amount&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; ORDER_RESOURCE = List.of(</b>
+&nbsp;            &quot;code&quot;,
+&nbsp;            &quot;name&quot;,
+&nbsp;            &quot;color&quot;,
+&nbsp;            &quot;customerResource.code&quot;,
+&nbsp;            &quot;customerResource.name&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; ORDER_CANCELLATION_REASON = List.of(</b>
+&nbsp;            &quot;name&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; ORDER = List.of(</b>
+&nbsp;            &quot;code&quot;,
+&nbsp;            &quot;toName&quot;,
+&nbsp;            &quot;toPhone&quot;,
+&nbsp;            &quot;toAddress&quot;,
+&nbsp;            &quot;toWardName&quot;,
+&nbsp;            &quot;toDistrictName&quot;,
+&nbsp;            &quot;toProvinceName&quot;,
+&nbsp;            &quot;orderResource.name&quot;,
+&nbsp;            &quot;user.username&quot;,
+&nbsp;            &quot;user.fullname&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; ORDER_VARIANT = List.of(</b>
+&nbsp;            &quot;order.code&quot;,
+&nbsp;            &quot;variant.product.name&quot;,
+&nbsp;            &quot;variant.product.code&quot;,
+&nbsp;            &quot;variant.sku&quot;,
+&nbsp;            &quot;variant.cost&quot;,
+&nbsp;            &quot;variant.price&quot;,
+&nbsp;            &quot;price&quot;,
+&nbsp;            &quot;quantity&quot;,
+&nbsp;            &quot;amount&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; CLIENT_PRODUCT = List.of(</b>
+&nbsp;            &quot;name&quot;,
+&nbsp;            &quot;slug&quot;,
+&nbsp;            &quot;category.name&quot;,
+&nbsp;            &quot;brand.name&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; WAYBILL = List.of(</b>
+&nbsp;            &quot;code&quot;,
+&nbsp;            &quot;order.code&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; REVIEW = List.of(</b>
+&nbsp;            &quot;user.username&quot;,
+&nbsp;            &quot;user.fullname&quot;,
+&nbsp;            &quot;product.name&quot;,
+&nbsp;            &quot;product.code&quot;,
+&nbsp;            &quot;product.slug&quot;,
+&nbsp;            &quot;content&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; PAYMENT_METHOD = List.of(</b>
+&nbsp;            &quot;name&quot;,
+&nbsp;            &quot;code&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; PROMOTION = List.of(</b>
+&nbsp;            &quot;name&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; MESSAGE = List.of(</b>
+&nbsp;            &quot;createdAt&quot;,
+&nbsp;            &quot;room.id&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; ROOM = List.of(</b>
+&nbsp;            &quot;id&quot;,
+&nbsp;            &quot;name&quot;,
+&nbsp;            &quot;user.id&quot;
+&nbsp;    );
+&nbsp;
+<b class="fc">&nbsp;    List&lt;String&gt; REWARD_STRATEGY = List.of(</b>
+&nbsp;            &quot;name&quot;,
+&nbsp;            &quot;code&quot;,
+&nbsp;            &quot;formula&quot;
+&nbsp;    );
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-09 20:31</div>
+</div>
+</body>
+</html>

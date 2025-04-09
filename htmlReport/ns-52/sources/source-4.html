@@ -1,0 +1,342 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MapperUtils</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.utils</a>
+</div>
+
+<h1>Coverage Summary for Class: MapperUtils (com.electro.utils)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MapperUtils</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    5.3%
+  </span>
+  <span class="absValue">
+    (1/19)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    2.7%
+  </span>
+  <span class="absValue">
+    (1/37)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.utils;
+&nbsp;
+&nbsp;import com.electro.entity.BaseEntity;
+&nbsp;import com.electro.entity.address.District;
+&nbsp;import com.electro.entity.address.Province;
+&nbsp;import com.electro.entity.address.Ward;
+&nbsp;import com.electro.entity.authentication.User;
+&nbsp;import com.electro.entity.chat.Room;
+&nbsp;import com.electro.entity.customer.Customer;
+&nbsp;import com.electro.entity.customer.CustomerGroup;
+&nbsp;import com.electro.entity.customer.CustomerResource;
+&nbsp;import com.electro.entity.customer.CustomerStatus;
+&nbsp;import com.electro.entity.employee.Department;
+&nbsp;import com.electro.entity.employee.JobLevel;
+&nbsp;import com.electro.entity.employee.JobTitle;
+&nbsp;import com.electro.entity.employee.JobType;
+&nbsp;import com.electro.entity.employee.Office;
+&nbsp;import com.electro.entity.inventory.Count;
+&nbsp;import com.electro.entity.inventory.CountVariantKey;
+&nbsp;import com.electro.entity.inventory.Destination;
+&nbsp;import com.electro.entity.inventory.Docket;
+&nbsp;import com.electro.entity.inventory.DocketReason;
+&nbsp;import com.electro.entity.inventory.DocketVariantKey;
+&nbsp;import com.electro.entity.inventory.PurchaseOrder;
+&nbsp;import com.electro.entity.inventory.PurchaseOrderVariantKey;
+&nbsp;import com.electro.entity.inventory.Warehouse;
+&nbsp;import com.electro.entity.order.Order;
+&nbsp;import com.electro.entity.order.OrderCancellationReason;
+&nbsp;import com.electro.entity.order.OrderResource;
+&nbsp;import com.electro.entity.order.OrderVariantKey;
+&nbsp;import com.electro.entity.product.Brand;
+&nbsp;import com.electro.entity.product.Category;
+&nbsp;import com.electro.entity.product.Guarantee;
+&nbsp;import com.electro.entity.product.Product;
+&nbsp;import com.electro.entity.product.Supplier;
+&nbsp;import com.electro.entity.product.Unit;
+&nbsp;import com.electro.entity.product.Variant;
+&nbsp;import com.electro.repository.address.DistrictRepository;
+&nbsp;import com.electro.repository.address.ProvinceRepository;
+&nbsp;import com.electro.repository.address.WardRepository;
+&nbsp;import com.electro.repository.authentication.RoleRepository;
+&nbsp;import com.electro.repository.authentication.UserRepository;
+&nbsp;import com.electro.repository.product.ProductRepository;
+&nbsp;import com.electro.repository.product.TagRepository;
+&nbsp;import com.electro.repository.product.VariantRepository;
+&nbsp;import org.mapstruct.AfterMapping;
+&nbsp;import org.mapstruct.Mapper;
+&nbsp;import org.mapstruct.MappingTarget;
+&nbsp;import org.mapstruct.Named;
+&nbsp;import org.mapstruct.ReportingPolicy;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.lang.Nullable;
+&nbsp;import org.springframework.security.crypto.password.PasswordEncoder;
+&nbsp;
+&nbsp;import java.util.HashSet;
+&nbsp;import java.util.Optional;
+&nbsp;import java.util.Set;
+&nbsp;
+&nbsp;@Mapper(componentModel = &quot;spring&quot;, unmappedTargetPolicy = ReportingPolicy.IGNORE)
+<b class="fc">&nbsp;public abstract class MapperUtils {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private PasswordEncoder passwordEncoder;
+&nbsp;    @Autowired
+&nbsp;    private RoleRepository roleRepository;
+&nbsp;    @Autowired
+&nbsp;    private TagRepository tagRepository;
+&nbsp;    @Autowired
+&nbsp;    private VariantRepository variantRepository;
+&nbsp;    @Autowired
+&nbsp;    private ProductRepository productRepository;
+&nbsp;    @Autowired
+&nbsp;    private ProvinceRepository provinceRepository;
+&nbsp;    @Autowired
+&nbsp;    private DistrictRepository districtRepository;
+&nbsp;    @Autowired
+&nbsp;    private WardRepository wardRepository;
+&nbsp;    @Autowired
+&nbsp;    private UserRepository userRepository;
+&nbsp;
+&nbsp;    public Province mapToProvince(@Nullable Long id) {
+<b class="nc">&nbsp;        return id == null ? null : provinceRepository.getById(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public District mapToDistrict(@Nullable Long id) {
+<b class="nc">&nbsp;        return id == null ? null : districtRepository.getById(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Ward mapToWard(@Nullable Long id) {
+<b class="nc">&nbsp;        return id == null ? null : wardRepository.getById(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public abstract Office mapToOffice(Long id);
+&nbsp;
+&nbsp;    public abstract Department mapToDepartment(Long id);
+&nbsp;
+&nbsp;    public abstract JobType mapToJobType(Long id);
+&nbsp;
+&nbsp;    public abstract JobLevel mapToJobLevel(Long id);
+&nbsp;
+&nbsp;    public abstract JobTitle mapToJobTitle(Long id);
+&nbsp;
+&nbsp;    public abstract CustomerGroup mapToCustomerGroup(Long id);
+&nbsp;
+&nbsp;    public abstract CustomerResource mapToCustomerResource(Long id);
+&nbsp;
+&nbsp;    public abstract CustomerStatus mapToCustomerStatus(Long id);
+&nbsp;
+&nbsp;    public abstract Category mapToCategory(Long id);
+&nbsp;
+&nbsp;    public abstract Brand mapToBrand(Long id);
+&nbsp;
+&nbsp;    public abstract Supplier mapToSupplier(Long id);
+&nbsp;
+&nbsp;    public abstract Unit mapToUnit(Long id);
+&nbsp;
+&nbsp;    public abstract Guarantee mapToGuarantee(Long id);
+&nbsp;
+&nbsp;    public abstract Warehouse mapToWarehouse(Long id);
+&nbsp;
+&nbsp;    public abstract DocketReason mapToDocketReason(Long id);
+&nbsp;
+&nbsp;    public abstract Destination mapToDestination(Long id);
+&nbsp;
+&nbsp;    public abstract PurchaseOrder mapToPurchaseOrder(Long id);
+&nbsp;
+&nbsp;    public abstract OrderResource mapToOrderResource(Long id);
+&nbsp;
+&nbsp;    public abstract OrderCancellationReason mapToOrderCancellationReason(Long id);
+&nbsp;
+&nbsp;    public abstract Customer mapToCustomer(Long id);
+&nbsp;
+&nbsp;    public abstract Order mapToOrder(Long id);
+&nbsp;
+&nbsp;    public abstract Room mapToRoom(Long id);
+&nbsp;
+&nbsp;    public Variant mapToVariant(Long id) {
+<b class="nc">&nbsp;        return variantRepository.getById(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Product mapToProduct(Long id) {
+<b class="nc">&nbsp;        return productRepository.getById(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public User mapToUser(Long id) {
+<b class="nc">&nbsp;        return userRepository.getById(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Named(&quot;hashPassword&quot;)
+&nbsp;    public String hashPassword(String password) {
+<b class="nc">&nbsp;        return passwordEncoder.encode(password);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @AfterMapping
+&nbsp;    @Named(&quot;attachUser&quot;)
+&nbsp;    public User attachUser(@MappingTarget User user) {
+<b class="nc">&nbsp;        return user.setRoles(attachSet(user.getRoles(), roleRepository));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @AfterMapping
+&nbsp;    @Named(&quot;attachProduct&quot;)
+&nbsp;    public Product attachProduct(@MappingTarget Product product) {
+<b class="nc">&nbsp;        product.getImages().forEach(image -&gt; image.setProduct(product));</b>
+<b class="nc">&nbsp;        product.setTags(attachSet(product.getTags(), tagRepository));</b>
+<b class="nc">&nbsp;        product.getVariants().forEach(variant -&gt; variant.setProduct(product));</b>
+<b class="nc">&nbsp;        return product;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @AfterMapping
+&nbsp;    @Named(&quot;attachCount&quot;)
+&nbsp;    public Count attachCount(@MappingTarget Count count) {
+<b class="nc">&nbsp;        count.getCountVariants().forEach(countVariant -&gt; {</b>
+<b class="nc">&nbsp;            countVariant.setCountVariantKey(new CountVariantKey(count.getId(), countVariant.getVariant().getId()));</b>
+<b class="nc">&nbsp;            countVariant.setCount(count);</b>
+&nbsp;        });
+<b class="nc">&nbsp;        return count;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @AfterMapping
+&nbsp;    @Named(&quot;attachOrder&quot;)
+&nbsp;    public Order attachOrder(@MappingTarget Order order) {
+<b class="nc">&nbsp;        order.getOrderVariants().forEach(orderVariant -&gt; {</b>
+<b class="nc">&nbsp;            orderVariant.setOrderVariantKey(new OrderVariantKey(order.getId(), orderVariant.getVariant().getId()));</b>
+<b class="nc">&nbsp;            orderVariant.setOrder(order);</b>
+&nbsp;        });
+<b class="nc">&nbsp;        return order;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @AfterMapping
+&nbsp;    @Named(&quot;attachDocket&quot;)
+&nbsp;    public Docket attachDocket(@MappingTarget Docket docket) {
+<b class="nc">&nbsp;        docket.getDocketVariants().forEach(docketVariant -&gt; {</b>
+<b class="nc">&nbsp;            docketVariant.setDocketVariantKey(new DocketVariantKey(docket.getId(), docketVariant.getVariant().getId()));</b>
+<b class="nc">&nbsp;            docketVariant.setDocket(docket);</b>
+&nbsp;        });
+<b class="nc">&nbsp;        return docket;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @AfterMapping
+&nbsp;    @Named(&quot;attachPurchaseOrder&quot;)
+&nbsp;    public PurchaseOrder attachPurchaseOrder(@MappingTarget PurchaseOrder purchaseOrder) {
+<b class="nc">&nbsp;        purchaseOrder.getPurchaseOrderVariants().forEach(purchaseOrderVariant -&gt; {</b>
+<b class="nc">&nbsp;            purchaseOrderVariant.setPurchaseOrderVariantKey(</b>
+<b class="nc">&nbsp;                    new PurchaseOrderVariantKey(purchaseOrder.getId(), purchaseOrderVariant.getVariant().getId()));</b>
+<b class="nc">&nbsp;            purchaseOrderVariant.setPurchaseOrder(purchaseOrder);</b>
+&nbsp;        });
+<b class="nc">&nbsp;        return purchaseOrder;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private &lt;E extends BaseEntity&gt; Set&lt;E&gt; attachSet(Set&lt;E&gt; entities, JpaRepository&lt;E, Long&gt; repository) {
+<b class="nc">&nbsp;        Set&lt;E&gt; detachedSet = Optional.ofNullable(entities).orElseGet(HashSet::new);</b>
+<b class="nc">&nbsp;        Set&lt;E&gt; attachedSet = new HashSet&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;        for (E entity : detachedSet) {</b>
+<b class="nc">&nbsp;            if (entity.getId() != null) {</b>
+<b class="nc">&nbsp;                repository.findById(entity.getId()).ifPresent(attachedSet::add);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                attachedSet.add(entity);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return attachedSet;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-09 20:31</div>
+</div>
+</body>
+</html>

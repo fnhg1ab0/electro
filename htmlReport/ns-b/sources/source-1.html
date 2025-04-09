@@ -1,0 +1,213 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ClientCartController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.controller.client</a>
+</div>
+
+<h1>Coverage Summary for Class: ClientCartController (com.electro.controller.client)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ClientCartController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    16.7%
+  </span>
+  <span class="absValue">
+    (1/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    55.6%
+  </span>
+  <span class="absValue">
+    (15/27)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.controller.client;
+&nbsp;
+&nbsp;import com.electro.constant.AppConstants;
+&nbsp;import com.electro.constant.FieldName;
+&nbsp;import com.electro.constant.ResourceName;
+&nbsp;import com.electro.dto.client.ClientCartRequest;
+&nbsp;import com.electro.dto.client.ClientCartResponse;
+&nbsp;import com.electro.dto.client.ClientCartVariantKeyRequest;
+&nbsp;import com.electro.entity.cart.Cart;
+&nbsp;import com.electro.entity.cart.CartVariant;
+&nbsp;import com.electro.entity.cart.CartVariantKey;
+&nbsp;import com.electro.exception.ResourceNotFoundException;
+&nbsp;import com.electro.mapper.client.ClientCartMapper;
+&nbsp;import com.electro.repository.cart.CartRepository;
+&nbsp;import com.electro.repository.cart.CartVariantRepository;
+&nbsp;import com.electro.repository.inventory.DocketVariantRepository;
+&nbsp;import com.electro.utils.InventoryUtils;
+&nbsp;import com.fasterxml.jackson.databind.ObjectMapper;
+&nbsp;import com.fasterxml.jackson.databind.node.ObjectNode;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.security.core.Authentication;
+&nbsp;import org.springframework.web.bind.annotation.CrossOrigin;
+&nbsp;import org.springframework.web.bind.annotation.DeleteMapping;
+&nbsp;import org.springframework.web.bind.annotation.GetMapping;
+&nbsp;import org.springframework.web.bind.annotation.PostMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestBody;
+&nbsp;import org.springframework.web.bind.annotation.RequestMapping;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/client-api/carts&quot;)
+<b class="fc">&nbsp;@AllArgsConstructor</b>
+&nbsp;@CrossOrigin(AppConstants.FRONTEND_HOST)
+&nbsp;public class ClientCartController {
+&nbsp;
+&nbsp;    private CartRepository cartRepository;
+&nbsp;    private CartVariantRepository cartVariantRepository;
+&nbsp;    private ClientCartMapper clientCartMapper;
+&nbsp;    private DocketVariantRepository docketVariantRepository;
+&nbsp;
+&nbsp;    @GetMapping
+&nbsp;    public ResponseEntity&lt;ObjectNode&gt; getCart(Authentication authentication) {
+<b class="fc">&nbsp;        String username = authentication.getName();</b>
+<b class="fc">&nbsp;        ObjectMapper mapper = new ObjectMapper();</b>
+&nbsp;
+&nbsp;        // Reference: https://stackoverflow.com/a/11828920, https://stackoverflow.com/a/51456293
+<b class="fc">&nbsp;        ObjectNode response = cartRepository.findByUsername(username)</b>
+<b class="fc">&nbsp;                .map(clientCartMapper::entityToResponse)</b>
+<b class="fc">&nbsp;                .map(clientCartResponse -&gt; mapper.convertValue(clientCartResponse, ObjectNode.class))</b>
+<b class="fc">&nbsp;                .orElse(mapper.createObjectNode());</b>
+&nbsp;
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.OK).body(response);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping
+&nbsp;    public ResponseEntity&lt;ClientCartResponse&gt; saveCart(@RequestBody ClientCartRequest request) {
+&nbsp;        final Cart cartBeforeSave;
+&nbsp;
+&nbsp;        // TODO: Đôi khi cartId null nhưng thực tế user vẫn đang có cart trong DB
+<b class="pc">&nbsp;        if (request.getCartId() == null) {</b>
+<b class="fc">&nbsp;            cartBeforeSave = clientCartMapper.requestToEntity(request);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            cartBeforeSave = cartRepository.findById(request.getCartId())</b>
+<b class="nc">&nbsp;                    .map(existingEntity -&gt; clientCartMapper.partialUpdate(existingEntity, request))</b>
+<b class="nc">&nbsp;                    .orElseThrow(() -&gt; new ResourceNotFoundException(ResourceName.CART, FieldName.ID, request.getCartId()));</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Validate Variant Inventory
+<b class="nc">&nbsp;        for (CartVariant cartVariant : cartBeforeSave.getCartVariants()) {</b>
+<b class="nc">&nbsp;            int inventory = InventoryUtils</b>
+<b class="nc">&nbsp;                    .calculateInventoryIndices(docketVariantRepository.findByVariantId(cartVariant.getCartVariantKey().getVariantId()))</b>
+<b class="nc">&nbsp;                    .get(&quot;canBeSold&quot;);</b>
+<b class="nc">&nbsp;            if (cartVariant.getQuantity() &gt; inventory) {</b>
+<b class="nc">&nbsp;                throw new RuntimeException(&quot;Variant quantity cannot greater than variant inventory&quot;);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        Cart cart = cartRepository.save(cartBeforeSave);</b>
+<b class="nc">&nbsp;        ClientCartResponse clientCartResponse = clientCartMapper.entityToResponse(cart);</b>
+<b class="nc">&nbsp;        return ResponseEntity.status(HttpStatus.OK).body(clientCartResponse);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping
+&nbsp;    public ResponseEntity&lt;Void&gt; deleteCartItems(@RequestBody List&lt;ClientCartVariantKeyRequest&gt; idRequests) {
+<b class="fc">&nbsp;        List&lt;CartVariantKey&gt; ids = idRequests.stream()</b>
+<b class="fc">&nbsp;                .map(idRequest -&gt; new CartVariantKey(idRequest.getCartId(), idRequest.getVariantId()))</b>
+<b class="fc">&nbsp;                .collect(Collectors.toList());</b>
+<b class="fc">&nbsp;        cartVariantRepository.deleteAllById(ids);</b>
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-09 20:31</div>
+</div>
+</body>
+</html>

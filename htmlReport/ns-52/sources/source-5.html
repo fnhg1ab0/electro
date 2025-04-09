@@ -1,0 +1,262 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > RewardUtils</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.utils</a>
+</div>
+
+<h1>Coverage Summary for Class: RewardUtils (com.electro.utils)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">RewardUtils</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (2/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    4.1%
+  </span>
+  <span class="absValue">
+    (2/49)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">RewardUtils$MockitoMock$258627985</td>
+  </tr>
+  <tr>
+    <td class="name">RewardUtils$MockitoMock$258627985$auxiliary$8orv3FaW</td>
+  </tr>
+  <tr>
+    <td class="name">RewardUtils$MockitoMock$258627985$auxiliary$HnbxW1gp</td>
+  </tr>
+  <tr>
+    <td class="name">RewardUtils$MockitoMock$258627985$auxiliary$J3C1bZWV</td>
+  </tr>
+  <tr>
+    <td class="name">RewardUtils$MockitoMock$258627985$auxiliary$TWkckRLI</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (2/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    4.1%
+  </span>
+  <span class="absValue">
+    (2/49)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.utils;
+&nbsp;
+&nbsp;import com.electro.entity.general.Notification;
+&nbsp;import com.electro.entity.general.NotificationType;
+&nbsp;import com.electro.entity.order.Order;
+&nbsp;import com.electro.entity.review.Review;
+&nbsp;import com.electro.entity.reward.RewardLog;
+&nbsp;import com.electro.entity.reward.RewardStrategy;
+&nbsp;import com.electro.entity.reward.RewardType;
+&nbsp;import com.electro.mapper.general.NotificationMapper;
+&nbsp;import com.electro.repository.general.NotificationRepository;
+&nbsp;import com.electro.repository.reward.RewardLogRepository;
+&nbsp;import com.electro.repository.reward.RewardStrategyRepository;
+&nbsp;import com.electro.service.general.NotificationService;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import org.springframework.expression.ExpressionParser;
+&nbsp;import org.springframework.expression.spel.standard.SpelExpressionParser;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Component
+<b class="fc">&nbsp;@AllArgsConstructor</b>
+&nbsp;public class RewardUtils {
+&nbsp;
+&nbsp;    private RewardStrategyRepository rewardStrategyRepository;
+&nbsp;    private RewardLogRepository rewardLogRepository;
+&nbsp;    private NotificationRepository notificationRepository;
+&nbsp;    private NotificationService notificationService;
+&nbsp;    private NotificationMapper notificationMapper;
+&nbsp;
+<b class="fc">&nbsp;    private static final ExpressionParser spelParser = new SpelExpressionParser();</b>
+&nbsp;
+&nbsp;    public void approveReviewHook(Review review) {
+&nbsp;        // Khi thay đổi trạng thái review từ (1) Chưa duyệt sang (2) Đã duyệt
+<b class="nc">&nbsp;        if (review.getStatus().equals(2)) {</b>
+<b class="nc">&nbsp;            Optional&lt;RewardStrategy&gt; addReviewRewardStrategy = rewardStrategyRepository</b>
+<b class="nc">&nbsp;                    .findByCodeAndStatus(RewardType.ADD_REVIEW, 1);</b>
+&nbsp;
+<b class="nc">&nbsp;            if (addReviewRewardStrategy.isPresent()) {</b>
+&nbsp;                // Reference: https://stackoverflow.com/a/22043501
+<b class="nc">&nbsp;                Integer score = spelParser.parseExpression(addReviewRewardStrategy.get().getFormula())</b>
+<b class="nc">&nbsp;                        .getValue(Integer.class);</b>
+&nbsp;
+<b class="nc">&nbsp;                String note = String.format(&quot;Bạn đã nhận được %s điểm thưởng cho đánh giá ở sản phẩm %s.&quot;,</b>
+&nbsp;                        score,
+<b class="nc">&nbsp;                        review.getProduct().getName()</b>
+&nbsp;                );
+&nbsp;
+&nbsp;                // (1) Save reward log
+<b class="nc">&nbsp;                RewardLog rewardLog = new RewardLog()</b>
+<b class="nc">&nbsp;                        .setUser(review.getUser())</b>
+<b class="nc">&nbsp;                        .setType(RewardType.ADD_REVIEW)</b>
+<b class="nc">&nbsp;                        .setScore(score)</b>
+<b class="nc">&nbsp;                        .setNote(note);</b>
+&nbsp;
+<b class="nc">&nbsp;                rewardLogRepository.save(rewardLog);</b>
+&nbsp;
+&nbsp;                // (2) Save notification
+<b class="nc">&nbsp;                Notification notification = new Notification()</b>
+<b class="nc">&nbsp;                        .setUser(review.getUser())</b>
+<b class="nc">&nbsp;                        .setType(NotificationType.REVIEW)</b>
+<b class="nc">&nbsp;                        .setMessage(note)</b>
+<b class="nc">&nbsp;                        .setAnchor(&quot;/user/reward&quot;)</b>
+<b class="nc">&nbsp;                        .setStatus(1);</b>
+&nbsp;
+<b class="nc">&nbsp;                notificationRepository.save(notification);</b>
+&nbsp;
+<b class="nc">&nbsp;                notificationService.pushNotification(review.getUser().getUsername(),</b>
+<b class="nc">&nbsp;                        notificationMapper.entityToResponse(notification));</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public void successOrderHook(Order order) {
+&nbsp;        // Nếu đơn hàng là &quot;giao hàng thành công&quot; và &quot;đã thanh toán&quot;
+<b class="nc">&nbsp;        if (order.getStatus().equals(4) &amp;&amp; order.getPaymentStatus().equals(2)) {</b>
+<b class="nc">&nbsp;            Optional&lt;RewardStrategy&gt; successOrderRewardStrategy = rewardStrategyRepository</b>
+<b class="nc">&nbsp;                    .findByCodeAndStatus(RewardType.SUCCESS_ORDER, 1);</b>
+&nbsp;
+<b class="nc">&nbsp;            if (successOrderRewardStrategy.isPresent()) {</b>
+<b class="nc">&nbsp;                Integer score = spelParser.parseExpression(successOrderRewardStrategy.get().getFormula()</b>
+<b class="nc">&nbsp;                                .replace(&quot;{{ORDER_TOTAL_PAY}}&quot;, order.getTotalPay().toString()))</b>
+<b class="nc">&nbsp;                        .getValue(Integer.class);</b>
+&nbsp;
+<b class="nc">&nbsp;                String note = String.format(&quot;Bạn đã nhận được %s điểm thưởng cho đơn hàng %s.&quot;,</b>
+&nbsp;                        score,
+<b class="nc">&nbsp;                        order.getCode()</b>
+&nbsp;                );
+&nbsp;
+&nbsp;                // (1) Save reward log
+<b class="nc">&nbsp;                RewardLog rewardLog = new RewardLog()</b>
+<b class="nc">&nbsp;                        .setUser(order.getUser())</b>
+<b class="nc">&nbsp;                        .setType(RewardType.SUCCESS_ORDER)</b>
+<b class="nc">&nbsp;                        .setScore(score)</b>
+<b class="nc">&nbsp;                        .setNote(note);</b>
+&nbsp;
+<b class="nc">&nbsp;                rewardLogRepository.save(rewardLog);</b>
+&nbsp;
+&nbsp;                // (2) Save notification
+<b class="nc">&nbsp;                Notification notification = new Notification()</b>
+<b class="nc">&nbsp;                        .setUser(order.getUser())</b>
+<b class="nc">&nbsp;                        .setType(NotificationType.ORDER)</b>
+<b class="nc">&nbsp;                        .setMessage(note)</b>
+<b class="nc">&nbsp;                        .setAnchor(&quot;/user/reward&quot;)</b>
+<b class="nc">&nbsp;                        .setStatus(1);</b>
+&nbsp;
+<b class="nc">&nbsp;                notificationRepository.save(notification);</b>
+&nbsp;
+<b class="nc">&nbsp;                notificationService.pushNotification(order.getUser().getUsername(),</b>
+<b class="nc">&nbsp;                        notificationMapper.entityToResponse(notification));</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-09 20:31</div>
+</div>
+</body>
+</html>

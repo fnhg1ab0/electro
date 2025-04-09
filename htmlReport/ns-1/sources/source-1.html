@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > ClientCartTest</title>
+  <title>Coverage Report > ElectroApplication</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,18 +19,15 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">com.electro.Minh</a>
+    <a href="../index.html">com.electro</a>
 </div>
 
-<h1>Coverage Summary for Class: ClientCartTest (com.electro.Minh)</h1>
+<h1>Coverage Summary for Class: ElectroApplication (com.electro)</h1>
 
 <table class="coverageStats">
+
 <tr>
   <th class="name">Class</th>
-<th class="coverageStat 
-">
-  Class, %
-</th>
 <th class="coverageStat 
 ">
   Method, %
@@ -41,33 +38,73 @@ Current scope:     <a href="../../index.html">all classes</a>
 </th>
 </tr>
 <tr>
-  <td class="name">ClientCartTest</td>
+  <td class="name">ElectroApplication</td>
 <td class="coverageStat">
   <span class="percent">
-    100%
+    50%
   </span>
   <span class="absValue">
-    (1/1)
+    (1/2)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    100%
+    50%
   </span>
   <span class="absValue">
-    (9/9)
-  </span>
-</td>
-<td class="coverageStat">
-  <span class="percent">
-    100%
-  </span>
-  <span class="absValue">
-    (54/54)
+    (1/2)
   </span>
 </td>
 </tr>
-
+  <tr>
+    <td class="name">ElectroApplication$$EnhancerBySpringCGLIB$$3721dd1f</td>
+  </tr>
+  <tr>
+    <td class="name">ElectroApplication$$EnhancerBySpringCGLIB$$386e3d58</td>
+  </tr>
+  <tr>
+    <td class="name">ElectroApplication$$EnhancerBySpringCGLIB$$63c043fd</td>
+  </tr>
+  <tr>
+    <td class="name">ElectroApplication$$EnhancerBySpringCGLIB$$7881795d</td>
+  </tr>
+  <tr>
+    <td class="name">ElectroApplication$$EnhancerBySpringCGLIB$$8483995a</td>
+  </tr>
+  <tr>
+    <td class="name">ElectroApplication$$EnhancerBySpringCGLIB$$96cae2c7</td>
+  </tr>
+  <tr>
+    <td class="name">ElectroApplication$$EnhancerBySpringCGLIB$$9a95d60f</td>
+  </tr>
+  <tr>
+    <td class="name">ElectroApplication$$EnhancerBySpringCGLIB$$9ee70c23</td>
+  </tr>
+  <tr>
+    <td class="name">ElectroApplication$$EnhancerBySpringCGLIB$$aac97ea1</td>
+  </tr>
+  <tr>
+    <td class="name">ElectroApplication$$EnhancerBySpringCGLIB$$c03eb278</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/2)
+  </span>
+</td>
+</tr>
 </table>
 
 <br/>
@@ -75,207 +112,18 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.Minh;
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro;
 &nbsp;
-&nbsp;import com.electro.entity.authentication.User;
-&nbsp;import com.electro.entity.cart.Cart;
-&nbsp;import com.electro.repository.cart.CartRepository;
-&nbsp;import com.fasterxml.jackson.databind.ObjectMapper;
-&nbsp;import org.junit.jupiter.api.Test;
-&nbsp;import org.springframework.beans.factory.annotation.Autowired;
-&nbsp;import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-&nbsp;import org.springframework.boot.test.context.SpringBootTest;
-&nbsp;import org.springframework.http.MediaType;
-&nbsp;import org.springframework.security.test.context.support.WithMockUser;
-&nbsp;import org.springframework.test.context.ActiveProfiles;
-&nbsp;import org.springframework.test.web.servlet.MockMvc;
-&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;import org.springframework.boot.SpringApplication;
+&nbsp;import org.springframework.boot.autoconfigure.SpringBootApplication;
 &nbsp;
-&nbsp;import java.util.List;
+&nbsp;@SpringBootApplication
+<b class="fc">&nbsp;public class ElectroApplication {</b>
 &nbsp;
-&nbsp;import static org.assertj.core.api.Assertions.assertThat;
-&nbsp;import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-&nbsp;import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-&nbsp;
-&nbsp;@SpringBootTest
-&nbsp;@AutoConfigureMockMvc
-&nbsp;@ActiveProfiles(&quot;test&quot;)
-<b class="fc">&nbsp;class ClientCartTest {</b>
-&nbsp;
-&nbsp;    @Autowired
-&nbsp;    private MockMvc mockMvc;
-&nbsp;
-&nbsp;    @Autowired
-&nbsp;    private CartRepository cartRepository;
-&nbsp;
-&nbsp;    @Autowired
-&nbsp;    private ObjectMapper objectMapper;
-&nbsp;
-&nbsp;    /**
-&nbsp;     * TC_GetCart_001: Lấy giỏ hàng khi cart tồn tại.
-&nbsp;     * Mục tiêu: Kiểm tra xem giỏ hàng của người dùng có tồn tại hay không, nếu có thì trả về giỏ hàng.
-&nbsp;     */
-&nbsp;    @Test
-&nbsp;    @WithMockUser(username = &quot;dnucator0&quot;, authorities = {&quot;CUSTOMER&quot;})
-&nbsp;    @Transactional
-&nbsp;    void testGetCart_WhenCartExists_ReturnsCart() throws Exception {
-<b class="fc">&nbsp;        User user = new User();</b>
-<b class="fc">&nbsp;        user.setId(4L);</b>
-&nbsp;
-<b class="fc">&nbsp;        Cart cart = new Cart();</b>
-<b class="fc">&nbsp;        cart.setUser(user);</b>
-<b class="fc">&nbsp;        cart.setStatus(1);</b>
-<b class="fc">&nbsp;        cartRepository.save(cart);</b>
-&nbsp;
-<b class="fc">&nbsp;        mockMvc.perform(get(&quot;/client-api/carts&quot;))</b>
-<b class="fc">&nbsp;                .andExpect(status().isOk())  // Kiểm tra nếu trạng thái trả về là OK (200)</b>
-<b class="fc">&nbsp;                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));  // Kiểm tra loại nội dung trả về là JSON</b>
-&nbsp;
-<b class="fc">&nbsp;        List&lt;Cart&gt; carts = cartRepository.findAll();</b>
-<b class="fc">&nbsp;        assertThat(carts).isNotEmpty();  // Kiểm tra nếu giỏ hàng không rỗng</b>
+&nbsp;    public static void main(String[] args) {
+<b class="nc">&nbsp;        SpringApplication.run(ElectroApplication.class, args);</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    /**
-&nbsp;     * TC_SaveCart_InvalidJson_002: Tạo giỏ hàng với JSON không hợp lệ -&gt; lỗi 500.
-&nbsp;     * Mục tiêu: Kiểm tra trường hợp gửi JSON không hợp lệ và kiểm tra nếu server trả về lỗi 500.
-&nbsp;     */
-&nbsp;    @Test
-&nbsp;    @WithMockUser(username = &quot;dnucator0&quot;, authorities = {&quot;CUSTOMER&quot;})
-&nbsp;    void testSaveCart_InvalidJson_ReturnsInternalServerError() throws Exception {
-<b class="fc">&nbsp;        String invalidJson = &quot;{ \&quot;quantity\&quot;: abc }&quot;; // JSON không hợp lệ</b>
-&nbsp;
-<b class="fc">&nbsp;        mockMvc.perform(post(&quot;/client-api/carts&quot;)</b>
-<b class="fc">&nbsp;                        .contentType(MediaType.APPLICATION_JSON)</b>
-<b class="fc">&nbsp;                        .content(invalidJson))  // Gửi yêu cầu POST với JSON không hợp lệ</b>
-<b class="fc">&nbsp;                .andExpect(status().isInternalServerError());  // Kiểm tra nếu lỗi 500 được trả về</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    /**
-&nbsp;     * TC_DeleteCartItems_EmptyList_003: Xóa giỏ hàng với danh sách rỗng -&gt; thành công 204.
-&nbsp;     * Mục tiêu: Kiểm tra xem xóa giỏ hàng với danh sách trống có trả về mã trạng thái 204 hay không.
-&nbsp;     */
-&nbsp;    @Test
-&nbsp;    @WithMockUser(username = &quot;dnucator0&quot;, authorities = {&quot;CUSTOMER&quot;})
-&nbsp;    @Transactional
-&nbsp;    void testDeleteCartItems_WhenEmptyList_ReturnsNoContent() throws Exception {
-<b class="fc">&nbsp;        long beforeCount = cartRepository.count();  // Lấy số lượng giỏ hàng trước khi xóa</b>
-&nbsp;
-<b class="fc">&nbsp;        mockMvc.perform(delete(&quot;/client-api/carts&quot;)</b>
-<b class="fc">&nbsp;                        .contentType(MediaType.APPLICATION_JSON)</b>
-<b class="fc">&nbsp;                        .content(&quot;[]&quot;))  // Gửi danh sách rỗng để xóa</b>
-<b class="fc">&nbsp;                .andExpect(status().isNoContent());  // Kiểm tra trả về mã trạng thái 204 (Không có nội dung)</b>
-&nbsp;
-<b class="fc">&nbsp;        long afterCount = cartRepository.count();  // Kiểm tra số lượng giỏ hàng sau khi xóa</b>
-<b class="fc">&nbsp;        assertThat(afterCount).isEqualTo(beforeCount);  // Kiểm tra số lượng giỏ hàng không thay đổi</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    /**
-&nbsp;     * TC_GetCart_Positive_004: Lấy cart thành công và kiểm tra nội dung.
-&nbsp;     * Mục tiêu: Kiểm tra khi giỏ hàng tồn tại, API có trả về đúng dữ liệu giỏ hàng và các thông tin như cartVariants, status, userId.
-&nbsp;     */
-&nbsp;//    @Test
-&nbsp;//    @WithMockUser(username = &quot;dnucator0&quot;, authorities = {&quot;CUSTOMER&quot;})
-&nbsp;//    @Transactional
-&nbsp;//    void testGetCart_WhenCartExists_ReturnsCart_Success() throws Exception {
-&nbsp;//        User user = new User();
-&nbsp;//        user.setId(4L);
-&nbsp;//
-&nbsp;//        Cart cart = new Cart();
-&nbsp;//        cart.setUser(user);
-&nbsp;//        cart.setStatus(1);
-&nbsp;//        Cart savedCart = cartRepository.save(cart);  // Lưu giỏ hàng
-&nbsp;//
-&nbsp;//        mockMvc.perform(get(&quot;/client-api/carts&quot;))
-&nbsp;//                .andExpect(status().isOk())  // Kiểm tra nếu trạng thái trả về là OK
-&nbsp;//                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))  // Kiểm tra nếu trả về là JSON
-&nbsp;//                .andExpect(jsonPath(&quot;$.cartVariants&quot;).isArray())  // Kiểm tra xem trường cartVariants là mảng
-&nbsp;//                .andExpect(jsonPath(&quot;$.status&quot;).value(cart.getStatus()))  // Kiểm tra giá trị status
-&nbsp;//                .andExpect(jsonPath(&quot;$.userId&quot;).value(user.getId()));  // Kiểm tra giá trị userId
-&nbsp;//    }
-&nbsp;
-&nbsp;    /**
-&nbsp;     * TC_SaveCart_Positive_005: Tạo giỏ hàng thành công với JSON hợp lệ -&gt; hiện tại lỗi 500 (expected).
-&nbsp;     * Mục tiêu: Kiểm tra khi tạo giỏ hàng với JSON hợp lệ nhưng hiện tại dự kiến lỗi 500.
-&nbsp;     */
-&nbsp;    @Test
-&nbsp;    @WithMockUser(username = &quot;dnucator0&quot;, authorities = {&quot;CUSTOMER&quot;})
-&nbsp;    @Transactional
-&nbsp;    void testSaveCart_ValidJson_ReturnsInternalServerError() throws Exception {
-<b class="fc">&nbsp;        String validJson = &quot;{ \&quot;userId\&quot;: 4, \&quot;status\&quot;: 1 }&quot;;</b>
-&nbsp;
-<b class="fc">&nbsp;        mockMvc.perform(post(&quot;/client-api/carts&quot;)</b>
-<b class="fc">&nbsp;                        .contentType(MediaType.APPLICATION_JSON)</b>
-<b class="fc">&nbsp;                        .content(validJson))  // Gửi yêu cầu POST với JSON hợp lệ</b>
-<b class="fc">&nbsp;                .andExpect(status().isInternalServerError());  // Kiểm tra trả về lỗi 500</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    /**
-&nbsp;     * TC_DeleteCartItems_Positive_006: Xóa giỏ hàng thành công với danh sách hợp lệ.
-&nbsp;     * Mục tiêu: Kiểm tra khi xóa giỏ hàng với danh sách hợp lệ, API có trả về mã trạng thái 204 hay không.
-&nbsp;     */
-&nbsp;    @Test
-&nbsp;    @WithMockUser(username = &quot;dnucator0&quot;, authorities = {&quot;CUSTOMER&quot;})
-&nbsp;    @Transactional
-&nbsp;    void testDeleteCartItems_ValidList_ReturnsInternalServerError() throws Exception {
-<b class="fc">&nbsp;        User user = new User();</b>
-<b class="fc">&nbsp;        user.setId(4L);</b>
-&nbsp;
-<b class="fc">&nbsp;        Cart cart = new Cart();</b>
-<b class="fc">&nbsp;        cart.setUser(user);</b>
-<b class="fc">&nbsp;        cart.setStatus(1);</b>
-<b class="fc">&nbsp;        Cart savedCart = cartRepository.save(cart);  // Lưu giỏ hàng</b>
-&nbsp;
-&nbsp;        // ⚡ Không có CartVariant =&gt; API vẫn lỗi 500 do không tìm thấy dữ liệu
-<b class="fc">&nbsp;        String cartIdListJson = &quot;[{\&quot;cartId\&quot;:&quot; + savedCart.getId() + &quot;, \&quot;variantId\&quot;:1}]&quot;;</b>
-&nbsp;
-<b class="fc">&nbsp;        mockMvc.perform(delete(&quot;/client-api/carts&quot;)</b>
-<b class="fc">&nbsp;                        .contentType(MediaType.APPLICATION_JSON)</b>
-<b class="fc">&nbsp;                        .content(cartIdListJson))  // Gửi yêu cầu xóa với danh sách hợp lệ nhưng không có CartVariant</b>
-<b class="fc">&nbsp;                .andExpect(status().isInternalServerError());  // Kiểm tra nếu trả về lỗi 500</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    /**
-&nbsp;     * TC_GetCart_Negative_007: Lấy cart khi không có cart -&gt; trả về empty object {}.
-&nbsp;     * Mục tiêu: Kiểm tra khi không có giỏ hàng, API trả về đối tượng rỗng.
-&nbsp;     */
-&nbsp;    @Test
-&nbsp;    @WithMockUser(username = &quot;dnucator0&quot;, authorities = {&quot;CUSTOMER&quot;})
-&nbsp;    void testGetCart_WhenCartDoesNotExist_ReturnsEmptyCart() throws Exception {
-<b class="fc">&nbsp;        mockMvc.perform(get(&quot;/client-api/carts&quot;))</b>
-<b class="fc">&nbsp;                .andExpect(status().isOk())  // Kiểm tra nếu trạng thái trả về là OK</b>
-<b class="fc">&nbsp;                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))  // Kiểm tra trả về là JSON</b>
-<b class="fc">&nbsp;                .andExpect(content().json(&quot;{}&quot;));  // Kiểm tra nếu trả về đối tượng rỗng</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    /**
-&nbsp;     * TC_SaveCart_Negative_008: Tạo giỏ hàng thiếu trường bắt buộc -&gt; lỗi 500.
-&nbsp;     * Mục tiêu: Kiểm tra khi thiếu trường bắt buộc trong JSON, API trả về lỗi 500.
-&nbsp;     */
-&nbsp;    @Test
-&nbsp;    @WithMockUser(username = &quot;dnucator0&quot;, authorities = {&quot;CUSTOMER&quot;})
-&nbsp;    void testSaveCart_MissingRequiredField_ReturnsInternalServerError() throws Exception {
-<b class="fc">&nbsp;        String missingFieldJson = &quot;{ \&quot;status\&quot;: 1 }&quot;;  // Thiếu trường userId</b>
-&nbsp;
-<b class="fc">&nbsp;        mockMvc.perform(post(&quot;/client-api/carts&quot;)</b>
-<b class="fc">&nbsp;                        .contentType(MediaType.APPLICATION_JSON)</b>
-<b class="fc">&nbsp;                        .content(missingFieldJson))  // Gửi yêu cầu với JSON thiếu trường</b>
-<b class="fc">&nbsp;                .andExpect(status().isInternalServerError());  // Kiểm tra trả về lỗi 500</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    /**
-&nbsp;     * TC_DeleteCartItems_Negative_009: Xóa giỏ hàng với JSON format sai -&gt; lỗi 500.
-&nbsp;     * Mục tiêu: Kiểm tra khi format JSON không đúng, API trả về lỗi 500.
-&nbsp;     */
-&nbsp;    @Test
-&nbsp;    @WithMockUser(username = &quot;dnucator0&quot;, authorities = {&quot;CUSTOMER&quot;})
-&nbsp;    void testDeleteCartItems_InvalidJsonFormat_ReturnsInternalServerError() throws Exception {
-<b class="fc">&nbsp;        String invalidJson = &quot;{ \&quot;invalid\&quot;: true }&quot;;  // JSON không hợp lệ</b>
-&nbsp;
-<b class="fc">&nbsp;        mockMvc.perform(delete(&quot;/client-api/carts&quot;)</b>
-<b class="fc">&nbsp;                        .contentType(MediaType.APPLICATION_JSON)</b>
-<b class="fc">&nbsp;                        .content(invalidJson))  // Gửi yêu cầu xóa với JSON không hợp lệ</b>
-<b class="fc">&nbsp;                .andExpect(status().isInternalServerError());  // Kiểm tra nếu trả về lỗi 500</b>
-&nbsp;    }
 &nbsp;}
 </code>
 </pre>
@@ -300,7 +148,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-04-08 21:09</div>
+    <div style="float:right;">generated on 2025-04-09 20:31</div>
 </div>
 </body>
 </html>

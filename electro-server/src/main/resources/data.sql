@@ -3207,7 +3207,66 @@ VALUES ('2023-03-08 02:19:54', '2023-03-08 02:19:54', 4, 'SUCCESS_ORDER', 988,
 INSERT INTO promotion (created_at, updated_at, name, start_date, end_date, percent, status)
 VALUES ('2023-03-08 11:14:35', '2023-03-08 11:14:35', 'Khuyến mãi tháng 3', '2023-03-08 00:00:00',
         '2023-03-19 00:00:00', 10, 1);
+INSERT INTO promotion (id, created_at, updated_at, name, start_date, end_date, percent, status)
+VALUES (2, '2025-04-19 15:42:58', '2025-04-19 15:42:58', 'Mã khuyến mãi balo tháng 5', '2025-05-01 00:00:00',
+        '2025-05-31 00:00:00', 35, 1);
+INSERT INTO promotion (id, created_at, updated_at, name, start_date, end_date, percent, status)
+VALUES (3, '2025-04-19 15:44:21', '2025-04-19 15:44:21', 'Mã giảm giá laptop gaming cuối tháng 4',
+        '2025-04-20 00:00:00', '2025-04-26 00:00:00', 20, 1);
+INSERT INTO promotion (id, created_at, updated_at, name, start_date, end_date, percent, status)
+VALUES (4, '2025-04-19 15:45:39', '2025-04-19 15:45:39', 'Mã giảm giá core i9', '2025-04-28 00:00:00',
+        '2025-05-04 00:00:00', 20, 1);
+INSERT INTO promotion (id, created_at, updated_at, name, start_date, end_date, percent, status)
+VALUES (5, '2025-04-19 15:46:17', '2025-04-19 15:46:17', 'Mã giảm giá core logitech', '2025-04-28 00:00:00',
+        '2025-05-04 00:00:00', 10, 1);
+INSERT INTO promotion (id, created_at, updated_at, name, start_date, end_date, percent, status)
+VALUES (6, '2025-04-19 15:47:55', '2025-04-19 15:47:55', 'Mã giảm 1 số laptop văn phòng', '2025-04-28 00:00:00',
+        '2025-06-01 00:00:00', 100, 1);
+INSERT INTO promotion (id, created_at, updated_at, name, start_date, end_date, percent, status)
+VALUES (7, '2025-04-19 15:58:45', '2025-04-19 15:58:45', 'mã giảm Alienware', '2025-04-29 00:00:00',
+        '2025-04-30 00:00:00', 30, 1);
+INSERT INTO promotion (id, created_at, updated_at, name, start_date, end_date, percent, status)
+VALUES (8, '2025-04-19 15:59:30', '2025-04-19 15:59:30', 'mã giảm túi', '2025-04-29 00:00:00', '2025-04-30 00:00:00',
+        30, 2);
+INSERT INTO promotion (id, created_at, updated_at, name, start_date, end_date, percent, status)
+VALUES (10, '2025-05-14 20:13:43', '2025-05-14 20:13:43', 'Khuyến mãi danh mục máy chơi game t6', '2025-06-01 00:00:00',
+        '2025-06-30 00:00:00', 15, 1);
 
 -- promotion_product TABLE: 1 records
 INSERT INTO promotion_product (promotion_id, product_id)
 VALUES (1, 1);
+INSERT INTO promotion_product (promotion_id, product_id)
+VALUES (5, 8);
+INSERT INTO promotion_product (promotion_id, product_id)
+VALUES (10, 9);
+INSERT INTO promotion_product (promotion_id, product_id)
+VALUES (5, 10);
+INSERT INTO promotion_product (promotion_id, product_id)
+VALUES (4, 11);
+INSERT INTO promotion_product (promotion_id, product_id)
+VALUES (2, 13);
+INSERT INTO promotion_product (promotion_id, product_id)
+VALUES (8, 13);
+INSERT INTO promotion_product (promotion_id, product_id)
+VALUES (3, 32);
+INSERT INTO promotion_product (promotion_id, product_id)
+VALUES (3, 33);
+INSERT INTO promotion_product (promotion_id, product_id)
+VALUES (6, 80);
+INSERT INTO promotion_product (promotion_id, product_id)
+VALUES (6, 91);
+INSERT INTO promotion_product (promotion_id, product_id)
+VALUES (6, 92);
+INSERT INTO promotion_product (promotion_id, product_id)
+VALUES (6, 94);
+INSERT INTO promotion_product (promotion_id, product_id)
+VALUES (6, 95);
+INSERT INTO promotion_product (promotion_id, product_id)
+VALUES (6, 97);
+INSERT INTO promotion_product (promotion_id, product_id)
+VALUES (7, 98);
+INSERT INTO promotion_product (promotion_id, product_id)
+VALUES (3, 99);
+INSERT INTO promotion_product (promotion_id, product_id)
+VALUES (7, 99);
+

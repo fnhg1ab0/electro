@@ -79,7 +79,7 @@ public class ClientProductController {
         int averageRatingScore = reviewRepository.findAverageRatingScoreByProductId(product.getId());
         int countReviews = reviewRepository.countByProductId(product.getId());
 
-        // Related Products
+        // Related Products.
         Page<Product> relatedProducts = productRepository.findByParams(
                 String.format("category.id==%s;id!=%s",
                         Optional.ofNullable(product.getCategory())
@@ -100,7 +100,6 @@ public class ClientProductController {
         List<ClientListedProductResponse> relatedProductResponses = relatedProducts
                 .map(p -> clientProductMapper.entityToListedResponse(p, relatedProductInventories)).toList();
 
-        // Result
         ClientProductResponse clientProductResponse = clientProductMapper
                 .entityToResponse(product, productInventories, averageRatingScore, countReviews, relatedProductResponses);
 

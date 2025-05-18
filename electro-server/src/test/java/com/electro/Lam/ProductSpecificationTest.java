@@ -1,186 +1,366 @@
 package com.electro.Lam;
 
 import com.electro.entity.product.Specification;
+import com.electro.repository.cart.CartVariantRepository;
+import com.electro.repository.client.PreorderRepository;
+import com.electro.repository.client.WishRepository;
+import com.electro.repository.general.ImageRepository;
+import com.electro.repository.inventory.*;
+import com.electro.repository.order.OrderVariantRepository;
+import com.electro.repository.product.ProductRepository;
 import com.electro.repository.product.SpecificationRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.electro.repository.product.TagRepository;
+import com.electro.repository.product.VariantRepository;
+import com.electro.repository.promotion.PromotionRepository;
+import com.electro.repository.review.ReviewRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
+import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
+/**
+ * Integration tests for Specification entity interacting directly with the database
+ * Uses @SpringBootTest to load the full application context
+ * Uses @Transactional to rollback changes after each test
+ * Uses @ActiveProfiles("test") to use test-specific properties
+ */
+@SpringBootTest
+@ActiveProfiles("test")
+@Transactional
 public class ProductSpecificationTest {
 
-    @Mock
+    @Autowired
     private SpecificationRepository specificationRepository;
+    
+    @Autowired
+    private ProductRepository productRepository;
+    
+    @Autowired
+    private VariantRepository variantRepository;
+    
+    @Autowired
+    private CartVariantRepository cartVariantRepository;
+    
+    @Autowired
+    private CountVariantRepository countVariantRepository;
+    
+    @Autowired
+    private DocketVariantRepository docketVariantRepository;
+    
+    @Autowired
+    private PurchaseOrderVariantRepository purchaseOrderVariantRepository;
+    
+    @Autowired
+    private OrderVariantRepository orderVariantRepository;
+    
+    @Autowired
+    private ImageRepository imageRepository;
+    
+    @Autowired
+    private WishRepository wishRepository;
+    
+    @Autowired
+    private PreorderRepository preorderRepository;
+    
+    @Autowired
+    private ReviewRepository reviewRepository;
+    
+    @Autowired
+    private PromotionRepository promotionRepository;
+    
+    @Autowired
+    private TagRepository tagRepository;
+    
+    @Autowired
+    private ProductInventoryLimitRepository productInventoryLimitRepository;
 
-    private ObjectMapper objectMapper;
-
+    @Autowired
+    private EntityManager entityManager;
+    
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        objectMapper = new ObjectMapper();
-        objectMapper.findAndRegisterModules(); // Register modules for JSON serialization
+        // Temporarily disable foreign key checks to handle complex dependencies
+        entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS=0").executeUpdate();
+        
+        // Clear existing data before each test
+        wishRepository.deleteAll();
+        preorderRepository.deleteAll();
+        reviewRepository.deleteAll();
+
+        // Clear variants and associated entities
+        cartVariantRepository.deleteAll();
+        orderVariantRepository.deleteAll();
+        countVariantRepository.deleteAll();
+        docketVariantRepository.deleteAll();
+        purchaseOrderVariantRepository.deleteAll();
+
+        // Clear product inventory limits
+        productInventoryLimitRepository.deleteAll();
+
+        // Clear images
+        imageRepository.deleteAll();
+
+        // Clear promotion products (join tables for many-to-many relationships)
+        promotionRepository.findAll().forEach(promotion -> {
+            promotion.getProducts().clear();
+            promotionRepository.save(promotion);
+        });
+
+        // Clear variants
+        variantRepository.deleteAll();
+
+        // Clear product_tag join table
+        productRepository.findAll().forEach(product -> {
+            product.getTags().clear();
+            productRepository.save(product);
+        });
+
+        // Now we can safely clear products
+        productRepository.deleteAll();
+        
+        // Clear specifications
+        specificationRepository.deleteAll();
+        
+        tagRepository.deleteAll();
+        
+        // Re-enable foreign key checks
+        entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS=1").executeUpdate();
     }
 
-    private String toJson(Object object) {
-        try {
-            return objectMapper.writeValueAsString(object);
-        } catch (JsonProcessingException e) {
-            return "Error converting to JSON: " + e.getMessage();
-        }
-    }
-
+    /**
+     * Test Case ID: SIT001
+     * Tên test: testCreateSpecification
+     * Mục tiêu: Kiểm tra việc tạo mới thông số sản phẩm
+     * Đầu vào: Một đối tượng Specification với name="Screen Size", 
+     *          code="SCREEN_SIZE", description="Display dimensions", status=1
+     * Đầu ra mong đợi: Specification được lưu thành công với ID không null và các thông tin khớp với đầu vào
+     * Ghi chú: Kiểm tra chức năng cơ bản của việc tạo thông số sản phẩm
+     */
     @Test
     public void testCreateSpecification() {
         // Arrange
         Specification specification = new Specification();
-        specification.setName("Weight");
-        specification.setCode("SPEC001");
-        specification.setDescription("Specification for product weight");
+        specification.setName("Screen Size");
+        specification.setCode("SCREEN_SIZE");
+        specification.setDescription("Display dimensions");
         specification.setStatus(1); // Active status
-        System.out.println("Input: " + toJson(specification));
-
-        when(specificationRepository.save(specification)).thenReturn(specification);
-
+        System.out.println("Input: Specification [name=Screen Size, code=SCREEN_SIZE, description=Display dimensions, status=1]");
+        
         // Act
         Specification savedSpecification = specificationRepository.save(specification);
-        System.out.println("Output: " + toJson(savedSpecification));
-
+        System.out.println("Expected Output: Saved Specification with non-null ID and matching attributes");
+        
         // Assert
-        assertNotNull(savedSpecification, "Saved specification should not be null");
-        assertEquals("Weight", savedSpecification.getName(), "Specification name should match");
-        assertEquals("SPEC001", savedSpecification.getCode(), "Specification code should match");
-        assertEquals("Specification for product weight", savedSpecification.getDescription(), "Specification description should match");
+        assertNotNull(savedSpecification.getId(), "Saved specification ID should not be null");
+        assertEquals("Screen Size", savedSpecification.getName(), "Specification name should match");
+        assertEquals("SCREEN_SIZE", savedSpecification.getCode(), "Specification code should match");
+        assertEquals("Display dimensions", savedSpecification.getDescription(), "Specification description should match");
         assertEquals(1, savedSpecification.getStatus(), "Specification status should match");
-        verify(specificationRepository, times(1)).save(specification);
     }
-
+    
+    /**
+     * Test Case ID: SIT002
+     * Tên test: testUpdateSpecification
+     * Mục tiêu: Kiểm tra việc cập nhật thông tin thông số sản phẩm
+     * Đầu vào: Thông số đã tồn tại với name="Screen Size" và cập nhật thành name="Display Size",
+     *          description="Updated display dimensions"
+     * Đầu ra mong đợi: Specification được cập nhật thành công với thông tin mới
+     * Ghi chú: Kiểm tra chức năng cập nhật thông số sản phẩm
+     */
     @Test
     public void testUpdateSpecification() {
-        // Arrange
-        Specification existingSpecification = new Specification();
-        existingSpecification.setId(1L);
-        existingSpecification.setName("Weight");
-        existingSpecification.setCode("SPEC001");
-        existingSpecification.setDescription("Specification for product weight");
-        existingSpecification.setStatus(1); // Active status
-        System.out.println("Input (Existing Specification): " + toJson(existingSpecification));
-
-        when(specificationRepository.findById(1L)).thenReturn(Optional.of(existingSpecification));
-
-        // Act
-        Optional<Specification> specificationOptional = specificationRepository.findById(1L);
-        assertTrue(specificationOptional.isPresent(), "Specification should exist");
-        Specification specificationToUpdate = specificationOptional.get();
-        specificationToUpdate.setName("Dimensions");
-        specificationToUpdate.setCode("SPEC002");
-        specificationToUpdate.setDescription("Specification for product dimensions");
-        specificationToUpdate.setStatus(0); // Inactive status
-        System.out.println("Input (Updated Specification): " + toJson(specificationToUpdate));
-
-        when(specificationRepository.save(specificationToUpdate)).thenReturn(specificationToUpdate);
-        Specification updatedSpecification = specificationRepository.save(specificationToUpdate);
-        System.out.println("Output: " + toJson(updatedSpecification));
-
+        // Arrange - Create and save a specification
+        Specification specification = new Specification();
+        specification.setName("Screen Size");
+        specification.setCode("SCREEN_SIZE");
+        specification.setDescription("Display dimensions");
+        specification.setStatus(1);
+        Specification savedSpecification = specificationRepository.save(specification);
+        System.out.println("Input: Existing Specification [id=" + savedSpecification.getId() + 
+                          "] with updates [name=Display Size, description=Updated display dimensions]");
+        
+        // Act - Update the specification
+        savedSpecification.setName("Display Size");
+        savedSpecification.setDescription("Updated display dimensions");
+        Specification updatedSpecification = specificationRepository.save(savedSpecification);
+        System.out.println("Expected Output: Updated Specification with new values [name=Display Size, description=Updated display dimensions]");
+        
         // Assert
-        assertNotNull(updatedSpecification, "Updated specification should not be null");
-        assertEquals("Dimensions", updatedSpecification.getName(), "Updated name should match");
-        assertEquals("SPEC002", updatedSpecification.getCode(), "Updated code should match");
-        assertEquals("Specification for product dimensions", updatedSpecification.getDescription(), "Updated description should match");
-        assertEquals(0, updatedSpecification.getStatus(), "Updated status should match");
-        verify(specificationRepository, times(1)).findById(1L);
-        verify(specificationRepository, times(1)).save(specificationToUpdate);
+        assertEquals("Display Size", updatedSpecification.getName(), "Updated name should match");
+        assertEquals("Updated display dimensions", updatedSpecification.getDescription(), "Updated description should match");
+        assertEquals("SCREEN_SIZE", updatedSpecification.getCode(), "Code should remain unchanged");
+        assertEquals(1, updatedSpecification.getStatus(), "Status should remain unchanged");
     }
-
+    
+    /**
+     * Test Case ID: SIT003
+     * Tên test: testDeleteSpecification
+     * Mục tiêu: Kiểm tra việc xóa thông số sản phẩm
+     * Đầu vào: ID của thông số sản phẩm đã tồn tại trong cơ sở dữ liệu
+     * Đầu ra mong đợi: Thông số sản phẩm bị xóa khỏi cơ sở dữ liệu, không thể tìm thấy bằng ID
+     * Ghi chú: Kiểm tra chức năng xóa thông số sản phẩm
+     */
     @Test
     public void testDeleteSpecification() {
-        // Arrange
-        Long specificationId = 1L;
-        System.out.println("Input (Specification ID to delete): " + specificationId);
-        doNothing().when(specificationRepository).deleteById(specificationId);
-
-        // Act
+        // Arrange - Create and save a specification
+        Specification specification = new Specification();
+        specification.setName("Screen Size");
+        specification.setCode("SCREEN_SIZE");
+        specification.setDescription("Display dimensions");
+        specification.setStatus(1);
+        Specification savedSpecification = specificationRepository.save(specification);
+        Long specificationId = savedSpecification.getId();
+        System.out.println("Input: Specification ID to delete = " + specificationId);
+        
+        // Act - Delete the specification
         specificationRepository.deleteById(specificationId);
-        System.out.println("Output: Specification with ID " + specificationId + " deleted successfully.");
-
+        System.out.println("Expected Output: Specification with ID = " + specificationId + " no longer exists in database");
+        
         // Assert
-        verify(specificationRepository, times(1)).deleteById(specificationId);
+        Optional<Specification> deletedSpecification = specificationRepository.findById(specificationId);
+        assertFalse(deletedSpecification.isPresent(), "Specification should be deleted");
     }
-
+    
+    /**
+     * Test Case ID: SIT004
+     * Tên test: testGetAllSpecifications
+     * Mục tiêu: Kiểm tra việc lấy danh sách tất cả thông số sản phẩm
+     * Đầu vào: Hai thông số sản phẩm đã được lưu trong cơ sở dữ liệu
+     * Đầu ra mong đợi: Danh sách thông số sản phẩm chứa ít nhất 2 bản ghi
+     * Ghi chú: Kiểm tra chức năng lấy tất cả thông số sản phẩm
+     */
     @Test
     public void testGetAllSpecifications() {
-        // Arrange
-        Specification specification = new Specification();
-        specification.setName("Weight");
-        specification.setCode("SPEC001");
-        specification.setDescription("Specification for product weight");
-        specification.setStatus(1); // Active status
-        List<Specification> specifications = Collections.singletonList(specification);
-        System.out.println("Mocked Output (All Specifications): " + toJson(specifications));
-
-        when(specificationRepository.findAll()).thenReturn(specifications);
-
-        // Act
-        List<Specification> result = specificationRepository.findAll();
-        System.out.println("Output: " + toJson(result));
-
+        // Arrange - Create and save multiple specifications
+        Specification specification1 = new Specification();
+        specification1.setName("Screen Size");
+        specification1.setCode("SCREEN_SIZE");
+        specification1.setDescription("Display dimensions");
+        specification1.setStatus(1);
+        specificationRepository.save(specification1);
+        
+        Specification specification2 = new Specification();
+        specification2.setName("RAM");
+        specification2.setCode("RAM");
+        specification2.setDescription("Memory capacity");
+        specification2.setStatus(1);
+        specificationRepository.save(specification2);
+        System.out.println("Input: Two specifications saved to database");
+        
+        // Act - Get all specifications
+        List<Specification> specifications = specificationRepository.findAll();
+        System.out.println("Expected Output: List containing at least 2 specifications");
+        
         // Assert
-        assertNotNull(result, "Specifications list should not be null");
-        assertEquals(1, result.size(), "Specifications list size should be 1");
-        assertEquals("Weight", result.get(0).getName(), "Specification name should match");
-        assertEquals(1, result.get(0).getStatus(), "Specification status should match");
-        verify(specificationRepository, times(1)).findAll();
+        assertTrue(specifications.size() >= 2, "Should have at least 2 specifications");
+        assertTrue(specifications.stream().anyMatch(spec -> "SCREEN_SIZE".equals(spec.getCode())), 
+                  "Should contain specification with code SCREEN_SIZE");
+        assertTrue(specifications.stream().anyMatch(spec -> "RAM".equals(spec.getCode())), 
+                  "Should contain specification with code RAM");
     }
-
+    
+    /**
+     * Test Case ID: SIT005
+     * Tên test: testGetSpecificationById
+     * Mục tiêu: Kiểm tra việc lấy thông số sản phẩm theo ID
+     * Đầu vào: ID của thông số sản phẩm đã tồn tại trong cơ sở dữ liệu
+     * Đầu ra mong đợi: Thông số sản phẩm được tìm thấy với ID tương ứng
+     * Ghi chú: Kiểm tra chức năng tìm kiếm theo ID
+     */
     @Test
     public void testGetSpecificationById() {
-        // Arrange
-        Long specificationId = 1L;
+        // Arrange - Create and save a specification
         Specification specification = new Specification();
-        specification.setId(specificationId);
-        specification.setName("Weight");
-        specification.setCode("SPEC001");
-        specification.setDescription("Specification for product weight");
-        specification.setStatus(1); // Active status
-        System.out.println("Input (Specification ID): " + specificationId);
-        System.out.println("Mocked Output (Specification): " + toJson(specification));
-
-        when(specificationRepository.findById(specificationId)).thenReturn(Optional.of(specification));
-
-        // Act
-        Optional<Specification> specificationOptional = specificationRepository.findById(specificationId);
-        System.out.println("Output: " + toJson(specificationOptional.orElse(null)));
-
+        specification.setName("Screen Size");
+        specification.setCode("SCREEN_SIZE");
+        specification.setDescription("Display dimensions");
+        specification.setStatus(1);
+        Specification savedSpecification = specificationRepository.save(specification);
+        Long specificationId = savedSpecification.getId();
+        System.out.println("Input: Specification ID to find = " + specificationId);
+        
+        // Act - Find the specification by ID
+        Optional<Specification> foundSpecification = specificationRepository.findById(specificationId);
+        System.out.println("Expected Output: Specification found with matching ID");
+        
         // Assert
-        assertTrue(specificationOptional.isPresent(), "Specification should exist");
-        assertEquals("Weight", specificationOptional.get().getName(), "Specification name should match");
-        assertEquals(1, specificationOptional.get().getStatus(), "Specification status should match");
-        verify(specificationRepository, times(1)).findById(specificationId);
+        assertTrue(foundSpecification.isPresent(), "Specification should be found");
+        assertEquals(specificationId, foundSpecification.get().getId(), "Found specification ID should match");
+        assertEquals("Screen Size", foundSpecification.get().getName(), "Specification name should match");
+        assertEquals("SCREEN_SIZE", foundSpecification.get().getCode(), "Specification code should match");
     }
-
+    
+    /**
+     * Test Case ID: SIT006
+     * Tên test: testSpecificationCodeUniqueness
+     * Mục tiêu: Kiểm tra tính duy nhất của trường code trong thông số sản phẩm
+     * Đầu vào: Hai thông số sản phẩm cùng mã code
+     * Đầu ra mong đợi: Exception về vi phạm ràng buộc duy nhất
+     * Ghi chú: Kiểm tra ràng buộc duy nhất của trường code
+     */
     @Test
-    public void testGetSpecificationById_NotFound() {
-        // Arrange
-        Long specificationId = 1L;
-        System.out.println("Input (Specification ID): " + specificationId);
-        System.out.println("Mocked Output: Specification not found.");
-
-        when(specificationRepository.findById(specificationId)).thenReturn(Optional.empty());
-
-        // Act
-        Optional<Specification> specificationOptional = specificationRepository.findById(specificationId);
-        System.out.println("Output: " + toJson(specificationOptional.orElse(null)));
-
+    public void testSpecificationCodeUniqueness() {
+        // Arrange - Create and save a specification
+        Specification specification1 = new Specification();
+        specification1.setName("Screen Size");
+        specification1.setCode("DUPLICATE_CODE");
+        specification1.setDescription("Display dimensions");
+        specification1.setStatus(1);
+        specificationRepository.save(specification1);
+        System.out.println("Input: First Specification with code=DUPLICATE_CODE, then Second Specification with same code");
+        
+        // Create another specification with the same code
+        Specification specification2 = new Specification();
+        specification2.setName("Different Name");
+        specification2.setCode("DUPLICATE_CODE");
+        specification2.setDescription("Different description");
+        specification2.setStatus(1);
+        
+        // Act & Assert - Expect an exception when saving with duplicate code
+        Exception exception = assertThrows(Exception.class, () -> {
+            specificationRepository.saveAndFlush(specification2);
+        });
+        System.out.println("Expected Output: Exception thrown due to unique constraint violation");
+        
+        // Additional verification
+        assertTrue(exception.getMessage().contains("constraint") || 
+                  exception.getCause().getMessage().contains("constraint"), 
+                  "Exception should be related to constraint violation");
+    }
+    
+    /**
+     * Test Case ID: SIT007
+     * Tên test: testDeactivateSpecification
+     * Mục tiêu: Kiểm tra việc thay đổi trạng thái của thông số sản phẩm thành không hoạt động
+     * Đầu vào: Thông số sản phẩm có status=1 (hoạt động)
+     * Đầu ra mong đợi: Thông số sản phẩm được cập nhật với status=0 (không hoạt động)
+     * Ghi chú: Kiểm tra chức năng thay đổi trạng thái
+     */
+    @Test
+    public void testDeactivateSpecification() {
+        // Arrange - Create and save a specification with active status
+        Specification specification = new Specification();
+        specification.setName("Screen Size");
+        specification.setCode("SCREEN_SIZE");
+        specification.setDescription("Display dimensions");
+        specification.setStatus(1); // Active status
+        Specification savedSpecification = specificationRepository.save(specification);
+        System.out.println("Input: Active Specification [status=1] to be deactivated [status=0]");
+        
+        // Act - Deactivate the specification
+        savedSpecification.setStatus(0); // Inactive status
+        Specification updatedSpecification = specificationRepository.save(savedSpecification);
+        System.out.println("Expected Output: Specification with updated status=0 (inactive)");
+        
         // Assert
-        assertFalse(specificationOptional.isPresent(), "Specification should not exist");
-        verify(specificationRepository, times(1)).findById(specificationId);
+        assertEquals(0, updatedSpecification.getStatus(), "Specification status should be updated to inactive (0)");
     }
 }

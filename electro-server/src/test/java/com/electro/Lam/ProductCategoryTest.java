@@ -1,384 +1,331 @@
 package com.electro.Lam;
 
 import com.electro.entity.product.Category;
+import com.electro.repository.cart.CartVariantRepository;
+import com.electro.repository.client.PreorderRepository;
+import com.electro.repository.client.WishRepository;
+import com.electro.repository.general.ImageRepository;
+import com.electro.repository.inventory.CountVariantRepository;
+import com.electro.repository.inventory.DocketVariantRepository;
+import com.electro.repository.inventory.ProductInventoryLimitRepository;
+import com.electro.repository.inventory.PurchaseOrderVariantRepository;
+import com.electro.repository.inventory.StorageLocationRepository;
+import com.electro.repository.inventory.VariantInventoryLimitRepository;
+import com.electro.repository.order.OrderVariantRepository;
 import com.electro.repository.product.CategoryRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.electro.repository.product.ProductRepository;
+import com.electro.repository.product.TagRepository;
+import com.electro.repository.product.VariantRepository;
+import com.electro.repository.promotion.PromotionRepository;
+import com.electro.repository.review.ReviewRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
+@SpringBootTest
+@ActiveProfiles("test")
+@Transactional
 public class ProductCategoryTest {
-
-    @Mock
+    @Autowired
     private CategoryRepository categoryRepository;
 
-    private ObjectMapper objectMapper;
+    @Autowired
+    private VariantRepository variantRepository;
 
-    @BeforeEach
+    @Autowired
+    private StorageLocationRepository storageLocationRepository;
+    
+    @Autowired
+    private VariantInventoryLimitRepository variantInventoryLimitRepository;
+    
+    @Autowired
+    private CartVariantRepository cartVariantRepository;
+    
+    @Autowired
+    private CountVariantRepository countVariantRepository;
+    
+    @Autowired
+    private DocketVariantRepository docketVariantRepository;
+    
+    @Autowired
+    private PurchaseOrderVariantRepository purchaseOrderVariantRepository;
+    
+    @Autowired
+    private OrderVariantRepository orderVariantRepository;
+    
+    @Autowired
+    private ProductRepository productRepository;
+    
+    @Autowired
+    private ImageRepository imageRepository;
+    
+    @Autowired
+    private WishRepository wishRepository;
+    
+    @Autowired
+    private PreorderRepository preorderRepository;
+    
+    @Autowired
+    private ReviewRepository reviewRepository;
+    
+    @Autowired
+    private PromotionRepository promotionRepository;
+      @Autowired
+    private TagRepository tagRepository;
+    
+    @Autowired
+    private ProductInventoryLimitRepository productInventoryLimitRepository;
+      @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        objectMapper = new ObjectMapper();
-        objectMapper.findAndRegisterModules(); // Đăng ký các module hỗ trợ, bao gồm JavaTimeModule
+        // Xóa dữ liệu cũ để đảm bảo môi trường sạch - Clean up in proper order to respect foreign key constraints
+        // First clear associations and dependent entities
+        wishRepository.deleteAll();
+        preorderRepository.deleteAll();
+        reviewRepository.deleteAll();
+        
+        // Clear variants and associated entities
+        cartVariantRepository.deleteAll();
+        orderVariantRepository.deleteAll();
+        countVariantRepository.deleteAll();
+        docketVariantRepository.deleteAll();
+        purchaseOrderVariantRepository.deleteAll();
+        
+        // Clear inventory related entities
+        storageLocationRepository.deleteAll();
+        variantInventoryLimitRepository.deleteAll();
+        
+        // Clear product inventory limits
+        productInventoryLimitRepository.deleteAll();
+        
+        // Clear images
+        imageRepository.deleteAll();
+        
+        // Clear promotion products (join tables for many-to-many relationships)
+        promotionRepository.findAll().forEach(promotion -> {
+            promotion.getProducts().clear();
+            promotionRepository.save(promotion);
+        });
+        
+        // Clear variants
+        variantRepository.deleteAll();
+        
+        // Clear product_tag join table
+        productRepository.findAll().forEach(product -> {
+            product.getTags().clear();
+            productRepository.save(product);
+        });
+        
+        // Now we can safely clear products
+        productRepository.deleteAll();
+        
+        // Finally, clear categories and tags
+        categoryRepository.deleteAll();
+        tagRepository.deleteAll();
     }
-
-    private String toJson(Object object) {
-        try {
-            return objectMapper.writeValueAsString(object);
-        } catch (JsonProcessingException e) {
-            return "Error converting to JSON: " + e.getMessage();
-        }
-    }
-
+    /**
+     * Test Case ID: CIT001
+     * Tên test: testCreateCategory
+     * Mục tiêu: Kiểm tra việc tạo mới danh mục sản phẩm
+     * Đầu vào: Một đối tượng Category với name="Electronics", slug="electronics", 
+     *          description="Category for electronic products", status=1
+     * Đầu ra mong đợi: Category được lưu thành công với ID không null và các thông tin khớp với đầu vào
+     * Ghi chú: Kiểm tra chức năng cơ bản của việc tạo danh mục
+     */
     @Test
     public void testCreateCategory() {
         // Arrange
         Category category = new Category();
         category.setName("Electronics");
         category.setSlug("electronics");
-        System.out.println("Input: " + toJson(category));
-
-        when(categoryRepository.save(category)).thenReturn(category);
+        category.setDescription("Category for electronic products");
+        category.setStatus(1); // Thiết lập giá trị cho status
+        System.out.println("Input: Category [name=Electronics, slug=electronics, description=Category for electronic products, status=1]");
 
         // Act
         Category savedCategory = categoryRepository.save(category);
-        System.out.println("Output: " + toJson(savedCategory));
+        System.out.println("Expected Output: Saved Category with non-null ID and matching attributes");
 
         // Assert
-        assertNotNull(savedCategory, "Saved category should not be null");
+        assertNotNull(savedCategory.getId(), "Saved category ID should not be null");
         assertEquals("Electronics", savedCategory.getName(), "Category name should match");
         assertEquals("electronics", savedCategory.getSlug(), "Category slug should match");
-        verify(categoryRepository, times(1)).save(category);
-    }
-
+        assertEquals("Category for electronic products", savedCategory.getDescription(), "Category description should match");
+        assertEquals(1, savedCategory.getStatus(), "Category status should match");
+    }    /**
+     * Test Case ID: CIT002
+     * Tên test: testUpdateCategory
+     * Mục tiêu: Kiểm tra việc cập nhật thông tin danh mục sản phẩm
+     * Đầu vào: Danh mục đã tồn tại với name="Electronics" và cập nhật thành name="Updated Electronics",
+     *          description="Updated description"
+     * Đầu ra mong đợi: Category được cập nhật thành công với thông tin mới
+     * Ghi chú: Kiểm tra chức năng cập nhật danh mục
+     */
     @Test
     public void testUpdateCategory() {
         // Arrange
-        Category existingCategory = new Category();
-        existingCategory.setId(1L);
-        existingCategory.setName("Electronics");
-        existingCategory.setSlug("electronics");
-        System.out.println("Input (Existing Category): " + toJson(existingCategory));
-
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(existingCategory));
+        Category category = new Category();
+        category.setName("Electronics");
+        category.setSlug("electronics");
+        category.setDescription("Category for electronic products");
+        category.setStatus(1); // Thiết lập giá trị cho status
+        Category savedCategory = categoryRepository.save(category);
+        System.out.println("Input: Existing Category [id=" + savedCategory.getId() + 
+                          "] with updates [name=Updated Electronics, description=Updated description]");
 
         // Act
-        Optional<Category> categoryOptional = categoryRepository.findById(1L);
-        assertTrue(categoryOptional.isPresent(), "Category should exist");
-        Category categoryToUpdate = categoryOptional.get();
-        categoryToUpdate.setName("Updated Electronics");
-        categoryToUpdate.setSlug("updated-electronics");
-        System.out.println("Input (Updated Category): " + toJson(categoryToUpdate));
-
-        when(categoryRepository.save(categoryToUpdate)).thenReturn(categoryToUpdate);
-        Category updatedCategory = categoryRepository.save(categoryToUpdate);
-        System.out.println("Output: " + toJson(updatedCategory));
+        savedCategory.setName("Updated Electronics");
+        savedCategory.setDescription("Updated description");
+        Category updatedCategory = categoryRepository.save(savedCategory);
+        System.out.println("Expected Output: Updated Category with new values [name=Updated Electronics, description=Updated description]");
 
         // Assert
-        assertNotNull(updatedCategory, "Updated category should not be null");
         assertEquals("Updated Electronics", updatedCategory.getName(), "Updated name should match");
-        assertEquals("updated-electronics", updatedCategory.getSlug(), "Updated slug should match");
-        verify(categoryRepository, times(1)).findById(1L);
-        verify(categoryRepository, times(1)).save(categoryToUpdate);
-    }
-
+        assertEquals("Updated description", updatedCategory.getDescription(), "Updated description should match");
+        assertEquals(1, updatedCategory.getStatus(), "Category status should match");
+    }    /**
+     * Test Case ID: CIT003
+     * Tên test: testDeleteCategory
+     * Mục tiêu: Kiểm tra việc xóa danh mục sản phẩm
+     * Đầu vào: ID của danh mục đã tồn tại trong cơ sở dữ liệu
+     * Đầu ra mong đợi: Danh mục bị xóa khỏi cơ sở dữ liệu, không thể tìm thấy bằng ID
+     * Ghi chú: Kiểm tra chức năng xóa danh mục
+     */
     @Test
     public void testDeleteCategory() {
         // Arrange
-        Long categoryId = 1L;
-        System.out.println("Input (Category ID to delete): " + categoryId);
-        doNothing().when(categoryRepository).deleteById(categoryId);
-
-        // Act
-        categoryRepository.deleteById(categoryId);
-        System.out.println("Output: Category with ID " + categoryId + " deleted successfully.");
-
-        // Assert
-        verify(categoryRepository, times(1)).deleteById(categoryId);
-    }
-
-    @Test
-    public void testGetAllCategories() {
-        // Arrange
         Category category = new Category();
         category.setName("Electronics");
         category.setSlug("electronics");
-        List<Category> categories = Collections.singletonList(category);
-        System.out.println("Mocked Output (All Categories): " + toJson(categories));
-
-        when(categoryRepository.findAll()).thenReturn(categories);
-
-        // Act
-        List<Category> result = categoryRepository.findAll();
-        System.out.println("Output: " + toJson(result));
-
-        // Assert
-        assertNotNull(result, "Categories list should not be null");
-        assertEquals(1, result.size(), "Categories list size should be 1");
-        assertEquals("Electronics", result.get(0).getName(), "Category name should match");
-        verify(categoryRepository, times(1)).findAll();
-    }
-
-    @Test
-    public void testGetCategoryBySlug() {
-        // Arrange
-        String slug = "electronics";
-        Category category = new Category();
-        category.setName("Electronics");
-        category.setSlug(slug);
-        System.out.println("Input (Slug): " + slug);
-        System.out.println("Mocked Output (Category): " + toJson(category));
-
-        when(categoryRepository.findBySlug(slug)).thenReturn(Optional.of(category));
-
-        // Act
-        Optional<Category> categoryOptional = categoryRepository.findBySlug(slug);
-        System.out.println("Output: " + toJson(categoryOptional.orElse(null)));
-
-        // Assert
-        assertTrue(categoryOptional.isPresent(), "Category should exist");
-        assertEquals("Electronics", categoryOptional.get().getName(), "Category name should match");
-        assertEquals(slug, categoryOptional.get().getSlug(), "Category slug should match");
-        verify(categoryRepository, times(1)).findBySlug(slug);
-    }
-
-    @Test
-    public void testGetCategoryBySlug_NotFound() {
-        // Arrange
-        String slug = "non-existent";
-        System.out.println("Input (Slug): " + slug);
-        System.out.println("Mocked Output: Category not found.");
-
-        when(categoryRepository.findBySlug(slug)).thenReturn(Optional.empty());
-
-        // Act
-        Optional<Category> categoryOptional = categoryRepository.findBySlug(slug);
-        System.out.println("Output: " + toJson(categoryOptional.orElse(null)));
-
-        // Assert
-        assertFalse(categoryOptional.isPresent(), "Category should not exist");
-        verify(categoryRepository, times(1)).findBySlug(slug);
-    }
-    
-    // Additional white-box tests
-    
-    @Test
-    public void testGetCategoryById() {
-        // Arrange
-        Long id = 1L;
-        Category category = new Category();
-        category.setId(id);
-        category.setName("Electronics");
-        category.setSlug("electronics");
-        System.out.println("Input (ID): " + id);
-        System.out.println("Mocked Output (Category): " + toJson(category));
-
-        when(categoryRepository.findById(id)).thenReturn(Optional.of(category));
-
-        // Act
-        Optional<Category> categoryOptional = categoryRepository.findById(id);
-        System.out.println("Output: " + toJson(categoryOptional.orElse(null)));
-
-        // Assert
-        assertTrue(categoryOptional.isPresent(), "Category should exist");
-        assertEquals(id, categoryOptional.get().getId(), "Category ID should match");
-        assertEquals("Electronics", categoryOptional.get().getName(), "Category name should match");
-        verify(categoryRepository, times(1)).findById(id);
-    }
-    
-    @Test
-    public void testGetCategoryById_NotFound() {
-        // Arrange
-        Long id = 999L;
-        System.out.println("Input (ID): " + id);
-        System.out.println("Mocked Output: Category not found.");
-
-        when(categoryRepository.findById(id)).thenReturn(Optional.empty());
-
-        // Act
-        Optional<Category> categoryOptional = categoryRepository.findById(id);
-        System.out.println("Output: " + toJson(categoryOptional.orElse(null)));
-
-        // Assert
-        assertFalse(categoryOptional.isPresent(), "Category should not exist");
-        verify(categoryRepository, times(1)).findById(id);
-    }
-    
-    @Test
-    public void testCreateCategoryWithNestedAttributes() {
-        // Arrange
-        Category category = new Category();
-        category.setName("Electronics");
-        category.setSlug("electronics");
-        category.setDescription("Electronic devices and accessories");
-        category.setStatus(1);
-        System.out.println("Input: " + toJson(category));
-
-        when(categoryRepository.save(category)).thenReturn(category);
-
-        // Act
+        category.setDescription("Category for electronic products");
+        category.setStatus(1); // Thiết lập giá trị cho status
         Category savedCategory = categoryRepository.save(category);
-        System.out.println("Output: " + toJson(savedCategory));
-
-        // Assert
-        assertNotNull(savedCategory, "Saved category should not be null");
-        assertEquals("Electronics", savedCategory.getName(), "Category name should match");
-        assertEquals("electronics", savedCategory.getSlug(), "Category slug should match");
-        assertEquals("Electronic devices and accessories", savedCategory.getDescription(), "Category description should match");
-        assertEquals(1, savedCategory.getStatus(), "Category status should match");
-        verify(categoryRepository, times(1)).save(category);
-    }
-    
-    @Test
-    public void testFindParentCategories() {
-        // Arrange
-        Category parentCategory1 = new Category();
-        parentCategory1.setId(1L);
-        parentCategory1.setName("Electronics");
-        parentCategory1.setSlug("electronics");
-        
-        Category parentCategory2 = new Category();
-        parentCategory2.setId(2L);
-        parentCategory2.setName("Clothing");
-        parentCategory2.setSlug("clothing");
-        
-        List<Category> parentCategories = Arrays.asList(parentCategory1, parentCategory2);
-        System.out.println("Mocked Output (Parent Categories): " + toJson(parentCategories));
-
-        when(categoryRepository.findByParentCategoryIsNull()).thenReturn(parentCategories);
+        System.out.println("Input: Category ID to delete = " + savedCategory.getId());
 
         // Act
-        List<Category> result = categoryRepository.findByParentCategoryIsNull();
-        System.out.println("Output: " + toJson(result));
+        categoryRepository.deleteById(savedCategory.getId());
+        System.out.println("Expected Output: Category with ID = " + savedCategory.getId() + " no longer exists in database");
 
         // Assert
-        assertNotNull(result, "Parent categories list should not be null");
-        assertEquals(2, result.size(), "Parent categories list size should be 2");
-        assertEquals("Electronics", result.get(0).getName(), "First category name should match");
-        assertEquals("Clothing", result.get(1).getName(), "Second category name should match");
-        verify(categoryRepository, times(1)).findByParentCategoryIsNull();
-    }
-    
+        Optional<Category> deletedCategory = categoryRepository.findById(savedCategory.getId());
+        assertFalse(deletedCategory.isPresent(), "Category should be deleted");
+    }    /**
+     * Test Case ID: CIT004
+     * Tên test: testFindAllCategories
+     * Mục tiêu: Kiểm tra việc lấy tất cả danh mục sản phẩm
+     * Đầu vào: Hai danh mục "Electronics" và "Furniture" đã được lưu vào cơ sở dữ liệu
+     * Đầu ra mong đợi: Danh sách các danh mục có kích thước bằng 2
+     * Ghi chú: Kiểm tra chức năng lấy tất cả danh mục
+     */
     @Test
-    public void testCreateNestedCategory() {
+    public void testFindAllCategories() {
+        // Arrange
+        Category category1 = new Category();
+        category1.setName("Electronics");
+        category1.setSlug("electronics");
+        category1.setDescription("Category for electronic products");
+        category1.setStatus(1); // Thiết lập giá trị cho status
+
+        Category category2 = new Category();
+        category2.setName("Furniture");
+        category2.setSlug("furniture");
+        category2.setDescription("Category for furniture products");
+        category2.setStatus(1); // Thiết lập giá trị cho status
+
+        categoryRepository.save(category1);
+        categoryRepository.save(category2);
+        System.out.println("Input: Database with two categories - 'Electronics' and 'Furniture'");
+
+        // Act
+        List<Category> categories = categoryRepository.findAll();
+        System.out.println("Expected Output: List containing 2 categories");
+
+        // Assert
+        assertEquals(2, categories.size(), "There should be 2 categories");
+    }    /**
+     * Test Case ID: CIT005
+     * Tên test: testFindCategoryBySlug
+     * Mục tiêu: Kiểm tra việc tìm kiếm danh mục theo slug
+     * Đầu vào: Slug "electronics" của danh mục đã tồn tại trong cơ sở dữ liệu
+     * Đầu ra mong đợi: Tìm thấy danh mục với name="Electronics"
+     * Ghi chú: Kiểm tra chức năng tìm kiếm danh mục theo slug
+     */
+    @Test
+    public void testFindCategoryBySlug() {
+        // Arrange
+        Category category = new Category();
+        category.setName("Electronics");
+        category.setSlug("electronics");
+        category.setDescription("Category for electronic products");
+        category.setStatus(1); // Thiết lập giá trị cho status
+        categoryRepository.save(category);
+        System.out.println("Input: Search for category with slug='electronics'");
+
+        // Act
+        Optional<Category> foundCategory = categoryRepository.findBySlug("electronics");
+        System.out.println("Expected Output: Found category with name='Electronics'");
+
+        // Assert
+        assertTrue(foundCategory.isPresent(), "Category should exist");
+        assertEquals("Electronics", foundCategory.get().getName(), "Category name should match");
+    }    /**
+     * Test Case ID: CIT006
+     * Tên test: testFindCategoryBySlug_NotFound
+     * Mục tiêu: Kiểm tra việc tìm kiếm danh mục với slug không tồn tại
+     * Đầu vào: Slug "non-existent-slug" không tồn tại trong cơ sở dữ liệu
+     * Đầu ra mong đợi: Không tìm thấy danh mục nào (empty Optional)
+     * Ghi chú: Kiểm tra xử lý khi không tìm thấy dữ liệu
+     */
+    @Test
+    public void testFindCategoryBySlug_NotFound() {
+        // Act
+        System.out.println("Input: Search for category with non-existent slug='non-existent-slug'");
+        Optional<Category> foundCategory = categoryRepository.findBySlug("non-existent-slug");
+        System.out.println("Expected Output: No category found (empty Optional)");
+
+        // Assert
+        assertFalse(foundCategory.isPresent(), "Category should not exist");
+    }    /**
+     * Test Case ID: CIT007
+     * Tên test: testFindCategoriesWithNoParent
+     * Mục tiêu: Kiểm tra việc tìm kiếm danh mục không có danh mục cha
+     * Đầu vào: Một danh mục cha "Parent Category" và một danh mục con "Child Category" 
+     *          có tham chiếu đến danh mục cha
+     * Đầu ra mong đợi: Danh sách chứa một danh mục (Parent Category) không có danh mục cha
+     * Ghi chú: Kiểm tra chức năng tìm kiếm danh mục theo mối quan hệ phân cấp
+     */
+    @Test
+    public void testFindCategoriesWithNoParent() {
         // Arrange
         Category parentCategory = new Category();
-        parentCategory.setId(1L);
-        parentCategory.setName("Electronics");
-        parentCategory.setSlug("electronics");
-        
+        parentCategory.setName("Parent Category");
+        parentCategory.setSlug("parent-category");
+        parentCategory.setDescription("Parent category");
+        parentCategory.setStatus(1); // Thiết lập giá trị cho status
+        categoryRepository.save(parentCategory);
+
         Category childCategory = new Category();
-        childCategory.setName("Smartphones");
-        childCategory.setSlug("smartphones");
+        childCategory.setName("Child Category");
+        childCategory.setSlug("child-category");
+        childCategory.setDescription("Child category");
+        childCategory.setStatus(1); // Thiết lập giá trị cho status
         childCategory.setParentCategory(parentCategory);
-        System.out.println("Input (Child Category): " + toJson(childCategory));
-
-        when(categoryRepository.save(childCategory)).thenReturn(childCategory);
-
-        // Act
-        Category savedCategory = categoryRepository.save(childCategory);
-        System.out.println("Output: " + toJson(savedCategory));
-
-        // Assert
-        assertNotNull(savedCategory, "Saved category should not be null");
-        assertEquals("Smartphones", savedCategory.getName(), "Category name should match");
-        assertNotNull(savedCategory.getParentCategory(), "Parent category should not be null");
-        assertEquals("Electronics", savedCategory.getParentCategory().getName(), "Parent category name should match");
-        verify(categoryRepository, times(1)).save(childCategory);
-    }
-    
-    @Test
-    public void testUpdateCategoryMaintainingHierarchy() {
-        // Arrange
-        Category parentCategory = new Category();
-        parentCategory.setId(1L);
-        parentCategory.setName("Electronics");
-        parentCategory.setSlug("electronics");
-        
-        Category childCategory = new Category();
-        childCategory.setId(2L);
-        childCategory.setName("Smartphones");
-        childCategory.setSlug("smartphones");
-        childCategory.setParentCategory(parentCategory);
-        System.out.println("Input (Existing Child Category): " + toJson(childCategory));
-
-        when(categoryRepository.findById(2L)).thenReturn(Optional.of(childCategory));
+        categoryRepository.save(childCategory);
+        System.out.println("Input: Database with one parent category 'Parent Category' and one child category 'Child Category'");
 
         // Act
-        Optional<Category> categoryOptional = categoryRepository.findById(2L);
-        assertTrue(categoryOptional.isPresent(), "Category should exist");
-        Category categoryToUpdate = categoryOptional.get();
-        categoryToUpdate.setName("Mobile Phones");
-        // Keep the same parent category
-        System.out.println("Input (Updated Child Category): " + toJson(categoryToUpdate));
-
-        when(categoryRepository.save(categoryToUpdate)).thenReturn(categoryToUpdate);
-        Category updatedCategory = categoryRepository.save(categoryToUpdate);
-        System.out.println("Output: " + toJson(updatedCategory));
+        List<Category> categoriesWithoutParent = categoryRepository.findByParentCategoryIsNull();
+        System.out.println("Expected Output: List containing only 1 category ('Parent Category') with no parent");
 
         // Assert
-        assertNotNull(updatedCategory, "Updated category should not be null");
-        assertEquals("Mobile Phones", updatedCategory.getName(), "Updated name should match");
-        assertNotNull(updatedCategory.getParentCategory(), "Parent category should still exist");
-        assertEquals("Electronics", updatedCategory.getParentCategory().getName(), "Parent category name should be unchanged");
-        verify(categoryRepository, times(1)).findById(2L);
-        verify(categoryRepository, times(1)).save(categoryToUpdate);
+        assertEquals(1, categoriesWithoutParent.size(), "There should be 1 category without a parent");
+        assertEquals("Parent Category", categoriesWithoutParent.get(0).getName(), "Category name should match");
     }
-    
-    @Test
-    public void testDeleteAllCategories() {
-        // Arrange
-        System.out.println("Input: Request to delete all categories");
-        doNothing().when(categoryRepository).deleteAll();
-
-        // Act
-        categoryRepository.deleteAll();
-        System.out.println("Output: All categories deleted successfully.");
-
-        // Assert
-        verify(categoryRepository, times(1)).deleteAll();
-    }
-    
-//    @Test
-//    public void testExistsBySlug() {
-//        // Arrange
-//        String slug = "electronics";
-//        System.out.println("Input (Slug to check): " + slug);
-//
-//        when(categoryRepository.existsBySlug(slug)).thenReturn(true);
-//
-//        // Act
-//        boolean exists = categoryRepository.existsBySlug(slug);
-//        System.out.println("Output: Category with slug '" + slug + "' exists: " + exists);
-//
-//        // Assert
-//        assertTrue(exists, "Category should exist with the given slug");
-//        verify(categoryRepository, times(1)).existsBySlug(slug);
-//    }
-//
-//    @Test
-//    public void testExistsBySlug_NotExists() {
-//        // Arrange
-//        String slug = "non-existent";
-//        System.out.println("Input (Slug to check): " + slug);
-//
-//        when(categoryRepository.existsBySlug(slug)).thenReturn(false);
-//
-//        // Act
-//        boolean exists = categoryRepository.existsBySlug(slug);
-//        System.out.println("Output: Category with slug '" + slug + "' exists: " + exists);
-//
-//        // Assert
-//        assertFalse(exists, "Category should not exist with the given slug");
-//        verify(categoryRepository, times(1)).existsBySlug(slug);
-//    }
 }

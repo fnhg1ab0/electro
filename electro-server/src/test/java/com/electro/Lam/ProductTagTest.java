@@ -1,179 +1,346 @@
 package com.electro.Lam;
 
+import com.electro.entity.product.Product;
 import com.electro.entity.product.Tag;
+import com.electro.repository.cart.CartVariantRepository;
+import com.electro.repository.client.PreorderRepository;
+import com.electro.repository.client.WishRepository;
+import com.electro.repository.general.ImageRepository;
+import com.electro.repository.inventory.*;
+import com.electro.repository.order.OrderVariantRepository;
+import com.electro.repository.product.ProductRepository;
 import com.electro.repository.product.TagRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.electro.repository.product.VariantRepository;
+import com.electro.repository.promotion.PromotionRepository;
+import com.electro.repository.review.ReviewRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
+/**
+ * Integration tests for Tag entity interacting directly with the database
+ * Uses @SpringBootTest to load the full application context
+ * Uses @Transactional to rollback changes after each test
+ * Uses @ActiveProfiles("test") to use test-specific properties
+ */
+@SpringBootTest
+@ActiveProfiles("test")
+@Transactional
 public class ProductTagTest {
 
-    @Mock
+    @Autowired
+    private ProductRepository productRepository;
+
+
+    @Autowired
+    private VariantRepository variantRepository;
+
+    @Autowired
+    private StorageLocationRepository storageLocationRepository;
+
+    @Autowired
+    private VariantInventoryLimitRepository variantInventoryLimitRepository;
+
+    @Autowired
+    private CartVariantRepository cartVariantRepository;
+
+    @Autowired
+    private CountVariantRepository countVariantRepository;
+
+    @Autowired
+    private DocketVariantRepository docketVariantRepository;
+
+    @Autowired
+    private PurchaseOrderVariantRepository purchaseOrderVariantRepository;
+
+    @Autowired
+    private OrderVariantRepository orderVariantRepository;
+
+    @Autowired
+    private ImageRepository imageRepository;
+
+    @Autowired
+    private WishRepository wishRepository;
+
+    @Autowired
+    private PreorderRepository preorderRepository;
+
+    @Autowired
+    private ReviewRepository reviewRepository;
+
+    @Autowired
+    private PromotionRepository promotionRepository;
+    @Autowired
     private TagRepository tagRepository;
 
-    private ObjectMapper objectMapper;
-
+    @Autowired
+    private ProductInventoryLimitRepository productInventoryLimitRepository;
+    
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        objectMapper = new ObjectMapper();
-        objectMapper.findAndRegisterModules(); // Register modules for JSON serialization
-    }
+        wishRepository.deleteAll();
+        preorderRepository.deleteAll();
+        reviewRepository.deleteAll();
 
-    private String toJson(Object object) {
-        try {
-            return objectMapper.writeValueAsString(object);
-        } catch (JsonProcessingException e) {
-            return "Error converting to JSON: " + e.getMessage();
-        }
-    }
+        // Clear variants and associated entities
+        cartVariantRepository.deleteAll();
+        orderVariantRepository.deleteAll();
+        countVariantRepository.deleteAll();
+        docketVariantRepository.deleteAll();
+        purchaseOrderVariantRepository.deleteAll();
 
+        // Clear inventory related entities
+        storageLocationRepository.deleteAll();
+        variantInventoryLimitRepository.deleteAll();
+
+        // Clear product inventory limits
+        productInventoryLimitRepository.deleteAll();
+
+        // Clear images
+        imageRepository.deleteAll();
+
+        // Clear promotion products (join tables for many-to-many relationships)
+        promotionRepository.findAll().forEach(promotion -> {
+            promotion.getProducts().clear();
+            promotionRepository.save(promotion);
+        });
+
+        // Clear variants
+        variantRepository.deleteAll();
+
+        // Clear product_tag join table
+        productRepository.findAll().forEach(product -> {
+            product.getTags().clear();
+            productRepository.save(product);
+        });
+
+        // Now we can safely clear products
+        productRepository.deleteAll();
+        tagRepository.deleteAll();
+    }
+    
+    /**
+     * Test Case ID: TIT001
+     * Tên test: testCreateTag
+     * Mục tiêu: Kiểm tra việc tạo mới thẻ sản phẩm
+     * Đầu vào: Một đối tượng Tag với name="Electronics", slug="electronics", status=1
+     * Đầu ra mong đợi: Tag được lưu thành công với ID không null và các thông tin khớp với đầu vào
+     * Ghi chú: Kiểm tra chức năng cơ bản của việc tạo thẻ sản phẩm
+     */
     @Test
     public void testCreateTag() {
         // Arrange
         Tag tag = new Tag();
         tag.setName("Electronics");
         tag.setSlug("electronics");
-        tag.setStatus(1); // Active status
-        System.out.println("Input: " + toJson(tag));
-
-        when(tagRepository.save(tag)).thenReturn(tag);
-
+        tag.setStatus(1);
+        System.out.println("Input: Tag [name=Electronics, slug=electronics, status=1]");
+        
         // Act
         Tag savedTag = tagRepository.save(tag);
-        System.out.println("Output: " + toJson(savedTag));
-
+        System.out.println("Expected Output: Saved Tag with non-null ID and matching attributes");
+        
         // Assert
-        assertNotNull(savedTag, "Saved tag should not be null");
+        assertNotNull(savedTag.getId(), "Saved tag ID should not be null");
         assertEquals("Electronics", savedTag.getName(), "Tag name should match");
         assertEquals("electronics", savedTag.getSlug(), "Tag slug should match");
         assertEquals(1, savedTag.getStatus(), "Tag status should match");
-        verify(tagRepository, times(1)).save(tag);
     }
-
+    
+    /**
+     * Test Case ID: TIT002
+     * Tên test: testUpdateTag
+     * Mục tiêu: Kiểm tra việc cập nhật thông tin thẻ sản phẩm
+     * Đầu vào: Thẻ đã tồn tại với name="Electronics" và cập nhật thành 
+     *          name="Updated Electronics", slug="updated-electronics"
+     * Đầu ra mong đợi: Tag được cập nhật thành công với thông tin mới
+     * Ghi chú: Kiểm tra chức năng cập nhật thẻ sản phẩm
+     */
     @Test
     public void testUpdateTag() {
-        // Arrange
-        Tag existingTag = new Tag();
-        existingTag.setId(1L);
-        existingTag.setName("Electronics");
-        existingTag.setSlug("electronics");
-        existingTag.setStatus(1); // Active status
-        System.out.println("Input (Existing Tag): " + toJson(existingTag));
-
-        when(tagRepository.findById(1L)).thenReturn(Optional.of(existingTag));
-
-        // Act
-        Optional<Tag> tagOptional = tagRepository.findById(1L);
-        assertTrue(tagOptional.isPresent(), "Tag should exist");
-        Tag tagToUpdate = tagOptional.get();
-        tagToUpdate.setName("Home Appliances");
-        tagToUpdate.setSlug("home-appliances");
-        tagToUpdate.setStatus(0); // Inactive status
-        System.out.println("Input (Updated Tag): " + toJson(tagToUpdate));
-
-        when(tagRepository.save(tagToUpdate)).thenReturn(tagToUpdate);
-        Tag updatedTag = tagRepository.save(tagToUpdate);
-        System.out.println("Output: " + toJson(updatedTag));
-
+        // Arrange - Create and save a tag
+        Tag tag = new Tag();
+        tag.setName("Electronics");
+        tag.setSlug("electronics");
+        tag.setStatus(1);
+        Tag savedTag = tagRepository.save(tag);
+        System.out.println("Input: Existing Tag [id=" + savedTag.getId() + 
+                         "] with updates [name=Updated Electronics, slug=updated-electronics]");
+        
+        // Act - Update the tag
+        savedTag.setName("Updated Electronics");
+        savedTag.setSlug("updated-electronics");
+        Tag updatedTag = tagRepository.save(savedTag);
+        System.out.println("Expected Output: Updated Tag with new values [name=Updated Electronics, slug=updated-electronics]");
+        
         // Assert
-        assertNotNull(updatedTag, "Updated tag should not be null");
-        assertEquals("Home Appliances", updatedTag.getName(), "Updated name should match");
-        assertEquals("home-appliances", updatedTag.getSlug(), "Updated slug should match");
-        assertEquals(0, updatedTag.getStatus(), "Updated status should match");
-        verify(tagRepository, times(1)).findById(1L);
-        verify(tagRepository, times(1)).save(tagToUpdate);
+        assertEquals("Updated Electronics", updatedTag.getName(), "Updated name should match");
+        assertEquals("updated-electronics", updatedTag.getSlug(), "Updated slug should match");
     }
-
+    
+    /**
+     * Test Case ID: TIT003
+     * Tên test: testDeleteTag
+     * Mục tiêu: Kiểm tra việc xóa thẻ sản phẩm
+     * Đầu vào: ID của thẻ đã tồn tại trong cơ sở dữ liệu
+     * Đầu ra mong đợi: Thẻ bị xóa khỏi cơ sở dữ liệu, không thể tìm thấy bằng ID
+     * Ghi chú: Kiểm tra chức năng xóa thẻ sản phẩm
+     */
     @Test
     public void testDeleteTag() {
-        // Arrange
-        Long tagId = 1L;
-        System.out.println("Input (Tag ID to delete): " + tagId);
-        doNothing().when(tagRepository).deleteById(tagId);
-
-        // Act
+        // Arrange - Create and save a tag
+        Tag tag = new Tag();
+        tag.setName("Electronics");
+        tag.setSlug("electronics");
+        tag.setStatus(1);
+        Tag savedTag = tagRepository.save(tag);
+        Long tagId = savedTag.getId();
+        System.out.println("Input: Tag ID to delete = " + tagId);
+        
+        // Act - Delete the tag
         tagRepository.deleteById(tagId);
-        System.out.println("Output: Tag with ID " + tagId + " deleted successfully.");
-
+        System.out.println("Expected Output: Tag with ID = " + tagId + " no longer exists in database");
+        
         // Assert
-        verify(tagRepository, times(1)).deleteById(tagId);
+        Optional<Tag> deletedTag = tagRepository.findById(tagId);
+        assertFalse(deletedTag.isPresent(), "Tag should be deleted");
     }
-
+    
+    /**
+     * Test Case ID: TIT004
+     * Tên test: testGetAllTags
+     * Mục tiêu: Kiểm tra việc lấy tất cả thẻ sản phẩm
+     * Đầu vào: Hai thẻ "Electronics" và "Discount" đã được lưu vào cơ sở dữ liệu
+     * Đầu ra mong đợi: Danh sách các thẻ có kích thước bằng 2
+     * Ghi chú: Kiểm tra chức năng lấy tất cả thẻ sản phẩm
+     */
     @Test
     public void testGetAllTags() {
-        // Arrange
-        Tag tag = new Tag();
-        tag.setName("Electronics");
-        tag.setSlug("electronics");
-        tag.setStatus(1); // Active status
-        List<Tag> tags = Collections.singletonList(tag);
-        System.out.println("Mocked Output (All Tags): " + toJson(tags));
-
-        when(tagRepository.findAll()).thenReturn(tags);
-
+        // Arrange - Create and save two tags
+        Tag tag1 = new Tag();
+        tag1.setName("Electronics");
+        tag1.setSlug("electronics");
+        tag1.setStatus(1);
+        
+        Tag tag2 = new Tag();
+        tag2.setName("Discount");
+        tag2.setSlug("discount");
+        tag2.setStatus(1);
+        
+        tagRepository.save(tag1);
+        tagRepository.save(tag2);
+        System.out.println("Input: Database with two tags - 'Electronics' and 'Discount'");
+        
         // Act
-        List<Tag> result = tagRepository.findAll();
-        System.out.println("Output: " + toJson(result));
-
+        List<Tag> tags = tagRepository.findAll();
+        System.out.println("Expected Output: List containing 2 tags");
+        
         // Assert
-        assertNotNull(result, "Tags list should not be null");
-        assertEquals(1, result.size(), "Tags list size should be 1");
-        assertEquals("Electronics", result.get(0).getName(), "Tag name should match");
-        assertEquals(1, result.get(0).getStatus(), "Tag status should match");
-        verify(tagRepository, times(1)).findAll();
+        assertEquals(2, tags.size(), "There should be 2 tags");
     }
-
+    
+    /**
+     * Test Case ID: TIT005
+     * Tên test: testGetTagById
+     * Mục tiêu: Kiểm tra việc tìm kiếm thẻ sản phẩm theo ID
+     * Đầu vào: ID của thẻ đã tồn tại trong cơ sở dữ liệu
+     * Đầu ra mong đợi: Tìm thấy thẻ với name="Electronics"
+     * Ghi chú: Kiểm tra chức năng tìm kiếm thẻ sản phẩm theo ID
+     */
     @Test
     public void testGetTagById() {
-        // Arrange
-        Long tagId = 1L;
+        // Arrange - Create and save a tag
         Tag tag = new Tag();
-        tag.setId(tagId);
         tag.setName("Electronics");
         tag.setSlug("electronics");
-        tag.setStatus(1); // Active status
-        System.out.println("Input (Tag ID): " + tagId);
-        System.out.println("Mocked Output (Tag): " + toJson(tag));
-
-        when(tagRepository.findById(tagId)).thenReturn(Optional.of(tag));
-
+        tag.setStatus(1);
+        Tag savedTag = tagRepository.save(tag);
+        Long tagId = savedTag.getId();
+        System.out.println("Input: Search for tag with id=" + tagId);
+        
         // Act
-        Optional<Tag> tagOptional = tagRepository.findById(tagId);
-        System.out.println("Output: " + toJson(tagOptional.orElse(null)));
-
+        Optional<Tag> foundTag = tagRepository.findById(tagId);
+        System.out.println("Expected Output: Found tag with name='Electronics'");
+        
         // Assert
-        assertTrue(tagOptional.isPresent(), "Tag should exist");
-        assertEquals("Electronics", tagOptional.get().getName(), "Tag name should match");
-        assertEquals(1, tagOptional.get().getStatus(), "Tag status should match");
-        verify(tagRepository, times(1)).findById(tagId);
+        assertTrue(foundTag.isPresent(), "Tag should exist");
+        assertEquals("Electronics", foundTag.get().getName(), "Tag name should match");
     }
-
+    
+    /**
+     * Test Case ID: TIT006
+     * Tên test: testGetTagById_NotFound
+     * Mục tiêu: Kiểm tra việc tìm kiếm thẻ sản phẩm với ID không tồn tại
+     * Đầu vào: ID 999L không tồn tại trong cơ sở dữ liệu
+     * Đầu ra mong đợi: Không tìm thấy thẻ nào (empty Optional)
+     * Ghi chú: Kiểm tra xử lý khi không tìm thấy dữ liệu
+     */
     @Test
     public void testGetTagById_NotFound() {
-        // Arrange
-        Long tagId = 1L;
-        System.out.println("Input (Tag ID): " + tagId);
-        System.out.println("Mocked Output: Tag not found.");
-
-        when(tagRepository.findById(tagId)).thenReturn(Optional.empty());
-
+        // Non-existent ID (assuming no tag with ID 999 exists)
+        Long nonExistingId = 999L;
+        System.out.println("Input: Search for tag with non-existent id=" + nonExistingId);
+        
         // Act
-        Optional<Tag> tagOptional = tagRepository.findById(tagId);
-        System.out.println("Output: " + toJson(tagOptional.orElse(null)));
-
+        Optional<Tag> foundTag = tagRepository.findById(nonExistingId);
+        System.out.println("Expected Output: No tag found (empty Optional)");
+        
         // Assert
-        assertFalse(tagOptional.isPresent(), "Tag should not exist");
-        verify(tagRepository, times(1)).findById(tagId);
+        assertFalse(foundTag.isPresent(), "Tag should not exist");
+    }
+    
+    /**
+     * Test Case ID: TIT007
+     * Tên test: testTagProductAssociation
+     * Mục tiêu: Kiểm tra mối quan hệ nhiều-nhiều giữa Tag và Product
+     * Đầu vào: Một thẻ và một sản phẩm đã được liên kết với nhau
+     * Đầu ra mong đợi: Mối quan hệ được thiết lập đúng, danh sách products của tag phải chứa sản phẩm đã liên kết
+     * Ghi chú: Kiểm tra chức năng thiết lập mối quan hệ giữa thẻ và sản phẩm
+     */
+    @Test
+    public void testTagProductAssociation() {
+        // Arrange - Create a tag and a product
+        Tag tag = new Tag();
+        tag.setName("Electronics");
+        tag.setSlug("electronics");
+        tag.setStatus(1);
+        Tag savedTag = tagRepository.save(tag);
+        
+        Product product = new Product();
+        product.setName("Smartphone");
+        product.setCode("SP001");
+        product.setSlug("smartphone");
+        product.setStatus(1);
+        
+        // Establish the many-to-many relationship
+        Set<Tag> tags = new HashSet<>();
+        tags.add(savedTag);
+        product.setTags(tags);
+        Product savedProduct = productRepository.save(product);
+        
+        System.out.println("Input: Tag 'Electronics' associated with Product 'Smartphone'");
+        
+        // Refresh the tag from the database to get updated relationships
+        Optional<Tag> refreshedTag = tagRepository.findById(savedTag.getId());
+        System.out.println("Expected Output: Tag 'Electronics' contains Product 'Smartphone' in its products collection");
+        
+        // Assert
+        assertTrue(refreshedTag.isPresent(), "Tag should exist");
+        assertFalse(refreshedTag.get().getProducts().isEmpty(), "Tag should have associated products");
+        
+        // The product should be in the tag's products collection
+        boolean productFound = refreshedTag.get().getProducts().stream()
+            .anyMatch(p -> p.getId().equals(savedProduct.getId()));
+        assertTrue(productFound, "Product should be associated with the tag");
     }
 }

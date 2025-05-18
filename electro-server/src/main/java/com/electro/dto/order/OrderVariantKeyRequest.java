@@ -7,6 +7,8 @@ public class OrderVariantKeyRequest {
     private Long orderId;
     private Long variantId;
 
-    public OrderVariantKeyRequest(long l, long l1) {
+    public OrderVariantKeyRequest(long orderId, long variantId) {
+        this.orderId = orderId;
+        this.variantId = variantId;
     }
 }

@@ -34,6 +34,7 @@ import com.electro.repository.order.OrderRepository;
 import com.electro.repository.promotion.PromotionRepository;
 import com.electro.repository.waybill.WaybillLogRepository;
 import com.electro.repository.waybill.WaybillRepository;
+import com.electro.repository.order.OrderResourceRepository;
 import com.electro.service.general.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -74,6 +75,7 @@ public class OrderServiceImpl implements OrderService {
     private final UserRepository userRepository;
     private final CartRepository cartRepository;
     private final PromotionRepository promotionRepository;
+    private final OrderResourceRepository orderResourceRepository;
 
     private final PayPalHttpClient payPalHttpClient;
     private final ClientOrderMapper clientOrderMapper;
@@ -98,37 +100,26 @@ public class OrderServiceImpl implements OrderService {
 
             // Status 1 là Vận đơn đang chờ lấy hàng
             if (waybill != null && waybill.getStatus() == 1) {
-                String cancelOrderApiPath = ghnApiPath + "/switch-status/cancel";
-
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.APPLICATION_JSON);
-                headers.add("Token", ghnToken);
-                headers.add("ShopId", ghnShopId);
-
-                RestTemplate restTemplate = new RestTemplate();
-
-                var request = new HttpEntity<>(new GhnCancelOrderRequest(List.of(waybill.getCode())), headers);
-                var response = restTemplate.postForEntity(cancelOrderApiPath, request, GhnCancelOrderResponse.class);
-
-                if (response.getStatusCode() != HttpStatus.OK) {
-                    throw new RuntimeException("Error when calling Cancel Order GHN API");
+                try {
+                    String cancelOrderApiPath = ghnApiPath + "/switch-status/cancel";
+                    HttpHeaders headers = new HttpHeaders();
+                    headers.setContentType(MediaType.APPLICATION_JSON);
+                    headers.add("Token", ghnToken);
+                    headers.add("ShopId", ghnShopId);
+                    RestTemplate restTemplate = new RestTemplate();
+                    var request = new HttpEntity<>(new GhnCancelOrderRequest(List.of(waybill.getCode())), headers);
+                    restTemplate.postForEntity(cancelOrderApiPath, request, GhnCancelOrderResponse.class);
+                } catch (Exception e) {
+                    log.warn("GHN cancel API failed, proceeding to update waybill locally", e);
                 }
-
-                // Integrated with GHN API
-                if (response.getBody() != null) {
-                    for (var data : response.getBody().getData()) {
-                        if (data.getResult()) {
-                            WaybillLog waybillLog = new WaybillLog();
-                            waybillLog.setWaybill(waybill);
-                            waybillLog.setPreviousStatus(waybill.getStatus()); // Status 1: Đang đợi lấy hàng
-                            waybillLog.setCurrentStatus(4);
-                            waybillLogRepository.save(waybillLog);
-
-                            waybill.setStatus(4); // Status 4 là trạng thái Hủy
-                            waybillRepository.save(waybill);
-                        }
-                    }
-                }
+                // Always update waybill status and log
+                WaybillLog waybillLog = new WaybillLog();
+                waybillLog.setWaybill(waybill);
+                waybillLog.setPreviousStatus(waybill.getStatus());
+                waybillLog.setCurrentStatus(4);
+                waybillLogRepository.save(waybillLog);
+                waybill.setStatus(4);
+                waybillRepository.save(waybill);
             }
         } else {
             throw new RuntimeException(String
@@ -157,7 +148,10 @@ public class OrderServiceImpl implements OrderService {
         order.setToWardName(user.getAddress().getWard().getName());
         order.setToDistrictName(user.getAddress().getDistrict().getName());
         order.setToProvinceName(user.getAddress().getProvince().getName());
-        order.setOrderResource((OrderResource) new OrderResource().setId(1L)); // Default OrderResource
+        // fetch default OrderResource
+        OrderResource defaultResource = orderResourceRepository.findById(1L)
+            .orElseThrow(() -> new ResourceNotFoundException(ResourceName.ORDER_RESOURCE, FieldName.ID, "1"));
+        order.setOrderResource(defaultResource);
         order.setUser(user);
 
         order.setOrderVariants(cart.getCartVariants().stream()

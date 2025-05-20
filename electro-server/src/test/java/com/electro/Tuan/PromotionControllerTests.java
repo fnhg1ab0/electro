@@ -512,8 +512,8 @@ public class PromotionControllerTests {
         requestNode = objectMapper.valueToTree(request);
 
         // Thực hiện & Kiểm tra
-        Exception exception = assertThrows(
-                Exception.class,
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
                 () -> promotionController.createResource(requestNode)
         );
 

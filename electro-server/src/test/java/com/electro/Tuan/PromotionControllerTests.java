@@ -488,7 +488,6 @@ public class PromotionControllerTests {
      * Đầu vào: Yêu cầu tạo khuyến mãi với ngày kết thúc trước ngày bắt đầu
      * Đầu ra mong đợi: Exception liên quan đến dữ liệu không hợp lệ
      * Ghi chú: Kiểm tra xử lý lỗi đối với dữ liệu đầu vào không hợp lệ
-     * Loại test: Kiểm thử hộp trắng - Bao phủ nhánh (kiểm tra điều kiện ngày)
      */
     @Test
     public void testCreateResource_DuLieuKhongHopLe_PCT013() {

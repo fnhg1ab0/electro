@@ -1,0 +1,219 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ClientUserController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.controller.client</a>
+</div>
+
+<h1>Coverage Summary for Class: ClientUserController (com.electro.controller.client)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ClientUserController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (36/36)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.controller.client;
+&nbsp;
+&nbsp;import com.electro.constant.AppConstants;
+&nbsp;import com.electro.dto.authentication.UserResponse;
+&nbsp;import com.electro.dto.client.ClientEmailSettingUserRequest;
+&nbsp;import com.electro.dto.client.ClientPasswordSettingUserRequest;
+&nbsp;import com.electro.dto.client.ClientPersonalSettingUserRequest;
+&nbsp;import com.electro.dto.client.ClientPhoneSettingUserRequest;
+&nbsp;import com.electro.entity.authentication.User;
+&nbsp;import com.electro.mapper.authentication.UserMapper;
+&nbsp;import com.electro.repository.authentication.UserRepository;
+&nbsp;import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+&nbsp;import com.fasterxml.jackson.databind.node.ObjectNode;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.security.core.Authentication;
+&nbsp;import org.springframework.security.core.userdetails.UsernameNotFoundException;
+&nbsp;import org.springframework.security.crypto.password.PasswordEncoder;
+&nbsp;import org.springframework.web.bind.annotation.CrossOrigin;
+&nbsp;import org.springframework.web.bind.annotation.GetMapping;
+&nbsp;import org.springframework.web.bind.annotation.PostMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestBody;
+&nbsp;import org.springframework.web.bind.annotation.RequestMapping;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/client-api/users&quot;)
+<b class="fc">&nbsp;@AllArgsConstructor</b>
+&nbsp;@CrossOrigin(AppConstants.FRONTEND_HOST)
+&nbsp;public class ClientUserController {
+&nbsp;
+&nbsp;    private UserRepository userRepository;
+&nbsp;    private UserMapper userMapper;
+&nbsp;    private PasswordEncoder passwordEncoder;
+&nbsp;
+&nbsp;    @GetMapping(&quot;/info&quot;)
+&nbsp;    public ResponseEntity&lt;UserResponse&gt; getUserInfo(Authentication authentication) {
+<b class="fc">&nbsp;        String username = authentication.getName();</b>
+<b class="fc">&nbsp;        UserResponse userResponse = userRepository.findByUsername(username)</b>
+<b class="fc">&nbsp;                .map(userMapper::entityToResponse)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new UsernameNotFoundException(username));</b>
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.OK).body(userResponse);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(&quot;/personal&quot;)
+&nbsp;    public ResponseEntity&lt;UserResponse&gt; updatePersonalSetting(Authentication authentication,
+&nbsp;                                                              @RequestBody ClientPersonalSettingUserRequest userRequest) {
+<b class="fc">&nbsp;        String username = authentication.getName();</b>
+<b class="fc">&nbsp;        UserResponse userResponse = userRepository.findByUsername(username)</b>
+<b class="fc">&nbsp;                .map(existingUser -&gt; userMapper.partialUpdate(existingUser, userRequest))</b>
+<b class="fc">&nbsp;                .map(userRepository::save)</b>
+<b class="fc">&nbsp;                .map(userMapper::entityToResponse)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new UsernameNotFoundException(username));</b>
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.OK).body(userResponse);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(&quot;/phone&quot;)
+&nbsp;    public ResponseEntity&lt;UserResponse&gt; updatePhoneSetting(Authentication authentication,
+&nbsp;                                                           @RequestBody ClientPhoneSettingUserRequest userRequest) {
+<b class="fc">&nbsp;        String username = authentication.getName();</b>
+<b class="fc">&nbsp;        UserResponse userResponse = userRepository.findByUsername(username)</b>
+<b class="fc">&nbsp;                .map(existingUser -&gt; userMapper.partialUpdate(existingUser, userRequest))</b>
+<b class="fc">&nbsp;                .map(userRepository::save)</b>
+<b class="fc">&nbsp;                .map(userMapper::entityToResponse)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new UsernameNotFoundException(username));</b>
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.OK).body(userResponse);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(&quot;/email&quot;)
+&nbsp;    public ResponseEntity&lt;UserResponse&gt; updateEmailSetting(Authentication authentication,
+&nbsp;                                                           @RequestBody ClientEmailSettingUserRequest userRequest) {
+<b class="fc">&nbsp;        String username = authentication.getName();</b>
+<b class="fc">&nbsp;        UserResponse userResponse = userRepository.findByUsername(username)</b>
+<b class="fc">&nbsp;                .map(existingUser -&gt; userMapper.partialUpdate(existingUser, userRequest))</b>
+<b class="fc">&nbsp;                .map(userRepository::save)</b>
+<b class="fc">&nbsp;                .map(userMapper::entityToResponse)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new UsernameNotFoundException(username));</b>
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.OK).body(userResponse);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(&quot;/password&quot;)
+&nbsp;    public ResponseEntity&lt;ObjectNode&gt; updatePasswordSetting(Authentication authentication,
+&nbsp;                                                            @RequestBody ClientPasswordSettingUserRequest userRequest) throws Exception {
+<b class="fc">&nbsp;        String username = authentication.getName();</b>
+&nbsp;
+<b class="fc">&nbsp;        User user = userRepository.findByUsername(username)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new UsernameNotFoundException(username));</b>
+&nbsp;
+<b class="fc">&nbsp;        if (passwordEncoder.matches(userRequest.getOldPassword(), user.getPassword())) {</b>
+<b class="fc">&nbsp;            String encodedNewPassword = passwordEncoder.encode(userRequest.getNewPassword());</b>
+<b class="fc">&nbsp;            user.setPassword(encodedNewPassword);</b>
+<b class="fc">&nbsp;            userRepository.save(user);</b>
+&nbsp;
+&nbsp;            // Source: https://stackoverflow.com/a/74827122
+&nbsp;            // More: https://codingexplained.com/coding/java/spring-framework/returning-empty-json-object-spring-framework
+<b class="fc">&nbsp;            return ResponseEntity.status(HttpStatus.OK).body(new ObjectNode(JsonNodeFactory.instance));</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            throw new Exception(&quot;Wrong old password&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-19 22:42</div>
+</div>
+</body>
+</html>

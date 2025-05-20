@@ -696,8 +696,6 @@ public class OrderControllerTest {
         }
 
 
-
-
         /**
          * Tạo các OrderVariant cho test
          */
@@ -746,8 +744,6 @@ public class OrderControllerTest {
         }
 
 
-
-
         /**
          * Tạo Waybill cho test
          */
@@ -781,8 +777,6 @@ public class OrderControllerTest {
 
             waybillRepository.save(waybill);
         }
-
-
 
 
         /**

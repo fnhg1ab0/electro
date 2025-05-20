@@ -1,0 +1,168 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > CartVariant</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.entity.cart</a>
+</div>
+
+<h1>Coverage Summary for Class: CartVariant (com.electro.entity.cart)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CartVariant</td>
+<td class="coverageStat">
+  <span class="percent">
+    85.7%
+  </span>
+  <span class="absValue">
+    (6/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    80%
+  </span>
+  <span class="absValue">
+    (8/10)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">CartVariant$HibernateProxy$38kCazMd</td>
+  </tr>
+  <tr>
+    <td class="name">CartVariant$HibernateProxy$3EPa7q3g</td>
+  </tr>
+  <tr>
+    <td class="name">CartVariant$HibernateProxy$HF7Nlm7L</td>
+  </tr>
+  <tr>
+    <td class="name">CartVariant$HibernateProxy$IqII4ckO</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    85.7%
+  </span>
+  <span class="absValue">
+    (6/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    80%
+  </span>
+  <span class="absValue">
+    (8/10)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.entity.cart;
+&nbsp;
+&nbsp;import com.electro.entity.product.Variant;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import lombok.Getter;
+&nbsp;import lombok.NoArgsConstructor;
+&nbsp;import lombok.Setter;
+&nbsp;import lombok.experimental.Accessors;
+&nbsp;
+&nbsp;import javax.persistence.Column;
+&nbsp;import javax.persistence.EmbeddedId;
+&nbsp;import javax.persistence.Entity;
+&nbsp;import javax.persistence.JoinColumn;
+&nbsp;import javax.persistence.ManyToOne;
+&nbsp;import javax.persistence.MapsId;
+&nbsp;import javax.persistence.Table;
+&nbsp;import java.time.Instant;
+&nbsp;
+<b class="nc">&nbsp;@AllArgsConstructor</b>
+<b class="fc">&nbsp;@NoArgsConstructor</b>
+&nbsp;@Getter
+<b class="fc">&nbsp;@Setter</b>
+&nbsp;@Accessors(chain = true)
+&nbsp;@Entity
+&nbsp;@Table(name = &quot;cart_variant&quot;)
+&nbsp;public class CartVariant {
+<b class="fc">&nbsp;    @EmbeddedId</b>
+<b class="fc">&nbsp;    private CartVariantKey cartVariantKey = new CartVariantKey();</b>
+&nbsp;
+&nbsp;    @ManyToOne
+&nbsp;    @MapsId(&quot;cartId&quot;)
+&nbsp;    @JoinColumn(name = &quot;cart_id&quot;, nullable = false)
+<b class="nc">&nbsp;    private Cart cart;</b>
+&nbsp;
+&nbsp;    @ManyToOne
+&nbsp;    @MapsId(&quot;variantId&quot;)
+&nbsp;    @JoinColumn(name = &quot;variant_id&quot;, nullable = false)
+<b class="fc">&nbsp;    private Variant variant;</b>
+&nbsp;
+<b class="fc">&nbsp;    @Column(name = &quot;created_at&quot;, nullable = false, updatable = false)</b>
+<b class="fc">&nbsp;    private Instant createdAt = Instant.now();</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;quantity&quot;, nullable = false)
+<b class="fc">&nbsp;    private Integer quantity;</b>
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-19 22:42</div>
+</div>
+</body>
+</html>

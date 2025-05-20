@@ -1,0 +1,241 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > GenericService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.service</a>
+</div>
+
+<h1>Coverage Summary for Class: GenericService (com.electro.service)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GenericService</td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (3/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    57.1%
+  </span>
+  <span class="absValue">
+    (8/14)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">GenericService$MockitoMock$2088351443</td>
+  </tr>
+  <tr>
+    <td class="name">GenericService$MockitoMock$2088351443$auxiliary$08vnN43M</td>
+  </tr>
+  <tr>
+    <td class="name">GenericService$MockitoMock$2088351443$auxiliary$9zVC1H35</td>
+  </tr>
+  <tr>
+    <td class="name">GenericService$MockitoMock$2088351443$auxiliary$cjfa06ID</td>
+  </tr>
+  <tr>
+    <td class="name">GenericService$MockitoMock$2088351443$auxiliary$dhZfdn3C</td>
+  </tr>
+  <tr>
+    <td class="name">GenericService$MockitoMock$2088351443$auxiliary$djQijkkk</td>
+  </tr>
+  <tr>
+    <td class="name">GenericService$MockitoMock$2088351443$auxiliary$dN6U72OR</td>
+  </tr>
+  <tr>
+    <td class="name">GenericService$MockitoMock$2088351443$auxiliary$eYvtSHi7</td>
+  </tr>
+  <tr>
+    <td class="name">GenericService$MockitoMock$2088351443$auxiliary$fteasDVr</td>
+  </tr>
+  <tr>
+    <td class="name">GenericService$MockitoMock$2088351443$auxiliary$G9YysJxP</td>
+  </tr>
+  <tr>
+    <td class="name">GenericService$MockitoMock$2088351443$auxiliary$IfNKcHDR</td>
+  </tr>
+  <tr>
+    <td class="name">GenericService$MockitoMock$2088351443$auxiliary$iWUCoMhY</td>
+  </tr>
+  <tr>
+    <td class="name">GenericService$MockitoMock$2088351443$auxiliary$jJW8TINt</td>
+  </tr>
+  <tr>
+    <td class="name">GenericService$MockitoMock$2088351443$auxiliary$kIGPGbZQ</td>
+  </tr>
+  <tr>
+    <td class="name">GenericService$MockitoMock$2088351443$auxiliary$mqprQqps</td>
+  </tr>
+  <tr>
+    <td class="name">GenericService$MockitoMock$2088351443$auxiliary$NFRlFpTN</td>
+  </tr>
+  <tr>
+    <td class="name">GenericService$MockitoMock$2088351443$auxiliary$nghhqf2p</td>
+  </tr>
+  <tr>
+    <td class="name">GenericService$MockitoMock$2088351443$auxiliary$p0jzUe6y</td>
+  </tr>
+  <tr>
+    <td class="name">GenericService$MockitoMock$2088351443$auxiliary$tMFrQIVK</td>
+  </tr>
+  <tr>
+    <td class="name">GenericService$MockitoMock$2088351443$auxiliary$tmPXxo0x</td>
+  </tr>
+  <tr>
+    <td class="name">GenericService$MockitoMock$2088351443$auxiliary$XCld61Jh</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (3/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    57.1%
+  </span>
+  <span class="absValue">
+    (8/14)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.service;
+&nbsp;
+&nbsp;import com.electro.dto.ListResponse;
+&nbsp;import com.electro.mapper.GenericMapper;
+&nbsp;import lombok.Setter;
+&nbsp;import org.springframework.context.annotation.Scope;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Component
+<b class="fc">&nbsp;@Setter</b>
+&nbsp;@Scope(&quot;prototype&quot;)
+<b class="fc">&nbsp;public class GenericService&lt;E, I, O&gt; implements CrudService&lt;Long, I, O&gt; {</b>
+&nbsp;
+&nbsp;    private JpaRepository&lt;E, Long&gt; repository;
+&nbsp;    private JpaSpecificationExecutor&lt;E&gt; specificationExecutor;
+&nbsp;    private GenericMapper&lt;E, I, O&gt; mapper;
+&nbsp;    private List&lt;String&gt; searchFields;
+&nbsp;    private String resourceName;
+&nbsp;
+&nbsp;    public &lt;R extends JpaRepository&lt;E, Long&gt; &amp; JpaSpecificationExecutor&lt;E&gt;&gt; GenericService&lt;E, I, O&gt; init(
+&nbsp;            R repository,
+&nbsp;            GenericMapper&lt;E, I, O&gt; mapper,
+&nbsp;            List&lt;String&gt; searchFields,
+&nbsp;            String resourceName) {
+<b class="fc">&nbsp;        this.setRepository(repository);</b>
+<b class="fc">&nbsp;        this.setSpecificationExecutor(repository);</b>
+<b class="fc">&nbsp;        this.setMapper(mapper);</b>
+<b class="fc">&nbsp;        this.setSearchFields(searchFields);</b>
+<b class="fc">&nbsp;        this.setResourceName(resourceName);</b>
+<b class="fc">&nbsp;        return this;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ListResponse&lt;O&gt; findAll(int page, int size, String sort, String filter, String search, boolean all) {
+<b class="nc">&nbsp;        return defaultFindAll(page, size, sort, filter, search, all, searchFields, specificationExecutor, mapper);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public O findById(Long id) {
+<b class="nc">&nbsp;        return defaultFindById(id, repository, mapper, resourceName);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public O save(I request) {
+<b class="nc">&nbsp;        return defaultSave(request, repository, mapper);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public O save(Long id, I request) {
+<b class="nc">&nbsp;        return defaultSave(id, request, repository, mapper, resourceName);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void delete(Long id) {
+<b class="nc">&nbsp;        repository.deleteById(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void delete(List&lt;Long&gt; ids) {
+<b class="nc">&nbsp;        repository.deleteAllById(ids);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-19 22:42</div>
+</div>
+</body>
+</html>

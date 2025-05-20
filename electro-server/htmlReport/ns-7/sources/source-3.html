@@ -1,0 +1,818 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > GenericMappingRegister</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: GenericMappingRegister (com.electro.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GenericMappingRegister</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (176/176)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.controller;
+&nbsp;
+&nbsp;import com.electro.constant.ResourceName;
+&nbsp;import com.electro.constant.SearchFields;
+&nbsp;import com.electro.dto.address.AddressRequest;
+&nbsp;import com.electro.dto.address.AddressResponse;
+&nbsp;import com.electro.dto.address.DistrictRequest;
+&nbsp;import com.electro.dto.address.DistrictResponse;
+&nbsp;import com.electro.dto.address.ProvinceRequest;
+&nbsp;import com.electro.dto.address.ProvinceResponse;
+&nbsp;import com.electro.dto.address.WardRequest;
+&nbsp;import com.electro.dto.address.WardResponse;
+&nbsp;import com.electro.dto.authentication.RoleRequest;
+&nbsp;import com.electro.dto.authentication.RoleResponse;
+&nbsp;import com.electro.dto.authentication.UserRequest;
+&nbsp;import com.electro.dto.authentication.UserResponse;
+&nbsp;import com.electro.dto.cashbook.PaymentMethodRequest;
+&nbsp;import com.electro.dto.cashbook.PaymentMethodResponse;
+&nbsp;import com.electro.dto.chat.RoomRequest;
+&nbsp;import com.electro.dto.chat.RoomResponse;
+&nbsp;import com.electro.dto.customer.CustomerGroupRequest;
+&nbsp;import com.electro.dto.customer.CustomerGroupResponse;
+&nbsp;import com.electro.dto.customer.CustomerRequest;
+&nbsp;import com.electro.dto.customer.CustomerResourceRequest;
+&nbsp;import com.electro.dto.customer.CustomerResourceResponse;
+&nbsp;import com.electro.dto.customer.CustomerResponse;
+&nbsp;import com.electro.dto.customer.CustomerStatusRequest;
+&nbsp;import com.electro.dto.customer.CustomerStatusResponse;
+&nbsp;import com.electro.dto.employee.DepartmentRequest;
+&nbsp;import com.electro.dto.employee.DepartmentResponse;
+&nbsp;import com.electro.dto.employee.EmployeeRequest;
+&nbsp;import com.electro.dto.employee.EmployeeResponse;
+&nbsp;import com.electro.dto.employee.JobLevelRequest;
+&nbsp;import com.electro.dto.employee.JobLevelResponse;
+&nbsp;import com.electro.dto.employee.JobTitleRequest;
+&nbsp;import com.electro.dto.employee.JobTitleResponse;
+&nbsp;import com.electro.dto.employee.JobTypeRequest;
+&nbsp;import com.electro.dto.employee.JobTypeResponse;
+&nbsp;import com.electro.dto.employee.OfficeRequest;
+&nbsp;import com.electro.dto.employee.OfficeResponse;
+&nbsp;import com.electro.dto.general.ImageRequest;
+&nbsp;import com.electro.dto.general.ImageResponse;
+&nbsp;import com.electro.dto.inventory.CountRequest;
+&nbsp;import com.electro.dto.inventory.CountResponse;
+&nbsp;import com.electro.dto.inventory.DestinationRequest;
+&nbsp;import com.electro.dto.inventory.DestinationResponse;
+&nbsp;import com.electro.dto.inventory.DocketReasonRequest;
+&nbsp;import com.electro.dto.inventory.DocketReasonResponse;
+&nbsp;import com.electro.dto.inventory.DocketRequest;
+&nbsp;import com.electro.dto.inventory.DocketResponse;
+&nbsp;import com.electro.dto.inventory.ProductInventoryLimitRequest;
+&nbsp;import com.electro.dto.inventory.ProductInventoryLimitResponse;
+&nbsp;import com.electro.dto.inventory.PurchaseOrderRequest;
+&nbsp;import com.electro.dto.inventory.PurchaseOrderResponse;
+&nbsp;import com.electro.dto.inventory.StorageLocationRequest;
+&nbsp;import com.electro.dto.inventory.StorageLocationResponse;
+&nbsp;import com.electro.dto.inventory.TransferRequest;
+&nbsp;import com.electro.dto.inventory.TransferResponse;
+&nbsp;import com.electro.dto.inventory.VariantInventoryLimitRequest;
+&nbsp;import com.electro.dto.inventory.VariantInventoryLimitResponse;
+&nbsp;import com.electro.dto.inventory.WarehouseRequest;
+&nbsp;import com.electro.dto.inventory.WarehouseResponse;
+&nbsp;import com.electro.dto.order.OrderCancellationReasonRequest;
+&nbsp;import com.electro.dto.order.OrderCancellationReasonResponse;
+&nbsp;import com.electro.dto.order.OrderRequest;
+&nbsp;import com.electro.dto.order.OrderResourceRequest;
+&nbsp;import com.electro.dto.order.OrderResourceResponse;
+&nbsp;import com.electro.dto.order.OrderResponse;
+&nbsp;import com.electro.dto.product.BrandRequest;
+&nbsp;import com.electro.dto.product.BrandResponse;
+&nbsp;import com.electro.dto.product.CategoryRequest;
+&nbsp;import com.electro.dto.product.CategoryResponse;
+&nbsp;import com.electro.dto.product.GuaranteeRequest;
+&nbsp;import com.electro.dto.product.GuaranteeResponse;
+&nbsp;import com.electro.dto.product.ProductRequest;
+&nbsp;import com.electro.dto.product.ProductResponse;
+&nbsp;import com.electro.dto.product.PropertyRequest;
+&nbsp;import com.electro.dto.product.PropertyResponse;
+&nbsp;import com.electro.dto.product.SpecificationRequest;
+&nbsp;import com.electro.dto.product.SpecificationResponse;
+&nbsp;import com.electro.dto.product.SupplierRequest;
+&nbsp;import com.electro.dto.product.SupplierResponse;
+&nbsp;import com.electro.dto.product.TagRequest;
+&nbsp;import com.electro.dto.product.TagResponse;
+&nbsp;import com.electro.dto.product.UnitRequest;
+&nbsp;import com.electro.dto.product.UnitResponse;
+&nbsp;import com.electro.dto.product.VariantRequest;
+&nbsp;import com.electro.dto.product.VariantResponse;
+&nbsp;import com.electro.dto.promotion.PromotionRequest;
+&nbsp;import com.electro.dto.promotion.PromotionResponse;
+&nbsp;import com.electro.dto.review.ReviewRequest;
+&nbsp;import com.electro.dto.review.ReviewResponse;
+&nbsp;import com.electro.dto.reward.RewardStrategyRequest;
+&nbsp;import com.electro.dto.reward.RewardStrategyResponse;
+&nbsp;import com.electro.dto.waybill.WaybillRequest;
+&nbsp;import com.electro.dto.waybill.WaybillResponse;
+&nbsp;import com.electro.entity.address.Address;
+&nbsp;import com.electro.entity.address.District;
+&nbsp;import com.electro.entity.address.Ward;
+&nbsp;import com.electro.entity.authentication.Role;
+&nbsp;import com.electro.entity.authentication.User;
+&nbsp;import com.electro.entity.cashbook.PaymentMethod;
+&nbsp;import com.electro.entity.chat.Room;
+&nbsp;import com.electro.entity.customer.Customer;
+&nbsp;import com.electro.entity.customer.CustomerGroup;
+&nbsp;import com.electro.entity.customer.CustomerResource;
+&nbsp;import com.electro.entity.customer.CustomerStatus;
+&nbsp;import com.electro.entity.employee.Department;
+&nbsp;import com.electro.entity.employee.Employee;
+&nbsp;import com.electro.entity.employee.JobLevel;
+&nbsp;import com.electro.entity.employee.JobTitle;
+&nbsp;import com.electro.entity.employee.JobType;
+&nbsp;import com.electro.entity.employee.Office;
+&nbsp;import com.electro.entity.general.Image;
+&nbsp;import com.electro.entity.inventory.Count;
+&nbsp;import com.electro.entity.inventory.Destination;
+&nbsp;import com.electro.entity.inventory.DocketReason;
+&nbsp;import com.electro.entity.inventory.ProductInventoryLimit;
+&nbsp;import com.electro.entity.inventory.PurchaseOrder;
+&nbsp;import com.electro.entity.inventory.StorageLocation;
+&nbsp;import com.electro.entity.inventory.Transfer;
+&nbsp;import com.electro.entity.inventory.VariantInventoryLimit;
+&nbsp;import com.electro.entity.inventory.Warehouse;
+&nbsp;import com.electro.entity.order.Order;
+&nbsp;import com.electro.entity.order.OrderCancellationReason;
+&nbsp;import com.electro.entity.order.OrderResource;
+&nbsp;import com.electro.entity.product.Brand;
+&nbsp;import com.electro.entity.product.Category;
+&nbsp;import com.electro.entity.product.Guarantee;
+&nbsp;import com.electro.entity.product.Product;
+&nbsp;import com.electro.entity.product.Property;
+&nbsp;import com.electro.entity.product.Specification;
+&nbsp;import com.electro.entity.product.Supplier;
+&nbsp;import com.electro.entity.product.Tag;
+&nbsp;import com.electro.entity.product.Unit;
+&nbsp;import com.electro.entity.product.Variant;
+&nbsp;import com.electro.entity.reward.RewardStrategy;
+&nbsp;import com.electro.mapper.address.AddressMapper;
+&nbsp;import com.electro.mapper.address.DistrictMapper;
+&nbsp;import com.electro.mapper.address.WardMapper;
+&nbsp;import com.electro.mapper.authentication.RoleMapper;
+&nbsp;import com.electro.mapper.authentication.UserMapper;
+&nbsp;import com.electro.mapper.cashbook.PaymentMethodMapper;
+&nbsp;import com.electro.mapper.chat.RoomMapper;
+&nbsp;import com.electro.mapper.customer.CustomerGroupMapper;
+&nbsp;import com.electro.mapper.customer.CustomerMapper;
+&nbsp;import com.electro.mapper.customer.CustomerResourceMapper;
+&nbsp;import com.electro.mapper.customer.CustomerStatusMapper;
+&nbsp;import com.electro.mapper.employee.DepartmentMapper;
+&nbsp;import com.electro.mapper.employee.EmployeeMapper;
+&nbsp;import com.electro.mapper.employee.JobLevelMapper;
+&nbsp;import com.electro.mapper.employee.JobTitleMapper;
+&nbsp;import com.electro.mapper.employee.JobTypeMapper;
+&nbsp;import com.electro.mapper.employee.OfficeMapper;
+&nbsp;import com.electro.mapper.general.ImageMapper;
+&nbsp;import com.electro.mapper.inventory.CountMapper;
+&nbsp;import com.electro.mapper.inventory.DestinationMapper;
+&nbsp;import com.electro.mapper.inventory.DocketReasonMapper;
+&nbsp;import com.electro.mapper.inventory.ProductInventoryLimitMapper;
+&nbsp;import com.electro.mapper.inventory.PurchaseOrderMapper;
+&nbsp;import com.electro.mapper.inventory.StorageLocationMapper;
+&nbsp;import com.electro.mapper.inventory.TransferMapper;
+&nbsp;import com.electro.mapper.inventory.VariantInventoryLimitMapper;
+&nbsp;import com.electro.mapper.inventory.WarehouseMapper;
+&nbsp;import com.electro.mapper.order.OrderCancellationReasonMapper;
+&nbsp;import com.electro.mapper.order.OrderMapper;
+&nbsp;import com.electro.mapper.order.OrderResourceMapper;
+&nbsp;import com.electro.mapper.product.BrandMapper;
+&nbsp;import com.electro.mapper.product.CategoryMapper;
+&nbsp;import com.electro.mapper.product.GuaranteeMapper;
+&nbsp;import com.electro.mapper.product.ProductMapper;
+&nbsp;import com.electro.mapper.product.PropertyMapper;
+&nbsp;import com.electro.mapper.product.SpecificationMapper;
+&nbsp;import com.electro.mapper.product.SupplierMapper;
+&nbsp;import com.electro.mapper.product.TagMapper;
+&nbsp;import com.electro.mapper.product.UnitMapper;
+&nbsp;import com.electro.mapper.product.VariantMapper;
+&nbsp;import com.electro.mapper.reward.RewardStrategyMapper;
+&nbsp;import com.electro.repository.address.AddressRepository;
+&nbsp;import com.electro.repository.address.DistrictRepository;
+&nbsp;import com.electro.repository.address.WardRepository;
+&nbsp;import com.electro.repository.authentication.RoleRepository;
+&nbsp;import com.electro.repository.authentication.UserRepository;
+&nbsp;import com.electro.repository.cashbook.PaymentMethodRepository;
+&nbsp;import com.electro.repository.chat.RoomRepository;
+&nbsp;import com.electro.repository.customer.CustomerGroupRepository;
+&nbsp;import com.electro.repository.customer.CustomerRepository;
+&nbsp;import com.electro.repository.customer.CustomerResourceRepository;
+&nbsp;import com.electro.repository.customer.CustomerStatusRepository;
+&nbsp;import com.electro.repository.employee.DepartmentRepository;
+&nbsp;import com.electro.repository.employee.EmployeeRepository;
+&nbsp;import com.electro.repository.employee.JobLevelRepository;
+&nbsp;import com.electro.repository.employee.JobTitleRepository;
+&nbsp;import com.electro.repository.employee.JobTypeRepository;
+&nbsp;import com.electro.repository.employee.OfficeRepository;
+&nbsp;import com.electro.repository.general.ImageRepository;
+&nbsp;import com.electro.repository.inventory.CountRepository;
+&nbsp;import com.electro.repository.inventory.DestinationRepository;
+&nbsp;import com.electro.repository.inventory.DocketReasonRepository;
+&nbsp;import com.electro.repository.inventory.ProductInventoryLimitRepository;
+&nbsp;import com.electro.repository.inventory.PurchaseOrderRepository;
+&nbsp;import com.electro.repository.inventory.StorageLocationRepository;
+&nbsp;import com.electro.repository.inventory.TransferRepository;
+&nbsp;import com.electro.repository.inventory.VariantInventoryLimitRepository;
+&nbsp;import com.electro.repository.inventory.WarehouseRepository;
+&nbsp;import com.electro.repository.order.OrderCancellationReasonRepository;
+&nbsp;import com.electro.repository.order.OrderRepository;
+&nbsp;import com.electro.repository.order.OrderResourceRepository;
+&nbsp;import com.electro.repository.product.BrandRepository;
+&nbsp;import com.electro.repository.product.CategoryRepository;
+&nbsp;import com.electro.repository.product.GuaranteeRepository;
+&nbsp;import com.electro.repository.product.ProductRepository;
+&nbsp;import com.electro.repository.product.PropertyRepository;
+&nbsp;import com.electro.repository.product.SpecificationRepository;
+&nbsp;import com.electro.repository.product.SupplierRepository;
+&nbsp;import com.electro.repository.product.TagRepository;
+&nbsp;import com.electro.repository.product.UnitRepository;
+&nbsp;import com.electro.repository.product.VariantRepository;
+&nbsp;import com.electro.repository.reward.RewardStrategyRepository;
+&nbsp;import com.electro.service.CrudService;
+&nbsp;import com.electro.service.GenericService;
+&nbsp;import com.electro.service.address.ProvinceService;
+&nbsp;import com.electro.service.inventory.DocketService;
+&nbsp;import com.electro.service.promotion.PromotionService;
+&nbsp;import com.electro.service.review.ReviewService;
+&nbsp;import com.electro.service.waybill.WaybillService;
+&nbsp;import com.fasterxml.jackson.databind.JsonNode;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import org.springframework.context.ApplicationContext;
+&nbsp;import org.springframework.http.MediaType;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;import org.springframework.web.bind.annotation.RequestMethod;
+&nbsp;import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
+&nbsp;import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+&nbsp;import org.springframework.web.util.pattern.PathPatternParser;
+&nbsp;
+&nbsp;import javax.annotation.PostConstruct;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Component
+<b class="fc">&nbsp;@AllArgsConstructor</b>
+&nbsp;public class GenericMappingRegister {
+&nbsp;
+&nbsp;    private ApplicationContext context;
+&nbsp;    private RequestMappingHandlerMapping handlerMapping;
+&nbsp;
+&nbsp;    // Controllers
+&nbsp;    private GenericController&lt;ProvinceRequest, ProvinceResponse&gt; provinceController;
+&nbsp;    private GenericController&lt;DistrictRequest, DistrictResponse&gt; districtController;
+&nbsp;    private GenericController&lt;WardRequest, WardResponse&gt; wardController;
+&nbsp;    private GenericController&lt;AddressRequest, AddressResponse&gt; addressController;
+&nbsp;    private GenericController&lt;UserRequest, UserResponse&gt; userController;
+&nbsp;    private GenericController&lt;RoleRequest, RoleResponse&gt; roleController;
+&nbsp;    private GenericController&lt;OfficeRequest, OfficeResponse&gt; officeController;
+&nbsp;    private GenericController&lt;DepartmentRequest, DepartmentResponse&gt; departmentController;
+&nbsp;    private GenericController&lt;JobLevelRequest, JobLevelResponse&gt; jobLevelController;
+&nbsp;    private GenericController&lt;JobTypeRequest, JobTypeResponse&gt; jobTypeController;
+&nbsp;    private GenericController&lt;JobTitleRequest, JobTitleResponse&gt; jobTitleController;
+&nbsp;    private GenericController&lt;EmployeeRequest, EmployeeResponse&gt; employeeController;
+&nbsp;    private GenericController&lt;CustomerGroupRequest, CustomerGroupResponse&gt; customerGroupController;
+&nbsp;    private GenericController&lt;CustomerResourceRequest, CustomerResourceResponse&gt; customerResourceController;
+&nbsp;    private GenericController&lt;CustomerStatusRequest, CustomerStatusResponse&gt; customerStatusController;
+&nbsp;    private GenericController&lt;CustomerRequest, CustomerResponse&gt; customerController;
+&nbsp;    private GenericController&lt;PropertyRequest, PropertyResponse&gt; propertyController;
+&nbsp;    private GenericController&lt;CategoryRequest, CategoryResponse&gt; categoryController;
+&nbsp;    private GenericController&lt;TagRequest, TagResponse&gt; tagController;
+&nbsp;    private GenericController&lt;GuaranteeRequest, GuaranteeResponse&gt; guaranteeController;
+&nbsp;    private GenericController&lt;UnitRequest, UnitResponse&gt; unitController;
+&nbsp;    private GenericController&lt;SupplierRequest, SupplierResponse&gt; supplierController;
+&nbsp;    private GenericController&lt;BrandRequest, BrandResponse&gt; brandController;
+&nbsp;    private GenericController&lt;SpecificationRequest, SpecificationResponse&gt; specificationController;
+&nbsp;    private GenericController&lt;ProductRequest, ProductResponse&gt; productController;
+&nbsp;    private GenericController&lt;VariantRequest, VariantResponse&gt; variantController;
+&nbsp;    private GenericController&lt;ImageRequest, ImageResponse&gt; imageController;
+&nbsp;    private GenericController&lt;ProductInventoryLimitRequest, ProductInventoryLimitResponse&gt; productInventoryLimitController;
+&nbsp;    private GenericController&lt;VariantInventoryLimitRequest, VariantInventoryLimitResponse&gt; variantInventoryLimitController;
+&nbsp;    private GenericController&lt;WarehouseRequest, WarehouseResponse&gt; warehouseController;
+&nbsp;    private GenericController&lt;CountRequest, CountResponse&gt; countController;
+&nbsp;    private GenericController&lt;DestinationRequest, DestinationResponse&gt; destinationController;
+&nbsp;    private GenericController&lt;DocketReasonRequest, DocketReasonResponse&gt; docketReasonController;
+&nbsp;    private GenericController&lt;TransferRequest, TransferResponse&gt; transferController;
+&nbsp;    private GenericController&lt;DocketRequest, DocketResponse&gt; docketController;
+&nbsp;    private GenericController&lt;StorageLocationRequest, StorageLocationResponse&gt; storageLocationController;
+&nbsp;    private GenericController&lt;PurchaseOrderRequest, PurchaseOrderResponse&gt; purchaseOrderController;
+&nbsp;    private GenericController&lt;OrderResourceRequest, OrderResourceResponse&gt; orderResourceController;
+&nbsp;    private GenericController&lt;OrderCancellationReasonRequest, OrderCancellationReasonResponse&gt; orderCancellationReasonController;
+&nbsp;    private GenericController&lt;OrderRequest, OrderResponse&gt; orderController;
+&nbsp;    private GenericController&lt;WaybillRequest, WaybillResponse&gt; waybillController;
+&nbsp;    private GenericController&lt;ReviewRequest, ReviewResponse&gt; reviewController;
+&nbsp;    private GenericController&lt;PaymentMethodRequest, PaymentMethodResponse&gt; paymentMethodController;
+&nbsp;    private GenericController&lt;PromotionRequest, PromotionResponse&gt; promotionController;
+&nbsp;    private GenericController&lt;RoomRequest, RoomResponse&gt; roomController;
+&nbsp;    private GenericController&lt;RewardStrategyRequest, RewardStrategyResponse&gt; rewardStrategyController;
+&nbsp;
+&nbsp;    // Services
+&nbsp;    private GenericService&lt;District, DistrictRequest, DistrictResponse&gt; districtService;
+&nbsp;    private GenericService&lt;Ward, WardRequest, WardResponse&gt; wardService;
+&nbsp;    private GenericService&lt;Address, AddressRequest, AddressResponse&gt; addressService;
+&nbsp;    private GenericService&lt;User, UserRequest, UserResponse&gt; userService;
+&nbsp;    private GenericService&lt;Role, RoleRequest, RoleResponse&gt; roleService;
+&nbsp;    private GenericService&lt;Office, OfficeRequest, OfficeResponse&gt; officeService;
+&nbsp;    private GenericService&lt;Department, DepartmentRequest, DepartmentResponse&gt; departmentService;
+&nbsp;    private GenericService&lt;JobLevel, JobLevelRequest, JobLevelResponse&gt; jobLevelService;
+&nbsp;    private GenericService&lt;JobType, JobTypeRequest, JobTypeResponse&gt; jobTypeService;
+&nbsp;    private GenericService&lt;JobTitle, JobTitleRequest, JobTitleResponse&gt; jobTitleService;
+&nbsp;    private GenericService&lt;Employee, EmployeeRequest, EmployeeResponse&gt; employeeService;
+&nbsp;    private GenericService&lt;CustomerGroup, CustomerGroupRequest, CustomerGroupResponse&gt; customerGroupService;
+&nbsp;    private GenericService&lt;CustomerResource, CustomerResourceRequest, CustomerResourceResponse&gt; customerResourceService;
+&nbsp;    private GenericService&lt;CustomerStatus, CustomerStatusRequest, CustomerStatusResponse&gt; customerStatusService;
+&nbsp;    private GenericService&lt;Customer, CustomerRequest, CustomerResponse&gt; customerService;
+&nbsp;    private GenericService&lt;Property, PropertyRequest, PropertyResponse&gt; propertyService;
+&nbsp;    private GenericService&lt;Category, CategoryRequest, CategoryResponse&gt; categoryService;
+&nbsp;    private GenericService&lt;Tag, TagRequest, TagResponse&gt; tagService;
+&nbsp;    private GenericService&lt;Guarantee, GuaranteeRequest, GuaranteeResponse&gt; guaranteeService;
+&nbsp;    private GenericService&lt;Unit, UnitRequest, UnitResponse&gt; unitService;
+&nbsp;    private GenericService&lt;Supplier, SupplierRequest, SupplierResponse&gt; supplierService;
+&nbsp;    private GenericService&lt;Brand, BrandRequest, BrandResponse&gt; brandService;
+&nbsp;    private GenericService&lt;Specification, SpecificationRequest, SpecificationResponse&gt; specificationService;
+&nbsp;    private GenericService&lt;Product, ProductRequest, ProductResponse&gt; productService;
+&nbsp;    private GenericService&lt;Variant, VariantRequest, VariantResponse&gt; variantService;
+&nbsp;    private GenericService&lt;Image, ImageRequest, ImageResponse&gt; imageService;
+&nbsp;    private GenericService&lt;ProductInventoryLimit, ProductInventoryLimitRequest, ProductInventoryLimitResponse&gt; productInventoryLimitService;
+&nbsp;    private GenericService&lt;VariantInventoryLimit, VariantInventoryLimitRequest, VariantInventoryLimitResponse&gt; variantInventoryLimitService;
+&nbsp;    private GenericService&lt;Warehouse, WarehouseRequest, WarehouseResponse&gt; warehouseService;
+&nbsp;    private GenericService&lt;Count, CountRequest, CountResponse&gt; countService;
+&nbsp;    private GenericService&lt;Destination, DestinationRequest, DestinationResponse&gt; destinationService;
+&nbsp;    private GenericService&lt;DocketReason, DocketReasonRequest, DocketReasonResponse&gt; docketReasonService;
+&nbsp;    private GenericService&lt;Transfer, TransferRequest, TransferResponse&gt; transferService;
+&nbsp;    private GenericService&lt;StorageLocation, StorageLocationRequest, StorageLocationResponse&gt; storageLocationService;
+&nbsp;    private GenericService&lt;PurchaseOrder, PurchaseOrderRequest, PurchaseOrderResponse&gt; purchaseOrderService;
+&nbsp;    private GenericService&lt;OrderResource, OrderResourceRequest, OrderResourceResponse&gt; orderResourceService;
+&nbsp;    private GenericService&lt;OrderCancellationReason, OrderCancellationReasonRequest, OrderCancellationReasonResponse&gt; orderCancellationReasonService;
+&nbsp;    private GenericService&lt;Order, OrderRequest, OrderResponse&gt; orderService;
+&nbsp;    private GenericService&lt;PaymentMethod, PaymentMethodRequest, PaymentMethodResponse&gt; paymentMethodService;
+&nbsp;    private GenericService&lt;Room, RoomRequest, RoomResponse&gt; roomService;
+&nbsp;    private GenericService&lt;RewardStrategy, RewardStrategyRequest, RewardStrategyResponse&gt; rewardStrategyService;
+&nbsp;
+&nbsp;    @PostConstruct
+&nbsp;    public void registerControllers() throws NoSuchMethodException {
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;provinces&quot;, provinceController, context.getBean(ProvinceService.class), ProvinceRequest.class);</b>
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;districts&quot;, districtController, districtService.init(</b>
+<b class="fc">&nbsp;                context.getBean(DistrictRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(DistrictMapper.class),</b>
+&nbsp;                SearchFields.DISTRICT,
+&nbsp;                ResourceName.DISTRICT
+&nbsp;        ), DistrictRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;wards&quot;, wardController, wardService.init(</b>
+<b class="fc">&nbsp;                context.getBean(WardRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(WardMapper.class),</b>
+&nbsp;                SearchFields.WARD,
+&nbsp;                ResourceName.WARD
+&nbsp;        ), WardRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;addresses&quot;, addressController, addressService.init(</b>
+<b class="fc">&nbsp;                context.getBean(AddressRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(AddressMapper.class),</b>
+&nbsp;                SearchFields.ADDRESS,
+&nbsp;                ResourceName.ADDRESS
+&nbsp;        ), AddressRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;users&quot;, userController, userService.init(</b>
+<b class="fc">&nbsp;                context.getBean(UserRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(UserMapper.class),</b>
+&nbsp;                SearchFields.USER,
+&nbsp;                ResourceName.USER
+&nbsp;        ), UserRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;roles&quot;, roleController, roleService.init(</b>
+<b class="fc">&nbsp;                context.getBean(RoleRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(RoleMapper.class),</b>
+&nbsp;                SearchFields.ROLE,
+&nbsp;                ResourceName.ROLE
+&nbsp;        ), RoleRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;offices&quot;, officeController, officeService.init(</b>
+<b class="fc">&nbsp;                context.getBean(OfficeRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(OfficeMapper.class),</b>
+&nbsp;                SearchFields.OFFICE,
+&nbsp;                ResourceName.OFFICE
+&nbsp;        ), OfficeRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;departments&quot;, departmentController, departmentService.init(</b>
+<b class="fc">&nbsp;                context.getBean(DepartmentRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(DepartmentMapper.class),</b>
+&nbsp;                SearchFields.DEPARTMENT,
+&nbsp;                ResourceName.DEPARTMENT
+&nbsp;        ), DepartmentRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;job-levels&quot;, jobLevelController, jobLevelService.init(</b>
+<b class="fc">&nbsp;                context.getBean(JobLevelRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(JobLevelMapper.class),</b>
+&nbsp;                SearchFields.JOB_LEVEL,
+&nbsp;                ResourceName.JOB_LEVEL
+&nbsp;        ), JobLevelRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;job-titles&quot;, jobTitleController, jobTitleService.init(</b>
+<b class="fc">&nbsp;                context.getBean(JobTitleRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(JobTitleMapper.class),</b>
+&nbsp;                SearchFields.JOB_TITLE,
+&nbsp;                ResourceName.JOB_TITLE
+&nbsp;        ), JobTitleRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;job-types&quot;, jobTypeController, jobTypeService.init(</b>
+<b class="fc">&nbsp;                context.getBean(JobTypeRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(JobTypeMapper.class),</b>
+&nbsp;                SearchFields.JOB_TYPE,
+&nbsp;                ResourceName.JOB_TYPE
+&nbsp;        ), JobTypeRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;employees&quot;, employeeController, employeeService.init(</b>
+<b class="fc">&nbsp;                context.getBean(EmployeeRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(EmployeeMapper.class),</b>
+&nbsp;                SearchFields.EMPLOYEE,
+&nbsp;                ResourceName.EMPLOYEE
+&nbsp;        ), EmployeeRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;customer-groups&quot;, customerGroupController, customerGroupService.init(</b>
+<b class="fc">&nbsp;                context.getBean(CustomerGroupRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(CustomerGroupMapper.class),</b>
+&nbsp;                SearchFields.CUSTOMER_GROUP,
+&nbsp;                ResourceName.CUSTOMER_GROUP
+&nbsp;        ), CustomerGroupRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;customer-resources&quot;, customerResourceController, customerResourceService.init(</b>
+<b class="fc">&nbsp;                context.getBean(CustomerResourceRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(CustomerResourceMapper.class),</b>
+&nbsp;                SearchFields.CUSTOMER_RESOURCE,
+&nbsp;                ResourceName.CUSTOMER_RESOURCE
+&nbsp;        ), CustomerResourceRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;customer-status&quot;, customerStatusController, customerStatusService.init(</b>
+<b class="fc">&nbsp;                context.getBean(CustomerStatusRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(CustomerStatusMapper.class),</b>
+&nbsp;                SearchFields.CUSTOMER_STATUS,
+&nbsp;                ResourceName.CUSTOMER_STATUS
+&nbsp;        ), CustomerStatusRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;customers&quot;, customerController, customerService.init(</b>
+<b class="fc">&nbsp;                context.getBean(CustomerRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(CustomerMapper.class),</b>
+&nbsp;                SearchFields.CUSTOMER,
+&nbsp;                ResourceName.CUSTOMER
+&nbsp;        ), CustomerRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;properties&quot;, propertyController, propertyService.init(</b>
+<b class="fc">&nbsp;                context.getBean(PropertyRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(PropertyMapper.class),</b>
+&nbsp;                SearchFields.PROPERTY,
+&nbsp;                ResourceName.PROPERTY
+&nbsp;        ), PropertyRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;categories&quot;, categoryController, categoryService.init(</b>
+<b class="fc">&nbsp;                context.getBean(CategoryRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(CategoryMapper.class),</b>
+&nbsp;                SearchFields.CATEGORY,
+&nbsp;                ResourceName.CATEGORY
+&nbsp;        ), CategoryRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;tags&quot;, tagController, tagService.init(</b>
+<b class="fc">&nbsp;                context.getBean(TagRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(TagMapper.class),</b>
+&nbsp;                SearchFields.TAG,
+&nbsp;                ResourceName.TAG
+&nbsp;        ), TagRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;guarantees&quot;, guaranteeController, guaranteeService.init(</b>
+<b class="fc">&nbsp;                context.getBean(GuaranteeRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(GuaranteeMapper.class),</b>
+&nbsp;                SearchFields.GUARANTEE,
+&nbsp;                ResourceName.GUARANTEE
+&nbsp;        ), GuaranteeRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;units&quot;, unitController, unitService.init(</b>
+<b class="fc">&nbsp;                context.getBean(UnitRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(UnitMapper.class),</b>
+&nbsp;                SearchFields.UNIT,
+&nbsp;                ResourceName.UNIT
+&nbsp;        ), UnitRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;suppliers&quot;, supplierController, supplierService.init(</b>
+<b class="fc">&nbsp;                context.getBean(SupplierRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(SupplierMapper.class),</b>
+&nbsp;                SearchFields.SUPPLIER,
+&nbsp;                ResourceName.SUPPLIER
+&nbsp;        ), SupplierRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;brands&quot;, brandController, brandService.init(</b>
+<b class="fc">&nbsp;                context.getBean(BrandRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(BrandMapper.class),</b>
+&nbsp;                SearchFields.BRAND,
+&nbsp;                ResourceName.BRAND
+&nbsp;        ), BrandRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;specifications&quot;, specificationController, specificationService.init(</b>
+<b class="fc">&nbsp;                context.getBean(SpecificationRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(SpecificationMapper.class),</b>
+&nbsp;                SearchFields.SPECIFICATION,
+&nbsp;                ResourceName.SPECIFICATION
+&nbsp;        ), SpecificationRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;products&quot;, productController, productService.init(</b>
+<b class="fc">&nbsp;                context.getBean(ProductRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(ProductMapper.class),</b>
+&nbsp;                SearchFields.PRODUCT,
+&nbsp;                ResourceName.PRODUCT
+&nbsp;        ), ProductRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;variants&quot;, variantController, variantService.init(</b>
+<b class="fc">&nbsp;                context.getBean(VariantRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(VariantMapper.class),</b>
+&nbsp;                SearchFields.VARIANT,
+&nbsp;                ResourceName.VARIANT
+&nbsp;        ), VariantRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;images&quot;, imageController, imageService.init(</b>
+<b class="fc">&nbsp;                context.getBean(ImageRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(ImageMapper.class),</b>
+&nbsp;                SearchFields.IMAGE,
+&nbsp;                ResourceName.IMAGE
+&nbsp;        ), ImageRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;product-inventory-limits&quot;, productInventoryLimitController, productInventoryLimitService.init(</b>
+<b class="fc">&nbsp;                context.getBean(ProductInventoryLimitRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(ProductInventoryLimitMapper.class),</b>
+&nbsp;                SearchFields.PRODUCT_INVENTORY_LIMIT,
+&nbsp;                ResourceName.PRODUCT_INVENTORY_LIMIT
+&nbsp;        ), ProductInventoryLimitRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;variant-inventory-limits&quot;, variantInventoryLimitController, variantInventoryLimitService.init(</b>
+<b class="fc">&nbsp;                context.getBean(VariantInventoryLimitRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(VariantInventoryLimitMapper.class),</b>
+&nbsp;                SearchFields.VARIANT_INVENTORY_LIMIT,
+&nbsp;                ResourceName.VARIANT_INVENTORY_LIMIT
+&nbsp;        ), VariantInventoryLimitRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;warehouses&quot;, warehouseController, warehouseService.init(</b>
+<b class="fc">&nbsp;                context.getBean(WarehouseRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(WarehouseMapper.class),</b>
+&nbsp;                SearchFields.WAREHOUSE,
+&nbsp;                ResourceName.WAREHOUSE
+&nbsp;        ), WarehouseRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;counts&quot;, countController, countService.init(</b>
+<b class="fc">&nbsp;                context.getBean(CountRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(CountMapper.class),</b>
+&nbsp;                SearchFields.COUNT,
+&nbsp;                ResourceName.COUNT
+&nbsp;        ), CountRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;destinations&quot;, destinationController, destinationService.init(</b>
+<b class="fc">&nbsp;                context.getBean(DestinationRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(DestinationMapper.class),</b>
+&nbsp;                SearchFields.DESTINATION,
+&nbsp;                ResourceName.DESTINATION
+&nbsp;        ), DestinationRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;docket-reasons&quot;, docketReasonController, docketReasonService.init(</b>
+<b class="fc">&nbsp;                context.getBean(DocketReasonRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(DocketReasonMapper.class),</b>
+&nbsp;                SearchFields.DOCKET_REASON,
+&nbsp;                ResourceName.DOCKET_REASON
+&nbsp;        ), DocketReasonRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;transfers&quot;, transferController, transferService.init(</b>
+<b class="fc">&nbsp;                context.getBean(TransferRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(TransferMapper.class),</b>
+&nbsp;                SearchFields.TRANSFER,
+&nbsp;                ResourceName.TRANSFER
+&nbsp;        ), TransferRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;dockets&quot;, docketController, context.getBean(DocketService.class), DocketRequest.class);</b>
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;storage-locations&quot;, storageLocationController, storageLocationService.init(</b>
+<b class="fc">&nbsp;                context.getBean(StorageLocationRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(StorageLocationMapper.class),</b>
+&nbsp;                SearchFields.STORAGE_LOCATION,
+&nbsp;                ResourceName.STORAGE_LOCATION
+&nbsp;        ), StorageLocationRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;purchase-orders&quot;, purchaseOrderController, purchaseOrderService.init(</b>
+<b class="fc">&nbsp;                context.getBean(PurchaseOrderRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(PurchaseOrderMapper.class),</b>
+&nbsp;                SearchFields.PURCHASE_ORDER,
+&nbsp;                ResourceName.PURCHASE_ORDER
+&nbsp;        ), PurchaseOrderRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;order-resources&quot;, orderResourceController, orderResourceService.init(</b>
+<b class="fc">&nbsp;                context.getBean(OrderResourceRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(OrderResourceMapper.class),</b>
+&nbsp;                SearchFields.ORDER_RESOURCE,
+&nbsp;                ResourceName.ORDER_RESOURCE
+&nbsp;        ), OrderResourceRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;order-cancellation-reasons&quot;, orderCancellationReasonController, orderCancellationReasonService.init(</b>
+<b class="fc">&nbsp;                context.getBean(OrderCancellationReasonRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(OrderCancellationReasonMapper.class),</b>
+&nbsp;                SearchFields.ORDER_CANCELLATION_REASON,
+&nbsp;                ResourceName.ORDER_CANCELLATION_REASON
+&nbsp;        ), OrderCancellationReasonRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;orders&quot;, orderController, orderService.init(</b>
+<b class="fc">&nbsp;                context.getBean(OrderRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(OrderMapper.class),</b>
+&nbsp;                SearchFields.ORDER,
+&nbsp;                ResourceName.ORDER
+&nbsp;        ), OrderRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;waybills&quot;, waybillController, context.getBean(WaybillService.class), WaybillRequest.class);</b>
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;reviews&quot;, reviewController, context.getBean(ReviewService.class), ReviewRequest.class);</b>
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;payment-methods&quot;, paymentMethodController, paymentMethodService.init(</b>
+<b class="fc">&nbsp;                context.getBean(PaymentMethodRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(PaymentMethodMapper.class),</b>
+&nbsp;                SearchFields.PAYMENT_METHOD,
+&nbsp;                ResourceName.PAYMENT_METHOD
+&nbsp;        ), PaymentMethodRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;promotions&quot;, promotionController, context.getBean(PromotionService.class), PromotionRequest.class);</b>
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;rooms&quot;, roomController, roomService.init(</b>
+<b class="fc">&nbsp;                context.getBean(RoomRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(RoomMapper.class),</b>
+&nbsp;                SearchFields.ROOM,
+&nbsp;                ResourceName.ROOM
+&nbsp;        ), RoomRequest.class);
+&nbsp;
+<b class="fc">&nbsp;        register(&quot;reward-strategies&quot;, rewardStrategyController, rewardStrategyService.init(</b>
+<b class="fc">&nbsp;                context.getBean(RewardStrategyRepository.class),</b>
+<b class="fc">&nbsp;                context.getBean(RewardStrategyMapper.class),</b>
+&nbsp;                SearchFields.REWARD_STRATEGY,
+&nbsp;                ResourceName.REWARD_STRATEGY
+&nbsp;        ), RewardStrategyRequest.class);
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    private &lt;I, O&gt; void register(String resource,
+&nbsp;                                 GenericController&lt;I, O&gt; controller,
+&nbsp;                                 CrudService&lt;Long, I, O&gt; service,
+&nbsp;                                 Class&lt;I&gt; requestType
+&nbsp;    ) throws NoSuchMethodException {
+<b class="fc">&nbsp;        RequestMappingInfo.BuilderConfiguration options = new RequestMappingInfo.BuilderConfiguration();</b>
+<b class="fc">&nbsp;        options.setPatternParser(new PathPatternParser());</b>
+&nbsp;
+<b class="fc">&nbsp;        controller.setCrudService(service);</b>
+<b class="fc">&nbsp;        controller.setRequestType(requestType);</b>
+&nbsp;
+<b class="fc">&nbsp;        handlerMapping.registerMapping(</b>
+<b class="fc">&nbsp;                RequestMappingInfo.paths(&quot;/api/&quot; + resource)</b>
+<b class="fc">&nbsp;                        .methods(RequestMethod.GET)</b>
+<b class="fc">&nbsp;                        .produces(MediaType.APPLICATION_JSON_VALUE)</b>
+<b class="fc">&nbsp;                        .options(options)</b>
+<b class="fc">&nbsp;                        .build(),</b>
+&nbsp;                controller,
+<b class="fc">&nbsp;                controller.getClass().getMethod(&quot;getAllResources&quot;, int.class, int.class,</b>
+&nbsp;                        String.class, String.class, String.class, boolean.class)
+&nbsp;        );
+&nbsp;
+<b class="fc">&nbsp;        handlerMapping.registerMapping(</b>
+<b class="fc">&nbsp;                RequestMappingInfo.paths(&quot;/api/&quot; + resource + &quot;/{id}&quot;)</b>
+<b class="fc">&nbsp;                        .methods(RequestMethod.GET)</b>
+<b class="fc">&nbsp;                        .produces(MediaType.APPLICATION_JSON_VALUE)</b>
+<b class="fc">&nbsp;                        .options(options)</b>
+<b class="fc">&nbsp;                        .build(),</b>
+&nbsp;                controller,
+<b class="fc">&nbsp;                controller.getClass().getMethod(&quot;getResource&quot;, Long.class)</b>
+&nbsp;        );
+&nbsp;
+<b class="fc">&nbsp;        handlerMapping.registerMapping(</b>
+<b class="fc">&nbsp;                RequestMappingInfo.paths(&quot;/api/&quot; + resource)</b>
+<b class="fc">&nbsp;                        .methods(RequestMethod.POST)</b>
+<b class="fc">&nbsp;                        .consumes(MediaType.APPLICATION_JSON_VALUE)</b>
+<b class="fc">&nbsp;                        .produces(MediaType.APPLICATION_JSON_VALUE)</b>
+<b class="fc">&nbsp;                        .options(options)</b>
+<b class="fc">&nbsp;                        .build(),</b>
+&nbsp;                controller,
+<b class="fc">&nbsp;                controller.getClass().getMethod(&quot;createResource&quot;, JsonNode.class)</b>
+&nbsp;        );
+&nbsp;
+<b class="fc">&nbsp;        handlerMapping.registerMapping(</b>
+<b class="fc">&nbsp;                RequestMappingInfo.paths(&quot;/api/&quot; + resource + &quot;/{id}&quot;)</b>
+<b class="fc">&nbsp;                        .methods(RequestMethod.PUT)</b>
+<b class="fc">&nbsp;                        .consumes(MediaType.APPLICATION_JSON_VALUE)</b>
+<b class="fc">&nbsp;                        .produces(MediaType.APPLICATION_JSON_VALUE)</b>
+<b class="fc">&nbsp;                        .options(options)</b>
+<b class="fc">&nbsp;                        .build(),</b>
+&nbsp;                controller,
+<b class="fc">&nbsp;                controller.getClass().getMethod(&quot;updateResource&quot;, Long.class, JsonNode.class)</b>
+&nbsp;        );
+&nbsp;
+<b class="fc">&nbsp;        handlerMapping.registerMapping(</b>
+<b class="fc">&nbsp;                RequestMappingInfo.paths(&quot;/api/&quot; + resource + &quot;/{id}&quot;)</b>
+<b class="fc">&nbsp;                        .methods(RequestMethod.DELETE)</b>
+<b class="fc">&nbsp;                        .options(options)</b>
+<b class="fc">&nbsp;                        .build(),</b>
+&nbsp;                controller,
+<b class="fc">&nbsp;                controller.getClass().getMethod(&quot;deleteResource&quot;, Long.class)</b>
+&nbsp;        );
+&nbsp;
+<b class="fc">&nbsp;        handlerMapping.registerMapping(</b>
+<b class="fc">&nbsp;                RequestMappingInfo.paths(&quot;/api/&quot; + resource)</b>
+<b class="fc">&nbsp;                        .methods(RequestMethod.DELETE)</b>
+<b class="fc">&nbsp;                        .consumes(MediaType.APPLICATION_JSON_VALUE)</b>
+<b class="fc">&nbsp;                        .options(options)</b>
+<b class="fc">&nbsp;                        .build(),</b>
+&nbsp;                controller,
+<b class="fc">&nbsp;                controller.getClass().getMethod(&quot;deleteResources&quot;, List.class)</b>
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-19 22:42</div>
+</div>
+</body>
+</html>

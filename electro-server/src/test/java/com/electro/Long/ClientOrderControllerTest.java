@@ -391,6 +391,14 @@ public class ClientOrderControllerTest {
             entityManager.flush();
         }
 
+        /**
+         * Test Case ID: CRO009
+         * Test Name: testCreateClientOrderIntegration
+         * Objective: Verify that the controller creates a client order with cash payment in the database
+         * Input: ClientSimpleOrderRequest with PaymentMethodType.CASH
+         * Expected Output: Order created in database with valid order code
+         * Note: Tests full integration with database for order creation
+         */
         @Test
         @DisplayName("Integration Test - Create client order with cash payment")
         void testCreateClientOrderIntegration() {
@@ -409,6 +417,14 @@ public class ClientOrderControllerTest {
             assertTrue(orderRepository.findByCode(response.getBody().getOrderCode()).isPresent());
         }
 
+        /**
+         * Test Case ID: CRO010
+         * Test Name: testCancelClientOrderIntegration
+         * Objective: Verify that the controller correctly cancels an existing order in the database
+         * Input: Valid order code from previously created order
+         * Expected Output: Order status changed to 5 (cancelled) in database
+         * Note: Tests full integration with database for order cancellation
+         */
         @Test
         @DisplayName("Integration Test - Cancel client order with database")
         void testCancelClientOrderIntegration() {

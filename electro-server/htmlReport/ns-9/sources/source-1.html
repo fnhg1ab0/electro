@@ -1,0 +1,228 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > AuthController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.controller.authentication</a>
+</div>
+
+<h1>Coverage Summary for Class: AuthController (com.electro.controller.authentication)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AuthController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    10%
+  </span>
+  <span class="absValue">
+    (1/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    3.2%
+  </span>
+  <span class="absValue">
+    (1/31)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.controller.authentication;
+&nbsp;
+&nbsp;import com.electro.config.security.JwtUtils;
+&nbsp;import com.electro.constant.AppConstants;
+&nbsp;import com.electro.dto.authentication.JwtResponse;
+&nbsp;import com.electro.dto.authentication.LoginRequest;
+&nbsp;import com.electro.dto.authentication.RefreshTokenRequest;
+&nbsp;import com.electro.dto.authentication.RegistrationRequest;
+&nbsp;import com.electro.dto.authentication.RegistrationResponse;
+&nbsp;import com.electro.dto.authentication.ResetPasswordRequest;
+&nbsp;import com.electro.dto.authentication.UserRequest;
+&nbsp;import com.electro.dto.authentication.UserResponse;
+&nbsp;import com.electro.entity.authentication.RefreshToken;
+&nbsp;import com.electro.entity.authentication.User;
+&nbsp;import com.electro.exception.RefreshTokenException;
+&nbsp;import com.electro.mapper.authentication.UserMapper;
+&nbsp;import com.electro.repository.authentication.UserRepository;
+&nbsp;import com.electro.service.auth.VerificationService;
+&nbsp;import com.electro.service.authetication.RefreshTokenService;
+&nbsp;import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+&nbsp;import com.fasterxml.jackson.databind.node.ObjectNode;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.security.authentication.AuthenticationManager;
+&nbsp;import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+&nbsp;import org.springframework.security.core.Authentication;
+&nbsp;import org.springframework.security.core.userdetails.UsernameNotFoundException;
+&nbsp;import org.springframework.web.bind.annotation.CrossOrigin;
+&nbsp;import org.springframework.web.bind.annotation.GetMapping;
+&nbsp;import org.springframework.web.bind.annotation.PathVariable;
+&nbsp;import org.springframework.web.bind.annotation.PostMapping;
+&nbsp;import org.springframework.web.bind.annotation.PutMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestBody;
+&nbsp;import org.springframework.web.bind.annotation.RequestMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestParam;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;
+&nbsp;import java.time.Instant;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/api/auth&quot;)
+<b class="fc">&nbsp;@AllArgsConstructor</b>
+&nbsp;@CrossOrigin(AppConstants.FRONTEND_HOST)
+&nbsp;public class AuthController {
+&nbsp;
+&nbsp;    private AuthenticationManager authenticationManager;
+&nbsp;    private VerificationService verificationService;
+&nbsp;    private RefreshTokenService refreshTokenService;
+&nbsp;    private JwtUtils jwtUtils;
+&nbsp;    private UserRepository userRepository;
+&nbsp;    private UserMapper userMapper;
+&nbsp;
+&nbsp;    @PostMapping(&quot;/login&quot;)
+&nbsp;    public ResponseEntity&lt;JwtResponse&gt; authenticateUser(@RequestBody LoginRequest loginRequest) {
+<b class="nc">&nbsp;        Authentication authentication = authenticationManager.authenticate(</b>
+<b class="nc">&nbsp;                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));</b>
+&nbsp;
+<b class="nc">&nbsp;        String jwt = jwtUtils.generateJwtToken(authentication);</b>
+<b class="nc">&nbsp;        String refreshToken = refreshTokenService.createRefreshToken(authentication).getToken();</b>
+&nbsp;
+<b class="nc">&nbsp;        return ResponseEntity.ok(new JwtResponse(&quot;Login success!&quot;, jwt, refreshToken, Instant.now()));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(&quot;/refresh-token&quot;)
+&nbsp;    public ResponseEntity&lt;JwtResponse&gt; refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+<b class="nc">&nbsp;        String refreshToken = refreshTokenRequest.getRefreshToken();</b>
+&nbsp;
+<b class="nc">&nbsp;        String jwt = refreshTokenService.findByToken(refreshToken)</b>
+<b class="nc">&nbsp;                .map(refreshTokenService::verifyExpiration)</b>
+<b class="nc">&nbsp;                .map(RefreshToken::getUser)</b>
+<b class="nc">&nbsp;                .map(User::getUsername)</b>
+<b class="nc">&nbsp;                .map(jwtUtils::generateTokenFromUsername)</b>
+<b class="nc">&nbsp;                .orElseThrow(() -&gt; new RefreshTokenException(&quot;Refresh token was expired. Please make a new signin request!&quot;));</b>
+&nbsp;
+<b class="nc">&nbsp;        return ResponseEntity.ok(new JwtResponse(&quot;Refresh token&quot;, jwt, refreshToken, Instant.now()));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(&quot;/registration&quot;)
+&nbsp;    public ResponseEntity&lt;RegistrationResponse&gt; registerUser(@RequestBody UserRequest userRequest) {
+<b class="nc">&nbsp;        Long userId = verificationService.generateTokenVerify(userRequest);</b>
+<b class="nc">&nbsp;        return ResponseEntity.status(HttpStatus.OK).body(new RegistrationResponse(userId));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/registration/{userId}/resend-token&quot;)
+&nbsp;    public ResponseEntity&lt;ObjectNode&gt; resendRegistrationToken(@PathVariable Long userId) {
+<b class="nc">&nbsp;        verificationService.resendRegistrationToken(userId);</b>
+<b class="nc">&nbsp;        return ResponseEntity.status(HttpStatus.OK).body(new ObjectNode(JsonNodeFactory.instance));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(&quot;/registration/confirm&quot;)
+&nbsp;    public ResponseEntity&lt;ObjectNode&gt; confirmRegistration(@RequestBody RegistrationRequest registration) {
+<b class="nc">&nbsp;        verificationService.confirmRegistration(registration);</b>
+<b class="nc">&nbsp;        return ResponseEntity.status(HttpStatus.OK).body(new ObjectNode(JsonNodeFactory.instance));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/registration/{userId}/change-email&quot;)
+&nbsp;    public ResponseEntity&lt;ObjectNode&gt; changeRegistrationEmail(@PathVariable Long userId, @RequestParam String email) {
+<b class="nc">&nbsp;        verificationService.changeRegistrationEmail(userId, email);</b>
+<b class="nc">&nbsp;        return ResponseEntity.status(HttpStatus.OK).body(new ObjectNode(JsonNodeFactory.instance));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/forgot-password&quot;)
+&nbsp;    public ResponseEntity&lt;ObjectNode&gt; forgotPassword(@RequestParam String email) {
+<b class="nc">&nbsp;        verificationService.forgetPassword(email);</b>
+<b class="nc">&nbsp;        return ResponseEntity.status(HttpStatus.OK).body(new ObjectNode(JsonNodeFactory.instance));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/reset-password&quot;)
+&nbsp;    public ResponseEntity&lt;ObjectNode&gt; resetPassword(@RequestBody ResetPasswordRequest resetPassword) {
+<b class="nc">&nbsp;        verificationService.resetPassword(resetPassword);</b>
+<b class="nc">&nbsp;        return ResponseEntity.status(HttpStatus.OK).body(new ObjectNode(JsonNodeFactory.instance));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/info&quot;)
+&nbsp;    public ResponseEntity&lt;UserResponse&gt; getAdminUserInfo(Authentication authentication) {
+<b class="nc">&nbsp;        String username = authentication.getName();</b>
+<b class="nc">&nbsp;        UserResponse userResponse = userRepository.findByUsername(username)</b>
+<b class="nc">&nbsp;                .map(userMapper::entityToResponse)</b>
+<b class="nc">&nbsp;                .orElseThrow(() -&gt; new UsernameNotFoundException(username));</b>
+<b class="nc">&nbsp;        return ResponseEntity.status(HttpStatus.OK).body(userResponse);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-19 22:42</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,257 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ClientOrderMapper</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.mapper.client</a>
+</div>
+
+<h1>Coverage Summary for Class: ClientOrderMapper (com.electro.mapper.client)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ClientOrderMapper</td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (1/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    11.1%
+  </span>
+  <span class="absValue">
+    (1/9)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ClientOrderMapper$MockitoMock$2103103981</td>
+  </tr>
+  <tr>
+    <td class="name">ClientOrderMapper$MockitoMock$2103103981$auxiliary$lxMeLCse</td>
+  </tr>
+  <tr>
+    <td class="name">ClientOrderMapper$MockitoMock$2103103981$auxiliary$ps3s09Lv</td>
+  </tr>
+  <tr>
+    <td class="name">ClientOrderMapper$MockitoMock$2103103981$auxiliary$XV9dLTGq</td>
+  </tr>
+  <tr>
+    <td class="name">ClientOrderMapper$MockitoMock$2103103981$auxiliary$YocPd57E</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (1/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    11.1%
+  </span>
+  <span class="absValue">
+    (1/9)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.mapper.client;
+&nbsp;
+&nbsp;import com.electro.dto.client.ClientOrderDetailResponse;
+&nbsp;import com.electro.dto.client.ClientOrderRequest;
+&nbsp;import com.electro.dto.client.ClientOrderVariantResponse;
+&nbsp;import com.electro.dto.client.ClientSimpleOrderResponse;
+&nbsp;import com.electro.dto.client.ClientWaybillResponse;
+&nbsp;import com.electro.entity.general.Image;
+&nbsp;import com.electro.entity.order.Order;
+&nbsp;import com.electro.entity.order.OrderVariant;
+&nbsp;import com.electro.entity.waybill.WaybillLog;
+&nbsp;import com.electro.repository.review.ReviewRepository;
+&nbsp;import com.electro.utils.MapperUtils;
+&nbsp;import org.mapstruct.AfterMapping;
+&nbsp;import org.mapstruct.BeanMapping;
+&nbsp;import org.mapstruct.Mapper;
+&nbsp;import org.mapstruct.Mapping;
+&nbsp;import org.mapstruct.MappingTarget;
+&nbsp;import org.mapstruct.ReportingPolicy;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.security.core.Authentication;
+&nbsp;import org.springframework.security.core.context.SecurityContextHolder;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Mapper(componentModel = &quot;spring&quot;, unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = MapperUtils.class)
+<b class="fc">&nbsp;public abstract class ClientOrderMapper {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private ReviewRepository reviewRepository;
+&nbsp;
+&nbsp;    @Mapping(source = &quot;id&quot;, target = &quot;orderId&quot;)
+&nbsp;    @Mapping(source = &quot;createdAt&quot;, target = &quot;orderCreatedAt&quot;)
+&nbsp;    @Mapping(source = &quot;code&quot;, target = &quot;orderCode&quot;)
+&nbsp;    @Mapping(source = &quot;status&quot;, target = &quot;orderStatus&quot;)
+&nbsp;    @Mapping(source = &quot;totalPay&quot;, target = &quot;orderTotalPay&quot;)
+&nbsp;    @Mapping(source = &quot;orderVariants&quot;, target = &quot;orderItems&quot;)
+&nbsp;    @Mapping(source = &quot;paymentStatus&quot;, target = &quot;orderPaymentStatus&quot;)
+&nbsp;    public abstract ClientSimpleOrderResponse entityToResponse(Order order);
+&nbsp;
+&nbsp;    @Mapping(source = &quot;id&quot;, target = &quot;orderId&quot;)
+&nbsp;    @Mapping(source = &quot;createdAt&quot;, target = &quot;orderCreatedAt&quot;)
+&nbsp;    @Mapping(source = &quot;code&quot;, target = &quot;orderCode&quot;)
+&nbsp;    @Mapping(source = &quot;status&quot;, target = &quot;orderStatus&quot;)
+&nbsp;    @Mapping(source = &quot;toName&quot;, target = &quot;orderToName&quot;)
+&nbsp;    @Mapping(source = &quot;toPhone&quot;, target = &quot;orderToPhone&quot;)
+&nbsp;    @Mapping(source = &quot;toAddress&quot;, target = &quot;orderToAddress&quot;)
+&nbsp;    @Mapping(source = &quot;toWardName&quot;, target = &quot;orderToWardName&quot;)
+&nbsp;    @Mapping(source = &quot;toDistrictName&quot;, target = &quot;orderToDistrictName&quot;)
+&nbsp;    @Mapping(source = &quot;toProvinceName&quot;, target = &quot;orderToProvinceName&quot;)
+&nbsp;    @Mapping(source = &quot;totalAmount&quot;, target = &quot;orderTotalAmount&quot;)
+&nbsp;    @Mapping(source = &quot;tax&quot;, target = &quot;orderTax&quot;)
+&nbsp;    @Mapping(source = &quot;shippingCost&quot;, target = &quot;orderShippingCost&quot;)
+&nbsp;    @Mapping(source = &quot;totalPay&quot;, target = &quot;orderTotalPay&quot;)
+&nbsp;    @Mapping(source = &quot;paymentMethodType&quot;, target = &quot;orderPaymentMethodType&quot;)
+&nbsp;    @Mapping(source = &quot;paymentStatus&quot;, target = &quot;orderPaymentStatus&quot;)
+&nbsp;    @Mapping(source = &quot;orderVariants&quot;, target = &quot;orderItems&quot;)
+&nbsp;    @Mapping(source = &quot;waybill&quot;, target = &quot;orderWaybill&quot;)
+&nbsp;    @Mapping(source = &quot;waybill.code&quot;, target = &quot;orderWaybill.waybillCode&quot;)
+&nbsp;    @Mapping(source = &quot;waybill.expectedDeliveryTime&quot;, target = &quot;orderWaybill.waybillExpectedDeliveryTime&quot;)
+&nbsp;    @Mapping(source = &quot;waybill.waybillLogs&quot;, target = &quot;orderWaybill.waybillLogs&quot;)
+&nbsp;    public abstract ClientOrderDetailResponse entityToDetailResponse(Order order);
+&nbsp;
+&nbsp;    @Mapping(source = &quot;variant.id&quot;, target = &quot;orderItemVariant.variantId&quot;)
+&nbsp;    @Mapping(source = &quot;variant.product.id&quot;, target = &quot;orderItemVariant.variantProduct.productId&quot;)
+&nbsp;    @Mapping(source = &quot;variant.product.name&quot;, target = &quot;orderItemVariant.variantProduct.productName&quot;)
+&nbsp;    @Mapping(source = &quot;variant.product.slug&quot;, target = &quot;orderItemVariant.variantProduct.productSlug&quot;)
+&nbsp;    @Mapping(source = &quot;variant.product.images&quot;, target = &quot;orderItemVariant.variantProduct.productThumbnail&quot;)
+&nbsp;    @Mapping(source = &quot;variant.properties&quot;, target = &quot;orderItemVariant.variantProperties&quot;)
+&nbsp;    @Mapping(source = &quot;price&quot;, target = &quot;orderItemPrice&quot;)
+&nbsp;    @Mapping(source = &quot;quantity&quot;, target = &quot;orderItemQuantity&quot;)
+&nbsp;    @Mapping(source = &quot;amount&quot;, target = &quot;orderItemAmount&quot;)
+&nbsp;    public abstract ClientOrderVariantResponse entityToResponse(OrderVariant orderVariant);
+&nbsp;
+&nbsp;    public String mapToProductThumbnail(List&lt;Image&gt; images) {
+<b class="nc">&nbsp;        return images.stream().filter(Image::getIsThumbnail).findAny().map(Image::getPath).orElse(null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @AfterMapping
+&nbsp;    public ClientOrderDetailResponse entityToDetailResponseCallback(@MappingTarget ClientOrderDetailResponse clientOrderDetailResponse) {
+<b class="nc">&nbsp;        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</b>
+<b class="nc">&nbsp;        String username = authentication.getName();</b>
+&nbsp;
+<b class="nc">&nbsp;        for (var clientOrderVariantResponse : clientOrderDetailResponse.getOrderItems()) {</b>
+<b class="nc">&nbsp;            var productId = clientOrderVariantResponse.getOrderItemVariant().getVariantProduct().getProductId();</b>
+<b class="nc">&nbsp;            var productIsReviewed = reviewRepository.existsByProductIdAndUsername(productId, username);</b>
+<b class="nc">&nbsp;            clientOrderVariantResponse.getOrderItemVariant().getVariantProduct().setProductIsReviewed(productIsReviewed);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return clientOrderDetailResponse;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @BeanMapping(qualifiedByName = &quot;attachOrder&quot;)
+&nbsp;    @Mapping(source = &quot;orderResourceId&quot;, target = &quot;orderResource&quot;)
+&nbsp;    @Mapping(source = &quot;orderCancellationReasonId&quot;, target = &quot;orderCancellationReason&quot;)
+&nbsp;    @Mapping(source = &quot;userId&quot;, target = &quot;user&quot;)
+&nbsp;    public abstract Order requestToEntity(ClientOrderRequest request);
+&nbsp;
+&nbsp;    @BeanMapping(qualifiedByName = &quot;attachOrder&quot;)
+&nbsp;    @Mapping(source = &quot;orderResourceId&quot;, target = &quot;orderResource&quot;)
+&nbsp;    @Mapping(source = &quot;orderCancellationReasonId&quot;, target = &quot;orderCancellationReason&quot;)
+&nbsp;    @Mapping(source = &quot;userId&quot;, target = &quot;user&quot;)
+&nbsp;    public abstract Order partialUpdate(@MappingTarget Order entity, ClientOrderRequest request);
+&nbsp;
+&nbsp;    @Mapping(source = &quot;id&quot;, target = &quot;waybillLogId&quot;)
+&nbsp;    @Mapping(source = &quot;createdAt&quot;, target = &quot;waybillLogCreatedAt&quot;)
+&nbsp;    @Mapping(source = &quot;previousStatus&quot;, target = &quot;waybillLogPreviousStatus&quot;)
+&nbsp;    @Mapping(source = &quot;currentStatus&quot;, target = &quot;waybillLogCurrentStatus&quot;)
+&nbsp;    public abstract ClientWaybillResponse.ClientWaybillLogResponse entityToResponse(WaybillLog waybillLog);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-19 22:42</div>
+</div>
+</body>
+</html>

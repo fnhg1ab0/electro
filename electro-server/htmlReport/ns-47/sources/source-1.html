@@ -1,0 +1,362 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > VerificationServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.service.auth</a>
+</div>
+
+<h1>Coverage Summary for Class: VerificationServiceImpl (com.electro.service.auth)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">VerificationServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    12.5%
+  </span>
+  <span class="absValue">
+    (1/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/26)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    1.1%
+  </span>
+  <span class="absValue">
+    (1/92)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">VerificationServiceImpl$$EnhancerBySpringCGLIB$$4972e324</td>
+  </tr>
+  <tr>
+    <td class="name">VerificationServiceImpl$$EnhancerBySpringCGLIB$$6cf7fe92</td>
+  </tr>
+  <tr>
+    <td class="name">VerificationServiceImpl$$EnhancerBySpringCGLIB$$8859fd35</td>
+  </tr>
+  <tr>
+    <td class="name">VerificationServiceImpl$$EnhancerBySpringCGLIB$$946c9221</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    12.5%
+  </span>
+  <span class="absValue">
+    (1/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/26)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    1.1%
+  </span>
+  <span class="absValue">
+    (1/92)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.service.auth;
+&nbsp;
+&nbsp;import com.electro.constant.AppConstants;
+&nbsp;import com.electro.dto.authentication.RegistrationRequest;
+&nbsp;import com.electro.dto.authentication.ResetPasswordRequest;
+&nbsp;import com.electro.dto.authentication.UserRequest;
+&nbsp;import com.electro.entity.authentication.Role;
+&nbsp;import com.electro.entity.authentication.User;
+&nbsp;import com.electro.entity.authentication.Verification;
+&nbsp;import com.electro.entity.authentication.VerificationType;
+&nbsp;import com.electro.entity.customer.Customer;
+&nbsp;import com.electro.entity.customer.CustomerGroup;
+&nbsp;import com.electro.entity.customer.CustomerResource;
+&nbsp;import com.electro.entity.customer.CustomerStatus;
+&nbsp;import com.electro.exception.ExpiredTokenException;
+&nbsp;import com.electro.exception.VerificationException;
+&nbsp;import com.electro.mapper.authentication.UserMapper;
+&nbsp;import com.electro.repository.authentication.UserRepository;
+&nbsp;import com.electro.repository.authentication.VerificationRepository;
+&nbsp;import com.electro.repository.customer.CustomerRepository;
+&nbsp;import com.electro.service.email.EmailSenderService;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import net.bytebuddy.utility.RandomString;
+&nbsp;import org.springframework.security.crypto.password.PasswordEncoder;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import javax.transaction.Transactional;
+&nbsp;import java.text.MessageFormat;
+&nbsp;import java.time.Instant;
+&nbsp;import java.time.temporal.ChronoUnit;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.Optional;
+&nbsp;import java.util.Random;
+&nbsp;import java.util.Set;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;@AllArgsConstructor</b>
+&nbsp;@Transactional(rollbackOn = VerificationException.class, dontRollbackOn = ExpiredTokenException.class)
+&nbsp;public class VerificationServiceImpl implements VerificationService {
+&nbsp;
+&nbsp;    private UserRepository userRepository;
+&nbsp;    private VerificationRepository verificationRepository;
+&nbsp;    private UserMapper userMapper;
+&nbsp;    private EmailSenderService emailSenderService;
+&nbsp;    private CustomerRepository customerRepository;
+&nbsp;    private PasswordEncoder passwordEncoder;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Long generateTokenVerify(UserRequest userRequest) {
+&nbsp;        // (1) Check if username exists in database
+<b class="nc">&nbsp;        if (userRepository.existsUserByUsername(userRequest.getUsername())) {</b>
+<b class="nc">&nbsp;            throw new VerificationException(&quot;Username is existing&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // (2) Check if email existing in database
+<b class="nc">&nbsp;        if (userRepository.existsUserByEmail(userRequest.getEmail())) {</b>
+<b class="nc">&nbsp;            throw new VerificationException(&quot;Email is existing&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // (3) Create user entity with status 2 (non-verified) and set role Customer
+<b class="nc">&nbsp;        User user = userMapper.requestToEntity(userRequest);</b>
+<b class="nc">&nbsp;        user.setStatus(2); // Non-verified</b>
+<b class="nc">&nbsp;        user.setRoles(Set.of((Role) new Role().setId(3L)));</b>
+&nbsp;
+<b class="nc">&nbsp;        userRepository.save(user);</b>
+&nbsp;
+&nbsp;        // (4) Create new verification entity and set user, token
+<b class="nc">&nbsp;        Verification verification = new Verification();</b>
+<b class="nc">&nbsp;        String token = generateVerificationToken();</b>
+&nbsp;
+<b class="nc">&nbsp;        verification.setUser(user);</b>
+<b class="nc">&nbsp;        verification.setToken(token);</b>
+<b class="nc">&nbsp;        verification.setExpiredAt(Instant.now().plus(5, ChronoUnit.MINUTES));</b>
+<b class="nc">&nbsp;        verification.setType(VerificationType.REGISTRATION);</b>
+&nbsp;
+<b class="nc">&nbsp;        verificationRepository.save(verification);</b>
+&nbsp;
+&nbsp;        // (5) Send email
+<b class="nc">&nbsp;        Map&lt;String, Object&gt; attributes = Map.of(</b>
+&nbsp;                &quot;token&quot;, token,
+<b class="nc">&nbsp;                &quot;link&quot;, MessageFormat.format(&quot;{0}/signup?userId={1}&quot;, AppConstants.FRONTEND_HOST, user.getId()));</b>
+<b class="nc">&nbsp;        emailSenderService.sendVerificationToken(user.getEmail(), attributes);</b>
+&nbsp;
+<b class="nc">&nbsp;        return user.getId();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void resendRegistrationToken(Long userId) {
+<b class="nc">&nbsp;        Optional&lt;Verification&gt; verifyOpt = verificationRepository.findByUserId(userId);</b>
+&nbsp;
+<b class="nc">&nbsp;        if (verifyOpt.isPresent()) {</b>
+<b class="nc">&nbsp;            Verification verification = verifyOpt.get();</b>
+<b class="nc">&nbsp;            String token = generateVerificationToken();</b>
+&nbsp;
+<b class="nc">&nbsp;            verification.setToken(token);</b>
+<b class="nc">&nbsp;            verification.setExpiredAt(Instant.now().plus(5, ChronoUnit.MINUTES));</b>
+&nbsp;
+<b class="nc">&nbsp;            verificationRepository.save(verification);</b>
+&nbsp;
+<b class="nc">&nbsp;            Map&lt;String, Object&gt; attributes = Map.of(</b>
+&nbsp;                    &quot;token&quot;, token,
+<b class="nc">&nbsp;                    &quot;link&quot;, MessageFormat.format(&quot;{0}/signup?userId={1}&quot;, AppConstants.FRONTEND_HOST, userId));</b>
+<b class="nc">&nbsp;            emailSenderService.sendVerificationToken(verification.getUser().getEmail(), attributes);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            throw new VerificationException(&quot;User ID is invalid. Please try again!&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void confirmRegistration(RegistrationRequest registration) {
+<b class="nc">&nbsp;        Optional&lt;Verification&gt; verifyOpt = verificationRepository.findByUserId(registration.getUserId());</b>
+&nbsp;
+<b class="nc">&nbsp;        if (verifyOpt.isPresent()) {</b>
+<b class="nc">&nbsp;            Verification verification = verifyOpt.get();</b>
+&nbsp;
+<b class="nc">&nbsp;            boolean validVerification = verification.getToken().equals(registration.getToken())</b>
+<b class="nc">&nbsp;                    &amp;&amp; verification.getExpiredAt().isAfter(Instant.now())</b>
+<b class="nc">&nbsp;                    &amp;&amp; verification.getType().equals(VerificationType.REGISTRATION);</b>
+&nbsp;
+<b class="nc">&nbsp;            if (validVerification) {</b>
+&nbsp;                // (1) Set status code and delete row verification
+<b class="nc">&nbsp;                User user = verification.getUser();</b>
+<b class="nc">&nbsp;                user.setStatus(1); // Verified</b>
+<b class="nc">&nbsp;                userRepository.save(user);</b>
+<b class="nc">&nbsp;                verificationRepository.delete(verification);</b>
+&nbsp;
+&nbsp;                // (2) Create customer entity
+<b class="nc">&nbsp;                Customer customer = new Customer();</b>
+<b class="nc">&nbsp;                customer.setUser(user);</b>
+<b class="nc">&nbsp;                customer.setCustomerGroup((CustomerGroup) new CustomerGroup().setId(1L));</b>
+<b class="nc">&nbsp;                customer.setCustomerStatus((CustomerStatus) new CustomerStatus().setId(1L));</b>
+<b class="nc">&nbsp;                customer.setCustomerResource((CustomerResource) new CustomerResource().setId(1L));</b>
+<b class="nc">&nbsp;                customerRepository.save(customer);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            boolean tokenIsExpired = verification.getToken().equals(registration.getToken())</b>
+<b class="nc">&nbsp;                    &amp;&amp; !verification.getExpiredAt().isAfter(Instant.now())</b>
+<b class="nc">&nbsp;                    &amp;&amp; verification.getType().equals(VerificationType.REGISTRATION);</b>
+&nbsp;
+<b class="nc">&nbsp;            if (tokenIsExpired) {</b>
+<b class="nc">&nbsp;                String token = generateVerificationToken();</b>
+&nbsp;
+<b class="nc">&nbsp;                verification.setToken(token);</b>
+<b class="nc">&nbsp;                verification.setExpiredAt(Instant.now().plus(5, ChronoUnit.MINUTES));</b>
+&nbsp;
+<b class="nc">&nbsp;                verificationRepository.save(verification);</b>
+&nbsp;
+<b class="nc">&nbsp;                Map&lt;String, Object&gt; attributes = Map.of(</b>
+&nbsp;                        &quot;token&quot;, token,
+<b class="nc">&nbsp;                        &quot;link&quot;, MessageFormat.format(&quot;{0}/signup?userId={1}&quot;, AppConstants.FRONTEND_HOST, registration.getUserId()));</b>
+<b class="nc">&nbsp;                emailSenderService.sendVerificationToken(verification.getUser().getEmail(), attributes);</b>
+&nbsp;
+<b class="nc">&nbsp;                throw new ExpiredTokenException(&quot;Token is expired, please check your email to get new token!&quot;);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            if (!verification.getToken().equals(registration.getToken())) {</b>
+<b class="nc">&nbsp;                throw new VerificationException(&quot;Invalid token&quot;);</b>
+&nbsp;            }
+&nbsp;        } else {
+<b class="nc">&nbsp;            throw new VerificationException(&quot;User does not exist&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void changeRegistrationEmail(Long userId, String emailUpdate) {
+<b class="nc">&nbsp;        Optional&lt;Verification&gt; verifyOpt = verificationRepository.findByUserId(userId);</b>
+&nbsp;
+<b class="nc">&nbsp;        if (verifyOpt.isPresent()) {</b>
+<b class="nc">&nbsp;            Verification verification = verifyOpt.get();</b>
+&nbsp;
+<b class="nc">&nbsp;            User user = verification.getUser();</b>
+<b class="nc">&nbsp;            user.setEmail(emailUpdate);</b>
+<b class="nc">&nbsp;            userRepository.save(user);</b>
+&nbsp;
+<b class="nc">&nbsp;            String token = generateVerificationToken();</b>
+<b class="nc">&nbsp;            verification.setToken(token);</b>
+<b class="nc">&nbsp;            verification.setExpiredAt(Instant.now().plus(5, ChronoUnit.MINUTES));</b>
+<b class="nc">&nbsp;            verificationRepository.save(verification);</b>
+&nbsp;
+<b class="nc">&nbsp;            Map&lt;String, Object&gt; attributes = Map.of(</b>
+&nbsp;                    &quot;token&quot;, token,
+<b class="nc">&nbsp;                    &quot;link&quot;, MessageFormat.format(&quot;{0}/signup?userId={1}&quot;, AppConstants.FRONTEND_HOST, userId));</b>
+<b class="nc">&nbsp;            emailSenderService.sendVerificationToken(verification.getUser().getEmail(), attributes);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            throw new VerificationException(&quot;User does not exist&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void forgetPassword(String email) {
+<b class="nc">&nbsp;        User user = userRepository.findByEmail(email).orElseThrow(() -&gt; new RuntimeException(&quot;Email doesn&#39;t exist&quot;));</b>
+&nbsp;
+<b class="nc">&nbsp;        if (user.getStatus() == 1) {</b>
+<b class="nc">&nbsp;            String token = RandomString.make(10);</b>
+<b class="nc">&nbsp;            user.setResetPasswordToken(token);</b>
+<b class="nc">&nbsp;            userRepository.save(user);</b>
+&nbsp;
+<b class="nc">&nbsp;            String link = MessageFormat.format(&quot;{0}/change-password?token={1}&amp;email={2}&quot;, AppConstants.FRONTEND_HOST, token, email);</b>
+<b class="nc">&nbsp;            emailSenderService.sendForgetPasswordToken(user.getEmail(), Map.of(&quot;link&quot;, link));</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            throw new VerificationException(&quot;Account is not activated&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void resetPassword(ResetPasswordRequest resetPasswordRequest) {
+<b class="nc">&nbsp;        User user = userRepository</b>
+<b class="nc">&nbsp;                .findByEmailAndResetPasswordToken(resetPasswordRequest.getEmail(), resetPasswordRequest.getToken())</b>
+<b class="nc">&nbsp;                .orElseThrow(() -&gt; new RuntimeException(&quot;Email and/or token are invalid&quot;));</b>
+<b class="nc">&nbsp;        user.setPassword(passwordEncoder.encode(resetPasswordRequest.getPassword()));</b>
+<b class="nc">&nbsp;        userRepository.save(user);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private String generateVerificationToken() {
+<b class="nc">&nbsp;        Random random = new Random();</b>
+<b class="nc">&nbsp;        return String.format(&quot;%04d&quot;, random.nextInt(10000));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-19 22:42</div>
+</div>
+</body>
+</html>

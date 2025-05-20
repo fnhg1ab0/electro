@@ -1,0 +1,138 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > HandlerFunctions</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: HandlerFunctions (com.electro.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">HandlerFunctions</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    25%
+  </span>
+  <span class="absValue">
+    (1/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    11.1%
+  </span>
+  <span class="absValue">
+    (1/9)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.controller;
+&nbsp;
+&nbsp;import com.fasterxml.jackson.databind.JsonNode;
+&nbsp;import org.springframework.http.MediaType;
+&nbsp;import org.springframework.stereotype.Controller;
+&nbsp;import org.springframework.web.client.RestTemplate;
+&nbsp;import org.springframework.web.servlet.function.ServerRequest;
+&nbsp;import org.springframework.web.servlet.function.ServerResponse;
+&nbsp;
+&nbsp;@Controller
+<b class="fc">&nbsp;public class HandlerFunctions {</b>
+&nbsp;
+&nbsp;    public ServerResponse returnText(ServerRequest request) {
+<b class="nc">&nbsp;        return ServerResponse.ok().body(&quot;Test Functional Endpoint 1&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ServerResponse returnParamsMap(ServerRequest request) {
+<b class="nc">&nbsp;        return ServerResponse.ok()</b>
+<b class="nc">&nbsp;                .contentType(MediaType.APPLICATION_JSON)</b>
+<b class="nc">&nbsp;                .body(request.params());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ServerResponse callWikipediaApi(ServerRequest request) {
+<b class="nc">&nbsp;        RestTemplate restTemplate = new RestTemplate();</b>
+&nbsp;
+<b class="nc">&nbsp;        return ServerResponse.ok()</b>
+<b class="nc">&nbsp;                .contentType(MediaType.APPLICATION_JSON)</b>
+<b class="nc">&nbsp;                .body(restTemplate.getForEntity(</b>
+&nbsp;                        &quot;https://en.wikipedia.org/api/rest_v1/page/title/Vietnam&quot;,
+&nbsp;                        JsonNode.class)
+&nbsp;                );
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-19 22:42</div>
+</div>
+</body>
+</html>

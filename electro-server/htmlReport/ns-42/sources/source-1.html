@@ -1,0 +1,148 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PromotionRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.repository.promotion</a>
+</div>
+
+<h1>Coverage Summary for Class: PromotionRepository (com.electro.repository.promotion)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PromotionRepository</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (10/10)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.repository.promotion;
+&nbsp;
+&nbsp;import com.electro.entity.product.Product;
+&nbsp;import com.electro.entity.promotion.Promotion;
+&nbsp;import org.springframework.data.jpa.domain.Specification;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;
+&nbsp;import javax.persistence.criteria.Join;
+&nbsp;import javax.persistence.criteria.Predicate;
+&nbsp;import java.time.Instant;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public interface PromotionRepository extends JpaRepository&lt;Promotion, Long&gt;, JpaSpecificationExecutor&lt;Promotion&gt; {
+&nbsp;
+&nbsp;    default List&lt;Promotion&gt; findByProductId(Long productId, Instant startDate, Instant endDate) {
+<b class="fc">&nbsp;        Specification&lt;Promotion&gt; spec = (root, query, cb) -&gt; {</b>
+<b class="fc">&nbsp;            List&lt;Predicate&gt; wheres = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;            Join&lt;Promotion, Product&gt; product = root.join(&quot;products&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;            wheres.add(cb.equal(product.get(&quot;id&quot;), productId));</b>
+<b class="fc">&nbsp;            wheres.add(cb.or(</b>
+<b class="fc">&nbsp;                    cb.between(root.get(&quot;startDate&quot;), startDate, endDate),</b>
+<b class="fc">&nbsp;                    cb.between(root.get(&quot;endDate&quot;), startDate, endDate)</b>
+&nbsp;            ));
+&nbsp;
+<b class="fc">&nbsp;            query.where(wheres.toArray(Predicate[]::new));</b>
+<b class="fc">&nbsp;            return query.getRestriction();</b>
+&nbsp;        };
+&nbsp;
+<b class="fc">&nbsp;        return findAll(spec);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Query(&quot;SELECT pr FROM Promotion pr JOIN pr.products p WHERE p.id = :productId AND pr.status = 1 AND &quot; +
+&nbsp;            &quot;CURRENT_DATE BETWEEN pr.startDate AND pr.endDate&quot;)
+&nbsp;    List&lt;Promotion&gt; findActivePromotionByProductId(@Param(&quot;productId&quot;) Long productId);
+&nbsp;
+&nbsp;    @Query(&quot;SELECT COUNT(pr.id) FROM Promotion pr WHERE pr.status = 1 AND CURRENT_DATE BETWEEN pr.startDate AND pr.endDate&quot;)
+&nbsp;    int countByPromotionId();
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-19 22:42</div>
+</div>
+</body>
+</html>

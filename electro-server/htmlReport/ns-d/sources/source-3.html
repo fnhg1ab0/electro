@@ -1,0 +1,255 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > InventoryController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.controller.inventory</a>
+</div>
+
+<h1>Coverage Summary for Class: InventoryController (com.electro.controller.inventory)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">InventoryController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (44/44)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.controller.inventory;
+&nbsp;
+&nbsp;import com.electro.constant.AppConstants;
+&nbsp;import com.electro.constant.FieldName;
+&nbsp;import com.electro.constant.ResourceName;
+&nbsp;import com.electro.dto.ListResponse;
+&nbsp;import com.electro.dto.inventory.ProductInventoryResponse;
+&nbsp;import com.electro.dto.inventory.VariantInventoryResponse;
+&nbsp;import com.electro.entity.inventory.DocketVariant;
+&nbsp;import com.electro.entity.product.Product;
+&nbsp;import com.electro.entity.product.Variant;
+&nbsp;import com.electro.exception.ResourceNotFoundException;
+&nbsp;import com.electro.mapper.product.ProductInventoryMapper;
+&nbsp;import com.electro.mapper.product.VariantInventoryMapper;
+&nbsp;import com.electro.projection.inventory.ProductInventory;
+&nbsp;import com.electro.projection.inventory.VariantInventory;
+&nbsp;import com.electro.repository.inventory.DocketVariantRepository;
+&nbsp;import com.electro.repository.product.ProductRepository;
+&nbsp;import com.electro.repository.product.VariantRepository;
+&nbsp;import com.electro.utils.InventoryUtils;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.PageRequest;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.CrossOrigin;
+&nbsp;import org.springframework.web.bind.annotation.GetMapping;
+&nbsp;import org.springframework.web.bind.annotation.PathVariable;
+&nbsp;import org.springframework.web.bind.annotation.RequestMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestParam;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/api&quot;)
+<b class="fc">&nbsp;@AllArgsConstructor</b>
+&nbsp;@CrossOrigin(AppConstants.FRONTEND_HOST)
+&nbsp;public class InventoryController {
+&nbsp;
+&nbsp;    private ProductRepository productRepository;
+&nbsp;    private DocketVariantRepository docketVariantRepository;
+&nbsp;    private ProductInventoryMapper productInventoryMapper;
+&nbsp;    private VariantRepository variantRepository;
+&nbsp;    private VariantInventoryMapper variantInventoryMapper;
+&nbsp;
+&nbsp;    @GetMapping(&quot;/product-inventories&quot;)
+&nbsp;    public ResponseEntity&lt;ListResponse&lt;ProductInventoryResponse&gt;&gt; getProductInventories(
+&nbsp;            @RequestParam(name = &quot;page&quot;, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
+&nbsp;            @RequestParam(name = &quot;size&quot;, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size
+&nbsp;    ) {
+&nbsp;        // Lấy danh sách sản phẩm từng được nhập xuất
+<b class="fc">&nbsp;        Page&lt;Product&gt; products = productRepository.findDocketedProducts(PageRequest.of(page - 1, size));</b>
+&nbsp;
+<b class="fc">&nbsp;        List&lt;ProductInventory&gt; productInventories = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;        for (Product product : products) {</b>
+<b class="fc">&nbsp;            ProductInventory productInventory = new ProductInventory();</b>
+&nbsp;
+<b class="fc">&nbsp;            productInventory.setProduct(product);</b>
+&nbsp;
+<b class="fc">&nbsp;            List&lt;DocketVariant&gt; transactions = docketVariantRepository.findByProductId(product.getId());</b>
+<b class="fc">&nbsp;            productInventory.setTransactions(transactions);</b>
+&nbsp;
+<b class="fc">&nbsp;            Map&lt;String, Integer&gt; inventoryIndices = InventoryUtils.calculateInventoryIndices(transactions);</b>
+&nbsp;
+<b class="fc">&nbsp;            productInventory.setInventory(inventoryIndices.get(&quot;inventory&quot;));</b>
+<b class="fc">&nbsp;            productInventory.setWaitingForDelivery(inventoryIndices.get(&quot;waitingForDelivery&quot;));</b>
+<b class="fc">&nbsp;            productInventory.setCanBeSold(inventoryIndices.get(&quot;canBeSold&quot;));</b>
+<b class="fc">&nbsp;            productInventory.setAreComing(inventoryIndices.get(&quot;areComing&quot;));</b>
+&nbsp;
+<b class="fc">&nbsp;            productInventories.add(productInventory);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        List&lt;ProductInventoryResponse&gt; productInventoryResponses = productInventoryMapper.toResponse(productInventories);</b>
+&nbsp;
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.OK).body(new ListResponse&lt;&gt;(productInventoryResponses, products));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/variant-inventories&quot;)
+&nbsp;    public ResponseEntity&lt;ListResponse&lt;VariantInventoryResponse&gt;&gt; getVariantInventories(
+&nbsp;            @RequestParam(name = &quot;page&quot;, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
+&nbsp;            @RequestParam(name = &quot;size&quot;, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size
+&nbsp;    ) {
+&nbsp;        // Lấy danh sách phiên bản sản phẩm từng được nhập xuất
+<b class="fc">&nbsp;        Page&lt;Variant&gt; variants = variantRepository.findDocketedVariants(PageRequest.of(page - 1, size));</b>
+&nbsp;
+<b class="fc">&nbsp;        List&lt;VariantInventory&gt; variantInventories = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;        for (Variant variant : variants) {</b>
+<b class="fc">&nbsp;            VariantInventory variantInventory = new VariantInventory();</b>
+&nbsp;
+<b class="fc">&nbsp;            variantInventory.setVariant(variant);</b>
+&nbsp;
+<b class="fc">&nbsp;            List&lt;DocketVariant&gt; transactions = docketVariantRepository.findByVariantId(variant.getId());</b>
+<b class="fc">&nbsp;            variantInventory.setTransactions(transactions);</b>
+&nbsp;
+<b class="fc">&nbsp;            Map&lt;String, Integer&gt; inventoryIndices = InventoryUtils.calculateInventoryIndices(transactions);</b>
+&nbsp;
+<b class="fc">&nbsp;            variantInventory.setInventory(inventoryIndices.get(&quot;inventory&quot;));</b>
+<b class="fc">&nbsp;            variantInventory.setWaitingForDelivery(inventoryIndices.get(&quot;waitingForDelivery&quot;));</b>
+<b class="fc">&nbsp;            variantInventory.setCanBeSold(inventoryIndices.get(&quot;canBeSold&quot;));</b>
+<b class="fc">&nbsp;            variantInventory.setAreComing(inventoryIndices.get(&quot;areComing&quot;));</b>
+&nbsp;
+<b class="fc">&nbsp;            variantInventories.add(variantInventory);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        List&lt;VariantInventoryResponse&gt; variantInventoryResponses = variantInventoryMapper.toResponse(variantInventories);</b>
+&nbsp;
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.OK).body(new ListResponse&lt;&gt;(variantInventoryResponses, variants));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/variant-inventories/{variantId}&quot;)
+&nbsp;    public ResponseEntity&lt;VariantInventoryResponse&gt; getVariantInventory(@PathVariable(&quot;variantId&quot;) Long variantId) {
+<b class="fc">&nbsp;        Variant variant = variantRepository.findById(variantId)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new ResourceNotFoundException(ResourceName.VARIANT, FieldName.ID, variantId));</b>
+&nbsp;
+<b class="fc">&nbsp;        VariantInventory variantInventory = new VariantInventory();</b>
+&nbsp;
+<b class="fc">&nbsp;        variantInventory.setVariant(variant);</b>
+&nbsp;
+<b class="fc">&nbsp;        List&lt;DocketVariant&gt; transactions = docketVariantRepository.findByVariantId(variant.getId());</b>
+<b class="fc">&nbsp;        variantInventory.setTransactions(transactions);</b>
+&nbsp;
+<b class="fc">&nbsp;        Map&lt;String, Integer&gt; inventoryIndices = InventoryUtils.calculateInventoryIndices(transactions);</b>
+&nbsp;
+<b class="fc">&nbsp;        variantInventory.setInventory(inventoryIndices.get(&quot;inventory&quot;));</b>
+<b class="fc">&nbsp;        variantInventory.setWaitingForDelivery(inventoryIndices.get(&quot;waitingForDelivery&quot;));</b>
+<b class="fc">&nbsp;        variantInventory.setCanBeSold(inventoryIndices.get(&quot;canBeSold&quot;));</b>
+<b class="fc">&nbsp;        variantInventory.setAreComing(inventoryIndices.get(&quot;areComing&quot;));</b>
+&nbsp;
+<b class="fc">&nbsp;        VariantInventoryResponse variantInventoryResponse = variantInventoryMapper.toResponse(variantInventory);</b>
+&nbsp;
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.OK).body(variantInventoryResponse);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-19 22:42</div>
+</div>
+</body>
+</html>

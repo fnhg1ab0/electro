@@ -1,0 +1,535 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > WaybillServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.service.waybill</a>
+</div>
+
+<h1>Coverage Summary for Class: WaybillServiceImpl (com.electro.service.waybill)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">WaybillServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    7.1%
+  </span>
+  <span class="absValue">
+    (1/14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/35)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0.5%
+  </span>
+  <span class="absValue">
+    (1/182)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">WaybillServiceImpl$$EnhancerBySpringCGLIB$$8e09d64d</td>
+  </tr>
+  <tr>
+    <td class="name">WaybillServiceImpl$$EnhancerBySpringCGLIB$$b18ef1bb</td>
+  </tr>
+  <tr>
+    <td class="name">WaybillServiceImpl$$EnhancerBySpringCGLIB$$ccf0f05e</td>
+  </tr>
+  <tr>
+    <td class="name">WaybillServiceImpl$$EnhancerBySpringCGLIB$$d903854a</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    7.1%
+  </span>
+  <span class="absValue">
+    (1/14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/35)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0.5%
+  </span>
+  <span class="absValue">
+    (1/182)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.service.waybill;
+&nbsp;
+&nbsp;import com.electro.constant.FieldName;
+&nbsp;import com.electro.constant.ResourceName;
+&nbsp;import com.electro.constant.SearchFields;
+&nbsp;import com.electro.dto.CollectionWrapper;
+&nbsp;import com.electro.dto.ListResponse;
+&nbsp;import com.electro.dto.waybill.GhnCallbackOrderRequest;
+&nbsp;import com.electro.dto.waybill.GhnCreateOrderRequest;
+&nbsp;import com.electro.dto.waybill.GhnCreateOrderResponse;
+&nbsp;import com.electro.dto.waybill.GhnUpdateOrderRequest;
+&nbsp;import com.electro.dto.waybill.GhnUpdateOrderResponse;
+&nbsp;import com.electro.dto.waybill.WaybillRequest;
+&nbsp;import com.electro.dto.waybill.WaybillResponse;
+&nbsp;import com.electro.entity.cashbook.PaymentMethodType;
+&nbsp;import com.electro.entity.general.Notification;
+&nbsp;import com.electro.entity.general.NotificationType;
+&nbsp;import com.electro.entity.order.Order;
+&nbsp;import com.electro.entity.order.OrderVariant;
+&nbsp;import com.electro.entity.waybill.Waybill;
+&nbsp;import com.electro.entity.waybill.WaybillLog;
+&nbsp;import com.electro.exception.ResourceNotFoundException;
+&nbsp;import com.electro.mapper.general.NotificationMapper;
+&nbsp;import com.electro.mapper.waybill.WaybillMapper;
+&nbsp;import com.electro.repository.general.NotificationRepository;
+&nbsp;import com.electro.repository.order.OrderRepository;
+&nbsp;import com.electro.repository.waybill.WaybillLogRepository;
+&nbsp;import com.electro.repository.waybill.WaybillRepository;
+&nbsp;import com.electro.service.general.NotificationService;
+&nbsp;import com.electro.utils.RewardUtils;
+&nbsp;import com.fasterxml.jackson.core.JsonProcessingException;
+&nbsp;import com.fasterxml.jackson.databind.JsonNode;
+&nbsp;import com.fasterxml.jackson.databind.ObjectMapper;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.beans.factory.annotation.Value;
+&nbsp;import org.springframework.http.HttpEntity;
+&nbsp;import org.springframework.http.HttpHeaders;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.MediaType;
+&nbsp;import org.springframework.lang.Nullable;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.web.client.RestTemplate;
+&nbsp;
+&nbsp;import javax.transaction.Transactional;
+&nbsp;import java.math.BigDecimal;
+&nbsp;import java.text.NumberFormat;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.LinkedHashMap;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Locale;
+&nbsp;import java.util.Objects;
+&nbsp;import java.util.Optional;
+&nbsp;import java.util.StringJoiner;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;@RequiredArgsConstructor</b>
+&nbsp;@Transactional
+&nbsp;public class WaybillServiceImpl implements WaybillService {
+&nbsp;
+&nbsp;    @Value(&quot;${electro.app.shipping.ghnToken}&quot;)
+&nbsp;    private String ghnToken;
+&nbsp;    @Value(&quot;${electro.app.shipping.ghnShopId}&quot;)
+&nbsp;    private String ghnShopId;
+&nbsp;    @Value(&quot;${electro.app.shipping.ghnApiPath}&quot;)
+&nbsp;    private String ghnApiPath;
+&nbsp;
+&nbsp;    private final OrderRepository orderRepository;
+&nbsp;    private final WaybillRepository waybillRepository;
+&nbsp;    private final WaybillMapper waybillMapper;
+&nbsp;    private final NotificationService notificationService;
+&nbsp;    private final NotificationRepository notificationRepository;
+&nbsp;    private final NotificationMapper notificationMapper;
+&nbsp;    private final WaybillLogRepository waybillLogRepository;
+&nbsp;    private final RewardUtils rewardUtils;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ListResponse&lt;WaybillResponse&gt; findAll(int page, int size, String sort, String filter, String search, boolean all) {
+<b class="nc">&nbsp;        return defaultFindAll(page, size, sort, filter, search, all, SearchFields.WAYBILL, waybillRepository, waybillMapper);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public WaybillResponse findById(Long id) {
+<b class="nc">&nbsp;        return defaultFindById(id, waybillRepository, waybillMapper, ResourceName.WAYBILL);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public WaybillResponse save(WaybillRequest waybillRequest) {
+<b class="nc">&nbsp;        Optional&lt;Waybill&gt; waybillOpt = waybillRepository.findByOrderId(waybillRequest.getOrderId());</b>
+&nbsp;
+<b class="nc">&nbsp;        if (waybillOpt.isPresent()) {</b>
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;This order already had a waybill. Please choose another order!&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        Order order = orderRepository.findById(waybillRequest.getOrderId())</b>
+<b class="nc">&nbsp;                .orElseThrow(() -&gt; new ResourceNotFoundException(ResourceName.ORDER, FieldName.ID, waybillRequest.getOrderId()));</b>
+&nbsp;
+&nbsp;        // Tạo waybill khi order.status == 1
+<b class="nc">&nbsp;        if (order.getStatus() == 1) {</b>
+<b class="nc">&nbsp;            String createGhnOrderApiPath = ghnApiPath + &quot;/shipping-order/create&quot;;</b>
+&nbsp;
+<b class="nc">&nbsp;            HttpHeaders headers = new HttpHeaders();</b>
+<b class="nc">&nbsp;            headers.setContentType(MediaType.APPLICATION_JSON);</b>
+<b class="nc">&nbsp;            headers.setAccept(List.of(MediaType.APPLICATION_JSON));</b>
+<b class="nc">&nbsp;            headers.add(&quot;Token&quot;, ghnToken);</b>
+<b class="nc">&nbsp;            headers.add(&quot;ShopId&quot;, ghnShopId);</b>
+&nbsp;
+<b class="nc">&nbsp;            RestTemplate restTemplate = new RestTemplate();</b>
+&nbsp;
+<b class="nc">&nbsp;            var request = new HttpEntity&lt;&gt;(buildGhnCreateOrderRequest(waybillRequest, order), headers);</b>
+<b class="nc">&nbsp;            var response = restTemplate.postForEntity(createGhnOrderApiPath, request, GhnCreateOrderResponse.class);</b>
+&nbsp;
+<b class="nc">&nbsp;            if (response.getStatusCode() != HttpStatus.OK) {</b>
+<b class="nc">&nbsp;                throw new RuntimeException(&quot;Error when calling Create Order GHN API&quot;);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            if (response.getBody() != null) {</b>
+<b class="nc">&nbsp;                var ghnCreateOrderResponse = response.getBody();</b>
+&nbsp;
+&nbsp;                // (1) Tạo waybill
+<b class="nc">&nbsp;                Waybill waybill = waybillMapper.requestToEntity(waybillRequest);</b>
+&nbsp;
+<b class="nc">&nbsp;                waybill.setCode(ghnCreateOrderResponse.getData().getOrderCode());</b>
+<b class="nc">&nbsp;                waybill.setOrder(order);</b>
+<b class="nc">&nbsp;                waybill.setExpectedDeliveryTime(ghnCreateOrderResponse.getData().getExpectedDeliveryTime());</b>
+<b class="nc">&nbsp;                waybill.setStatus(1); // Status 1: Đang đợi lấy hàng</b>
+<b class="nc">&nbsp;                waybill.setCodAmount(</b>
+<b class="nc">&nbsp;                        order.getPaymentMethodType() == PaymentMethodType.CASH</b>
+<b class="nc">&nbsp;                                ? order.getTotalPay().intValue()</b>
+<b class="nc">&nbsp;                                : 0</b>
+&nbsp;                );
+<b class="nc">&nbsp;                waybill.setShippingFee(ghnCreateOrderResponse.getData().getTotalFee());</b>
+<b class="nc">&nbsp;                waybill.setGhnPaymentTypeId(chooseGhnPaymentTypeId(order.getPaymentMethodType()));</b>
+&nbsp;
+<b class="nc">&nbsp;                Waybill waybillAfterSave = waybillRepository.save(waybill);</b>
+&nbsp;
+&nbsp;                // (2) Sửa order
+<b class="nc">&nbsp;                order.setShippingCost(BigDecimal.valueOf(ghnCreateOrderResponse.getData().getTotalFee()));</b>
+<b class="nc">&nbsp;                order.setTotalPay(BigDecimal.valueOf(</b>
+<b class="nc">&nbsp;                        order.getTotalPay().intValue() + ghnCreateOrderResponse.getData().getTotalFee()));</b>
+<b class="nc">&nbsp;                order.setStatus(2); // Status 2: Đang xử lý</b>
+&nbsp;
+<b class="nc">&nbsp;                orderRepository.save(order);</b>
+&nbsp;
+&nbsp;                // (2.1) Thêm waybill log
+<b class="nc">&nbsp;                WaybillLog waybillLog = new WaybillLog();</b>
+<b class="nc">&nbsp;                waybillLog.setWaybill(waybillAfterSave);</b>
+<b class="nc">&nbsp;                waybillLog.setCurrentStatus(1); // Status 1: Đang đợi lấy hàng</b>
+&nbsp;
+<b class="nc">&nbsp;                waybillLogRepository.save(waybillLog);</b>
+&nbsp;
+&nbsp;                // (3) Thông báo cho người dùng về việc đơn hàng đã được duyệt
+&nbsp;                // với thông tin phí vận chuyển và sự thay đổi tổng tiền trả
+<b class="nc">&nbsp;                Notification notification = new Notification()</b>
+<b class="nc">&nbsp;                        .setUser(order.getUser())</b>
+<b class="nc">&nbsp;                        .setType(NotificationType.ORDER)</b>
+<b class="nc">&nbsp;                        .setMessage(</b>
+<b class="nc">&nbsp;                                order.getPaymentMethodType() == PaymentMethodType.CASH</b>
+<b class="nc">&nbsp;                                        ? String.format(</b>
+&nbsp;                                        &quot;Đơn hàng %s của bạn đã được duyệt. Phí vận chuyển là %s. Tổng tiền cần trả là %s.&quot;,
+<b class="nc">&nbsp;                                        order.getCode(),</b>
+<b class="nc">&nbsp;                                        NumberFormat.getCurrencyInstance(new Locale(&quot;vi&quot;, &quot;VN&quot;))</b>
+<b class="nc">&nbsp;                                                .format(order.getShippingCost()),</b>
+<b class="nc">&nbsp;                                        NumberFormat.getCurrencyInstance(new Locale(&quot;vi&quot;, &quot;VN&quot;))</b>
+<b class="nc">&nbsp;                                                .format(order.getTotalPay()))</b>
+<b class="nc">&nbsp;                                        : String.format(&quot;Đơn hàng %s của bạn đã được duyệt.&quot;, order.getCode())</b>
+&nbsp;                        )
+<b class="nc">&nbsp;                        .setAnchor(&quot;/order/detail/&quot; + order.getCode())</b>
+<b class="nc">&nbsp;                        .setStatus(1);</b>
+&nbsp;
+<b class="nc">&nbsp;                notificationRepository.save(notification);</b>
+&nbsp;
+<b class="nc">&nbsp;                notificationService.pushNotification(order.getUser().getUsername(),</b>
+<b class="nc">&nbsp;                        notificationMapper.entityToResponse(notification));</b>
+&nbsp;
+<b class="nc">&nbsp;                return waybillMapper.entityToResponse(waybillAfterSave);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                throw new RuntimeException(&quot;Response from Create Order GHN API cannot use&quot;);</b>
+&nbsp;            }
+&nbsp;        } else {
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Cannot create a new waybill. Order already had a waybill or was cancelled before.&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public WaybillResponse save(Long id, WaybillRequest waybillRequest) {
+<b class="nc">&nbsp;        Waybill waybill = waybillRepository.findById(id)</b>
+<b class="nc">&nbsp;                .orElseThrow(() -&gt; new ResourceNotFoundException(ResourceName.WAYBILL, FieldName.ID, id));</b>
+&nbsp;
+<b class="nc">&nbsp;        String updateGhnOrderApiPath = ghnApiPath + &quot;/shipping-order/update&quot;;</b>
+&nbsp;
+<b class="nc">&nbsp;        HttpHeaders headers = new HttpHeaders();</b>
+<b class="nc">&nbsp;        headers.setContentType(MediaType.APPLICATION_JSON);</b>
+<b class="nc">&nbsp;        headers.setAccept(List.of(MediaType.APPLICATION_JSON));</b>
+<b class="nc">&nbsp;        headers.add(&quot;Token&quot;, ghnToken);</b>
+<b class="nc">&nbsp;        headers.add(&quot;ShopId&quot;, ghnShopId);</b>
+&nbsp;
+<b class="nc">&nbsp;        RestTemplate restTemplate = new RestTemplate();</b>
+&nbsp;
+<b class="nc">&nbsp;        var request = new HttpEntity&lt;&gt;(buildGhnUpdateOrderRequest(waybillRequest, waybill), headers);</b>
+<b class="nc">&nbsp;        var response = restTemplate.postForEntity(updateGhnOrderApiPath, request, GhnUpdateOrderResponse.class);</b>
+&nbsp;
+<b class="nc">&nbsp;        if (response.getStatusCode() != HttpStatus.OK) {</b>
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Error when calling Update Order GHN API&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (response.getBody() != null) {</b>
+<b class="nc">&nbsp;            Waybill waybillAfterSave = waybillRepository.save(waybillMapper.partialUpdate(waybill, waybillRequest));</b>
+<b class="nc">&nbsp;            return waybillMapper.entityToResponse(waybillAfterSave);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Response from Update Order GHN API cannot use&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void delete(Long id) {
+<b class="nc">&nbsp;        waybillRepository.deleteById(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void delete(List&lt;Long&gt; ids) {
+<b class="nc">&nbsp;        waybillRepository.deleteAllById(ids);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private GhnCreateOrderRequest buildGhnCreateOrderRequest(WaybillRequest waybillRequest, Order order) {
+<b class="nc">&nbsp;        GhnCreateOrderRequest ghnCreateOrderRequest = new GhnCreateOrderRequest();</b>
+&nbsp;
+<b class="nc">&nbsp;        ghnCreateOrderRequest.setPaymentTypeId(chooseGhnPaymentTypeId(order.getPaymentMethodType()));</b>
+<b class="nc">&nbsp;        ghnCreateOrderRequest.setNote(waybillRequest.getNote());</b>
+<b class="nc">&nbsp;        ghnCreateOrderRequest.setRequiredNote(waybillRequest.getGhnRequiredNote());</b>
+<b class="nc">&nbsp;        ghnCreateOrderRequest.setToName(order.getToName());</b>
+<b class="nc">&nbsp;        ghnCreateOrderRequest.setToPhone(order.getToPhone());</b>
+<b class="nc">&nbsp;        ghnCreateOrderRequest.setToAddress(order.getToAddress());</b>
+<b class="nc">&nbsp;        ghnCreateOrderRequest.setToWardName(order.getToWardName());</b>
+<b class="nc">&nbsp;        ghnCreateOrderRequest.setToDistrictName(order.getToDistrictName());</b>
+<b class="nc">&nbsp;        ghnCreateOrderRequest.setToProvinceName(order.getToProvinceName());</b>
+<b class="nc">&nbsp;        ghnCreateOrderRequest.setCodAmount(</b>
+<b class="nc">&nbsp;                order.getPaymentMethodType() == PaymentMethodType.CASH</b>
+<b class="nc">&nbsp;                        ? order.getTotalPay().intValue() // totalPay lúc này là tổng tiền tạm thời</b>
+<b class="nc">&nbsp;                        : 0</b>
+&nbsp;        );
+<b class="nc">&nbsp;        ghnCreateOrderRequest.setWeight(waybillRequest.getWeight());</b>
+<b class="nc">&nbsp;        ghnCreateOrderRequest.setLength(waybillRequest.getLength());</b>
+<b class="nc">&nbsp;        ghnCreateOrderRequest.setWidth(waybillRequest.getWidth());</b>
+<b class="nc">&nbsp;        ghnCreateOrderRequest.setHeight(waybillRequest.getHeight());</b>
+<b class="nc">&nbsp;        ghnCreateOrderRequest.setServiceTypeId(2);</b>
+<b class="nc">&nbsp;        ghnCreateOrderRequest.setServiceId(0);</b>
+<b class="nc">&nbsp;        ghnCreateOrderRequest.setPickupTime(waybillRequest.getShippingDate().getEpochSecond());</b>
+&nbsp;
+<b class="nc">&nbsp;        List&lt;GhnCreateOrderRequest.Item&gt; items = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        for (OrderVariant orderVariant : order.getOrderVariants()) {</b>
+<b class="nc">&nbsp;            var item = new GhnCreateOrderRequest.Item();</b>
+<b class="nc">&nbsp;            item.setName(buildGhnProductName(orderVariant.getVariant().getProduct().getName(),</b>
+<b class="nc">&nbsp;                    orderVariant.getVariant().getProperties()));</b>
+<b class="nc">&nbsp;            item.setQuantity(orderVariant.getQuantity());</b>
+<b class="nc">&nbsp;            item.setPrice(orderVariant.getPrice().intValue());</b>
+<b class="nc">&nbsp;            items.add(item);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        ghnCreateOrderRequest.setItems(items);</b>
+&nbsp;
+<b class="nc">&nbsp;        return ghnCreateOrderRequest;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Trả về tên sản phẩm không trùng nhau
+&nbsp;    // TH1: Chỉ có 1 phiên bản mặc định không có thuộc tính: Laptop Lenovo
+&nbsp;    // TH2: Có ít nhất 1 phiên bản với thuộc tính: Laptop Lenovo (Kích cỡ: S, Màu sắc: Đỏ)
+&nbsp;    @SuppressWarnings(&quot;unchecked&quot;)
+&nbsp;    private String buildGhnProductName(String productName, @Nullable JsonNode variantProperties) {
+<b class="nc">&nbsp;        ObjectMapper mapper = new ObjectMapper();</b>
+&nbsp;
+&nbsp;        CollectionWrapper&lt;LinkedHashMap&lt;String, Object&gt;&gt; variantPropertiesObj;
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            variantPropertiesObj = mapper.treeToValue(variantProperties, CollectionWrapper.class);</b>
+&nbsp;        } catch (JsonProcessingException e) {
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Cannot build product name for GHN order&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (variantPropertiesObj == null) {</b>
+<b class="nc">&nbsp;            return productName;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        StringJoiner joiner = new StringJoiner(&quot;, &quot;, &quot;(&quot;, &quot;)&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        for (var variantProperty : variantPropertiesObj.getContent()) {</b>
+<b class="nc">&nbsp;            joiner.add(String.format(&quot;%s: %s&quot;, variantProperty.get(&quot;name&quot;), variantProperty.get(&quot;value&quot;)));</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return String.format(&quot;%s %s&quot;, productName, joiner);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private int chooseGhnPaymentTypeId(PaymentMethodType paymentMethodType) {
+<b class="nc">&nbsp;        return paymentMethodType == PaymentMethodType.CASH</b>
+<b class="nc">&nbsp;                ? 2 // Thanh toán tiền mặt, người nhận trả tiền vận chuyển và tiền thu hộ</b>
+<b class="nc">&nbsp;                : 1; // Thanh toán PayPal, Người gửi trả tiền vận chuyển</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private GhnUpdateOrderRequest buildGhnUpdateOrderRequest(WaybillRequest waybillRequest, Waybill waybill) {
+<b class="nc">&nbsp;        GhnUpdateOrderRequest ghnUpdateOrderRequest = new GhnUpdateOrderRequest();</b>
+&nbsp;
+<b class="nc">&nbsp;        ghnUpdateOrderRequest.setOrderCode(waybill.getCode());</b>
+<b class="nc">&nbsp;        ghnUpdateOrderRequest.setNote(waybillRequest.getNote());</b>
+<b class="nc">&nbsp;        ghnUpdateOrderRequest.setRequiredNote(waybillRequest.getGhnRequiredNote());</b>
+&nbsp;
+<b class="nc">&nbsp;        return ghnUpdateOrderRequest;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void callbackStatusWaybillFromGHN(GhnCallbackOrderRequest ghnCallbackOrderRequest) {
+<b class="nc">&nbsp;        if (Objects.equals(ghnCallbackOrderRequest.getShopID().toString(), ghnShopId)) {</b>
+<b class="nc">&nbsp;            Waybill waybill = waybillRepository.findByCode(ghnCallbackOrderRequest.getOrderCode())</b>
+<b class="nc">&nbsp;                    .orElseThrow(() -&gt; new ResourceNotFoundException(</b>
+<b class="nc">&nbsp;                            ResourceName.WAYBILL, FieldName.WAYBILL_CODE, ghnCallbackOrderRequest.getOrderCode()));</b>
+&nbsp;
+<b class="nc">&nbsp;            Order order = waybill.getOrder();</b>
+&nbsp;
+<b class="nc">&nbsp;            WaybillLog waybillLog = new WaybillLog();</b>
+<b class="nc">&nbsp;            waybillLog.setWaybill(waybill);</b>
+<b class="nc">&nbsp;            waybillLog.setPreviousStatus(waybill.getStatus());</b>
+&nbsp;
+<b class="nc">&nbsp;            int currentWaybillStatus = WaybillCallbackConstants.WAYBILL_STATUS_CODE</b>
+<b class="nc">&nbsp;                    .get(ghnCallbackOrderRequest.getStatus());</b>
+&nbsp;
+<b class="nc">&nbsp;            if (!waybill.getStatus().equals(currentWaybillStatus)) {</b>
+<b class="nc">&nbsp;                switch (currentWaybillStatus) {</b>
+&nbsp;                    case WaybillCallbackConstants.WAITING:
+<b class="nc">&nbsp;                        waybillLog.setCurrentStatus(1);</b>
+<b class="nc">&nbsp;                        waybill.setStatus(1);</b>
+<b class="nc">&nbsp;                        order.setStatus(2);</b>
+&nbsp;                        break;
+&nbsp;                    case WaybillCallbackConstants.SHIPPING:
+<b class="nc">&nbsp;                        createNotification(new Notification()</b>
+<b class="nc">&nbsp;                                .setUser(order.getUser())</b>
+<b class="nc">&nbsp;                                .setType(NotificationType.ORDER)</b>
+<b class="nc">&nbsp;                                .setMessage(String.format(&quot;Đơn hàng %s của bạn đang được vận chuyển.&quot;, order.getCode()))</b>
+<b class="nc">&nbsp;                                .setAnchor(&quot;/order/detail/&quot; + order.getCode())</b>
+<b class="nc">&nbsp;                                .setStatus(1));</b>
+<b class="nc">&nbsp;                        waybillLog.setCurrentStatus(2);</b>
+<b class="nc">&nbsp;                        waybill.setStatus(2);</b>
+<b class="nc">&nbsp;                        order.setStatus(3);</b>
+&nbsp;                        break;
+&nbsp;                    case WaybillCallbackConstants.SUCCESS:
+<b class="nc">&nbsp;                        createNotification(new Notification()</b>
+<b class="nc">&nbsp;                                .setUser(order.getUser())</b>
+<b class="nc">&nbsp;                                .setType(NotificationType.ORDER)</b>
+<b class="nc">&nbsp;                                .setMessage(String.format(&quot;Đơn hàng %s của bạn đã giao thành công!&quot;, order.getCode()))</b>
+<b class="nc">&nbsp;                                .setAnchor(&quot;/order/detail/&quot; + order.getCode())</b>
+<b class="nc">&nbsp;                                .setStatus(1));</b>
+&nbsp;                        // TODO: KHI HOÀN THÀNH ĐƠN HÀNG CẦN GỬI MAIL CHO KHÁCH HÀNG
+<b class="nc">&nbsp;                        waybillLog.setCurrentStatus(3);</b>
+<b class="nc">&nbsp;                        waybill.setStatus(3);</b>
+<b class="nc">&nbsp;                        order.setStatus(4);</b>
+&nbsp;                        // Status 2: Đã thanh toán (giả định giao thành công thì
+&nbsp;                        // cũng có nghĩa khách hàng đã thanh toán tiền mặt)
+<b class="nc">&nbsp;                        order.setPaymentStatus(2);</b>
+&nbsp;
+&nbsp;                        // Tích điểm
+<b class="nc">&nbsp;                        rewardUtils.successOrderHook(order);</b>
+&nbsp;                        break;
+&nbsp;                    case WaybillCallbackConstants.FAILED:
+&nbsp;                    case WaybillCallbackConstants.RETURN:
+&nbsp;                        // TODO: CẦN THỐNG NHẤT VỀ CÁCH TRẢ HÀNG HOẶC HỦY ĐƠN HÀNG
+<b class="nc">&nbsp;                        createNotification(new Notification()</b>
+<b class="nc">&nbsp;                                .setUser(order.getUser())</b>
+<b class="nc">&nbsp;                                .setType(NotificationType.ORDER)</b>
+<b class="nc">&nbsp;                                .setMessage(String.format(&quot;Đơn hàng %s của bạn đã bị hủy.&quot;, order.getCode()))</b>
+<b class="nc">&nbsp;                                .setAnchor(&quot;/order/detail/&quot; + order.getCode())</b>
+<b class="nc">&nbsp;                                .setStatus(1));</b>
+<b class="nc">&nbsp;                        waybillLog.setCurrentStatus(4);</b>
+<b class="nc">&nbsp;                        waybill.setStatus(4);</b>
+<b class="nc">&nbsp;                        order.setStatus(5);</b>
+&nbsp;                        break;
+&nbsp;                    default:
+<b class="nc">&nbsp;                        throw new RuntimeException(&quot;There is no waybill status corresponding to GHN status code&quot;);</b>
+&nbsp;                }
+&nbsp;
+<b class="nc">&nbsp;                waybillRepository.save(waybill);</b>
+<b class="nc">&nbsp;                orderRepository.save(order);</b>
+<b class="nc">&nbsp;                waybillLogRepository.save(waybillLog);</b>
+&nbsp;            }
+&nbsp;        } else {
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;ShopId is not valid&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private void createNotification(Notification notification) {
+<b class="nc">&nbsp;        notificationRepository.save(notification);</b>
+&nbsp;
+<b class="nc">&nbsp;        notificationService.pushNotification(notification.getUser().getUsername(),</b>
+<b class="nc">&nbsp;                notificationMapper.entityToResponse(notification));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-19 22:42</div>
+</div>
+</body>
+</html>

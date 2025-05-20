@@ -1,0 +1,258 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > GhnCreateOrderResponse</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.dto.waybill</a>
+</div>
+
+<h1>Coverage Summary for Class: GhnCreateOrderResponse (com.electro.dto.waybill)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GhnCreateOrderResponse</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/46)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/6)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">GhnCreateOrderResponse$Data$</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/70)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/9)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">GhnCreateOrderResponse$Data$$Fee</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/110)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/14)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/29)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/226)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/29)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.dto.waybill;
+&nbsp;
+&nbsp;import com.fasterxml.jackson.annotation.JsonAlias;
+&nbsp;import lombok.Data;
+&nbsp;
+&nbsp;import java.time.Instant;
+&nbsp;
+&nbsp;// Reference: https://api.ghn.vn/home/docs/detail?id=122
+<b class="nc">&nbsp;@Data</b>
+&nbsp;public class GhnCreateOrderResponse {
+&nbsp;    @JsonAlias(&quot;code&quot;)
+<b class="nc">&nbsp;    private Integer code;</b>
+&nbsp;    @JsonAlias(&quot;code_message_value&quot;)
+<b class="nc">&nbsp;    private String codeMessageValue;</b>
+&nbsp;    @JsonAlias(&quot;data&quot;)
+<b class="nc">&nbsp;    private Data$ data;</b>
+&nbsp;
+<b class="nc">&nbsp;    @Data</b>
+&nbsp;    public static class Data$ {
+&nbsp;        @JsonAlias(&quot;order_code&quot;)
+<b class="nc">&nbsp;        private String orderCode;</b>
+&nbsp;        @JsonAlias(&quot;sort_code&quot;)
+<b class="nc">&nbsp;        private String sortCode;</b>
+&nbsp;        @JsonAlias(&quot;trans_type&quot;)
+<b class="nc">&nbsp;        private String transType;</b>
+&nbsp;        @JsonAlias(&quot;ward_encode&quot;)
+<b class="nc">&nbsp;        private String wardEncode;</b>
+&nbsp;        @JsonAlias(&quot;district_encode&quot;)
+<b class="nc">&nbsp;        private String districtEncode;</b>
+&nbsp;        @JsonAlias(&quot;fee&quot;)
+<b class="nc">&nbsp;        private Fee fee;</b>
+&nbsp;
+<b class="nc">&nbsp;        @Data</b>
+&nbsp;        public static class Fee {
+&nbsp;            @JsonAlias(&quot;main_service&quot;)
+<b class="nc">&nbsp;            private Integer mainService;</b>
+&nbsp;            @JsonAlias(&quot;insurance&quot;)
+<b class="nc">&nbsp;            private Integer insurance;</b>
+&nbsp;            @JsonAlias(&quot;cod_fee&quot;)
+<b class="nc">&nbsp;            private Integer codFee;</b>
+&nbsp;            @JsonAlias(&quot;station_do&quot;)
+<b class="nc">&nbsp;            private Integer stationDo;</b>
+&nbsp;            @JsonAlias(&quot;station_pu&quot;)
+<b class="nc">&nbsp;            private Integer stationPu;</b>
+&nbsp;            @JsonAlias(&quot;return&quot;)
+<b class="nc">&nbsp;            private Integer return$;</b>
+&nbsp;            @JsonAlias(&quot;r2s&quot;)
+<b class="nc">&nbsp;            private Integer r2s;</b>
+&nbsp;            @JsonAlias(&quot;coupon&quot;)
+<b class="nc">&nbsp;            private Integer coupon;</b>
+&nbsp;            @JsonAlias(&quot;document_return&quot;)
+<b class="nc">&nbsp;            private Integer documentReturn;</b>
+&nbsp;            @JsonAlias(&quot;double_check&quot;)
+<b class="nc">&nbsp;            private Integer doubleCheck;</b>
+&nbsp;            @JsonAlias(&quot;pick_remote_areas_fee&quot;)
+<b class="nc">&nbsp;            private Integer pickRemoteAreasFee;</b>
+&nbsp;            @JsonAlias(&quot;deliver_remote_areas_fee&quot;)
+<b class="nc">&nbsp;            private Integer deliverRemoteAreasFee;</b>
+&nbsp;            @JsonAlias(&quot;cod_failed_fee&quot;)
+<b class="nc">&nbsp;            private Integer codFailedFee;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        @JsonAlias(&quot;total_fee&quot;)
+<b class="nc">&nbsp;        private Integer totalFee;</b>
+&nbsp;        @JsonAlias(&quot;expected_delivery_time&quot;)
+<b class="nc">&nbsp;        private Instant expectedDeliveryTime;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @JsonAlias(&quot;message&quot;)
+<b class="nc">&nbsp;    private String message;</b>
+&nbsp;    @JsonAlias(&quot;message_display&quot;)
+<b class="nc">&nbsp;    private String messageDisplay;</b>
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-19 22:42</div>
+</div>
+</body>
+</html>

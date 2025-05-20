@@ -1,0 +1,444 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > OrderServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.service.order</a>
+</div>
+
+<h1>Coverage Summary for Class: OrderServiceImpl (com.electro.service.order)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">OrderServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    81.2%
+  </span>
+  <span class="absValue">
+    (13/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    97.5%
+  </span>
+  <span class="absValue">
+    (119/122)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">OrderServiceImpl$$EnhancerBySpringCGLIB$$1598a23a</td>
+  </tr>
+  <tr>
+    <td class="name">OrderServiceImpl$$EnhancerBySpringCGLIB$$9860d4e</td>
+  </tr>
+  <tr>
+    <td class="name">OrderServiceImpl$$EnhancerBySpringCGLIB$$ca9ef33d</td>
+  </tr>
+  <tr>
+    <td class="name">OrderServiceImpl$$EnhancerBySpringCGLIB$$ca9ef33d$$FastClassBySpringCGLIB$$49a4c992</td>
+  </tr>
+  <tr>
+    <td class="name">OrderServiceImpl$$EnhancerBySpringCGLIB$$ee240eab</td>
+  </tr>
+  <tr>
+    <td class="name">OrderServiceImpl$$FastClassBySpringCGLIB$$b764a78f</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    81.2%
+  </span>
+  <span class="absValue">
+    (13/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    97.5%
+  </span>
+  <span class="absValue">
+    (119/122)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.service.order;
+&nbsp;
+&nbsp;import com.electro.config.payment.paypal.PayPalHttpClient;
+&nbsp;import com.electro.constant.AppConstants;
+&nbsp;import com.electro.constant.FieldName;
+&nbsp;import com.electro.constant.ResourceName;
+&nbsp;import com.electro.dto.client.ClientConfirmedOrderResponse;
+&nbsp;import com.electro.dto.client.ClientSimpleOrderRequest;
+&nbsp;import com.electro.dto.payment.OrderIntent;
+&nbsp;import com.electro.dto.payment.OrderStatus;
+&nbsp;import com.electro.dto.payment.PaymentLandingPage;
+&nbsp;import com.electro.dto.payment.PaypalRequest;
+&nbsp;import com.electro.dto.payment.PaypalResponse;
+&nbsp;import com.electro.dto.waybill.GhnCancelOrderRequest;
+&nbsp;import com.electro.dto.waybill.GhnCancelOrderResponse;
+&nbsp;import com.electro.entity.authentication.User;
+&nbsp;import com.electro.entity.cart.Cart;
+&nbsp;import com.electro.entity.cashbook.PaymentMethodType;
+&nbsp;import com.electro.entity.general.Notification;
+&nbsp;import com.electro.entity.general.NotificationType;
+&nbsp;import com.electro.entity.order.Order;
+&nbsp;import com.electro.entity.order.OrderResource;
+&nbsp;import com.electro.entity.order.OrderVariant;
+&nbsp;import com.electro.entity.promotion.Promotion;
+&nbsp;import com.electro.entity.waybill.Waybill;
+&nbsp;import com.electro.entity.waybill.WaybillLog;
+&nbsp;import com.electro.exception.ResourceNotFoundException;
+&nbsp;import com.electro.mapper.client.ClientOrderMapper;
+&nbsp;import com.electro.mapper.general.NotificationMapper;
+&nbsp;import com.electro.repository.authentication.UserRepository;
+&nbsp;import com.electro.repository.cart.CartRepository;
+&nbsp;import com.electro.repository.general.NotificationRepository;
+&nbsp;import com.electro.repository.order.OrderRepository;
+&nbsp;import com.electro.repository.promotion.PromotionRepository;
+&nbsp;import com.electro.repository.waybill.WaybillLogRepository;
+&nbsp;import com.electro.repository.waybill.WaybillRepository;
+&nbsp;import com.electro.repository.order.OrderResourceRepository;
+&nbsp;import com.electro.service.general.NotificationService;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import net.bytebuddy.utility.RandomString;
+&nbsp;import org.springframework.beans.factory.annotation.Value;
+&nbsp;import org.springframework.http.HttpEntity;
+&nbsp;import org.springframework.http.HttpHeaders;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.MediaType;
+&nbsp;import org.springframework.security.core.Authentication;
+&nbsp;import org.springframework.security.core.context.SecurityContextHolder;
+&nbsp;import org.springframework.security.core.userdetails.UsernameNotFoundException;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.web.client.RestTemplate;
+&nbsp;
+&nbsp;import javax.transaction.Transactional;
+&nbsp;import java.math.BigDecimal;
+&nbsp;import java.math.RoundingMode;
+&nbsp;import java.util.List;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;@RequiredArgsConstructor</b>
+&nbsp;@Transactional
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;public class OrderServiceImpl implements OrderService {
+&nbsp;
+&nbsp;    @Value(&quot;${electro.app.shipping.ghnToken}&quot;)
+&nbsp;    private String ghnToken;
+&nbsp;    @Value(&quot;${electro.app.shipping.ghnShopId}&quot;)
+&nbsp;    private String ghnShopId;
+&nbsp;    @Value(&quot;${electro.app.shipping.ghnApiPath}&quot;)
+&nbsp;    private String ghnApiPath;
+&nbsp;
+&nbsp;    private final OrderRepository orderRepository;
+&nbsp;    private final WaybillRepository waybillRepository;
+&nbsp;    private final WaybillLogRepository waybillLogRepository;
+&nbsp;    private final UserRepository userRepository;
+&nbsp;    private final CartRepository cartRepository;
+&nbsp;    private final PromotionRepository promotionRepository;
+&nbsp;    private final OrderResourceRepository orderResourceRepository;
+&nbsp;
+&nbsp;    private final PayPalHttpClient payPalHttpClient;
+&nbsp;    private final ClientOrderMapper clientOrderMapper;
+&nbsp;
+&nbsp;    private final NotificationRepository notificationRepository;
+&nbsp;    private final NotificationService notificationService;
+&nbsp;    private final NotificationMapper notificationMapper;
+&nbsp;
+&nbsp;    private static final int USD_VND_RATE = 23_000;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void cancelOrder(String code) {
+<b class="fc">&nbsp;        Order order = orderRepository.findByCode(code)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new ResourceNotFoundException(ResourceName.ORDER, FieldName.ORDER_CODE, code));</b>
+&nbsp;
+&nbsp;        // Hủy đơn hàng khi status = 1 hoặc 2
+<b class="fc">&nbsp;        if (order.getStatus() &lt; 3) {</b>
+<b class="fc">&nbsp;            order.setStatus(5); // Status 5 là trạng thái Hủy</b>
+<b class="fc">&nbsp;            orderRepository.save(order);</b>
+&nbsp;
+<b class="fc">&nbsp;            Waybill waybill = waybillRepository.findByOrderId(order.getId()).orElse(null);</b>
+&nbsp;
+&nbsp;            // Status 1 là Vận đơn đang chờ lấy hàng
+<b class="pc">&nbsp;            if (waybill != null &amp;&amp; waybill.getStatus() == 1) {</b>
+&nbsp;                try {
+<b class="fc">&nbsp;                    String cancelOrderApiPath = ghnApiPath + &quot;/switch-status/cancel&quot;;</b>
+<b class="fc">&nbsp;                    HttpHeaders headers = new HttpHeaders();</b>
+<b class="fc">&nbsp;                    headers.setContentType(MediaType.APPLICATION_JSON);</b>
+<b class="fc">&nbsp;                    headers.add(&quot;Token&quot;, ghnToken);</b>
+<b class="fc">&nbsp;                    headers.add(&quot;ShopId&quot;, ghnShopId);</b>
+<b class="fc">&nbsp;                    RestTemplate restTemplate = new RestTemplate();</b>
+<b class="fc">&nbsp;                    var request = new HttpEntity&lt;&gt;(new GhnCancelOrderRequest(List.of(waybill.getCode())), headers);</b>
+<b class="fc">&nbsp;                    restTemplate.postForEntity(cancelOrderApiPath, request, GhnCancelOrderResponse.class);</b>
+&nbsp;                } catch (Exception e) {
+<b class="fc">&nbsp;                    log.warn(&quot;GHN cancel API failed, proceeding to update waybill locally&quot;, e);</b>
+&nbsp;                }
+&nbsp;                // Always update waybill status and log
+<b class="fc">&nbsp;                WaybillLog waybillLog = new WaybillLog();</b>
+<b class="fc">&nbsp;                waybillLog.setWaybill(waybill);</b>
+<b class="fc">&nbsp;                waybillLog.setPreviousStatus(waybill.getStatus());</b>
+<b class="fc">&nbsp;                waybillLog.setCurrentStatus(4);</b>
+<b class="fc">&nbsp;                waybillLogRepository.save(waybillLog);</b>
+<b class="fc">&nbsp;                waybill.setStatus(4);</b>
+<b class="fc">&nbsp;                waybillRepository.save(waybill);</b>
+&nbsp;            }
+&nbsp;        } else {
+<b class="fc">&nbsp;            throw new RuntimeException(String</b>
+<b class="fc">&nbsp;                    .format(&quot;Order with code %s is in delivery or has been cancelled. Please check again!&quot;, code));</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ClientConfirmedOrderResponse createClientOrder(ClientSimpleOrderRequest request) {
+<b class="fc">&nbsp;        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</b>
+<b class="fc">&nbsp;        String username = authentication.getName();</b>
+&nbsp;
+<b class="fc">&nbsp;        User user = userRepository.findByUsername(username).orElseThrow(() -&gt; new UsernameNotFoundException(username));</b>
+&nbsp;
+<b class="fc">&nbsp;        Cart cart = cartRepository.findByUsername(username)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new ResourceNotFoundException(ResourceName.CART, FieldName.USERNAME, username));</b>
+&nbsp;
+&nbsp;        // (1) Tạo đơn hàng
+<b class="fc">&nbsp;        Order order = new Order();</b>
+&nbsp;
+<b class="fc">&nbsp;        order.setCode(RandomString.make(12).toUpperCase());</b>
+<b class="fc">&nbsp;        order.setStatus(1); // Status 1: Đơn hàng mới</b>
+<b class="fc">&nbsp;        order.setToName(user.getFullname());</b>
+<b class="fc">&nbsp;        order.setToPhone(user.getPhone());</b>
+<b class="fc">&nbsp;        order.setToAddress(user.getAddress().getLine());</b>
+<b class="fc">&nbsp;        order.setToWardName(user.getAddress().getWard().getName());</b>
+<b class="fc">&nbsp;        order.setToDistrictName(user.getAddress().getDistrict().getName());</b>
+<b class="fc">&nbsp;        order.setToProvinceName(user.getAddress().getProvince().getName());</b>
+&nbsp;        // fetch default OrderResource
+<b class="fc">&nbsp;        OrderResource defaultResource = orderResourceRepository.findById(1L)</b>
+<b class="fc">&nbsp;            .orElseThrow(() -&gt; new ResourceNotFoundException(ResourceName.ORDER_RESOURCE, FieldName.ID, &quot;1&quot;));</b>
+<b class="fc">&nbsp;        order.setOrderResource(defaultResource);</b>
+<b class="fc">&nbsp;        order.setUser(user);</b>
+&nbsp;
+<b class="fc">&nbsp;        order.setOrderVariants(cart.getCartVariants().stream()</b>
+<b class="fc">&nbsp;                .map(cartVariant -&gt; {</b>
+<b class="fc">&nbsp;                    Promotion promotion = promotionRepository</b>
+<b class="fc">&nbsp;                            .findActivePromotionByProductId(cartVariant.getVariant().getProduct().getId())</b>
+<b class="fc">&nbsp;                            .stream()</b>
+<b class="fc">&nbsp;                            .findFirst()</b>
+<b class="fc">&nbsp;                            .orElse(null);</b>
+&nbsp;
+<b class="fc">&nbsp;                    double currentPrice = calculateDiscountedPrice(cartVariant.getVariant().getPrice(),</b>
+<b class="pc">&nbsp;                            promotion == null ? 0 : promotion.getPercent());</b>
+&nbsp;
+<b class="fc">&nbsp;                    return new OrderVariant()</b>
+<b class="fc">&nbsp;                            .setOrder(order)</b>
+<b class="fc">&nbsp;                            .setVariant(cartVariant.getVariant())</b>
+<b class="fc">&nbsp;                            .setPrice(BigDecimal.valueOf(currentPrice))</b>
+<b class="fc">&nbsp;                            .setQuantity(cartVariant.getQuantity())</b>
+<b class="fc">&nbsp;                            .setAmount(BigDecimal.valueOf(currentPrice).multiply(BigDecimal.valueOf(cartVariant.getQuantity())));</b>
+&nbsp;                })
+<b class="fc">&nbsp;                .collect(Collectors.toSet()));</b>
+&nbsp;
+&nbsp;        // Calculate price values
+&nbsp;        // TODO: Vấn đề khuyến mãi
+<b class="fc">&nbsp;        BigDecimal totalAmount = BigDecimal.valueOf(order.getOrderVariants().stream()</b>
+<b class="fc">&nbsp;                .mapToDouble(orderVariant -&gt; orderVariant.getAmount().doubleValue())</b>
+<b class="fc">&nbsp;                .sum());</b>
+&nbsp;
+<b class="fc">&nbsp;        BigDecimal tax = BigDecimal.valueOf(AppConstants.DEFAULT_TAX);</b>
+&nbsp;
+<b class="fc">&nbsp;        BigDecimal shippingCost = BigDecimal.ZERO;</b>
+&nbsp;
+<b class="fc">&nbsp;        BigDecimal totalPay = totalAmount</b>
+<b class="fc">&nbsp;                .add(totalAmount.multiply(tax).setScale(0, RoundingMode.HALF_UP))</b>
+<b class="fc">&nbsp;                .add(shippingCost);</b>
+&nbsp;
+<b class="fc">&nbsp;        order.setTotalAmount(totalAmount);</b>
+<b class="fc">&nbsp;        order.setTax(tax);</b>
+<b class="fc">&nbsp;        order.setShippingCost(shippingCost);</b>
+<b class="fc">&nbsp;        order.setTotalPay(totalPay);</b>
+<b class="fc">&nbsp;        order.setPaymentMethodType(request.getPaymentMethodType());</b>
+<b class="fc">&nbsp;        order.setPaymentStatus(1); // Status 1: Chưa thanh toán</b>
+&nbsp;
+&nbsp;        // (2) Tạo response
+<b class="fc">&nbsp;        ClientConfirmedOrderResponse response = new ClientConfirmedOrderResponse();</b>
+&nbsp;
+<b class="fc">&nbsp;        response.setOrderCode(order.getCode());</b>
+<b class="fc">&nbsp;        response.setOrderPaymentMethodType(order.getPaymentMethodType());</b>
+&nbsp;
+&nbsp;        // (3) Kiểm tra hình thức thanh toán
+<b class="fc">&nbsp;        if (request.getPaymentMethodType() == PaymentMethodType.CASH) {</b>
+<b class="fc">&nbsp;            orderRepository.save(order);</b>
+<b class="pc">&nbsp;        } else if (request.getPaymentMethodType() == PaymentMethodType.PAYPAL) {</b>
+&nbsp;            try {
+&nbsp;                // (3.2.1) Tính tổng tiền theo USD
+<b class="fc">&nbsp;                BigDecimal totalPayUSD = order.getTotalPay()</b>
+<b class="fc">&nbsp;                        .divide(BigDecimal.valueOf(USD_VND_RATE), 0, RoundingMode.HALF_UP);</b>
+&nbsp;
+&nbsp;                // (3.2.2) Tạo một yêu cầu giao dịch PayPal
+<b class="fc">&nbsp;                PaypalRequest paypalRequest = new PaypalRequest();</b>
+&nbsp;
+<b class="fc">&nbsp;                paypalRequest.setIntent(OrderIntent.CAPTURE);</b>
+<b class="fc">&nbsp;                paypalRequest.setPurchaseUnits(List.of(</b>
+&nbsp;                        new PaypalRequest.PurchaseUnit(
+<b class="fc">&nbsp;                                new PaypalRequest.PurchaseUnit.Money(&quot;USD&quot;, totalPayUSD.toString())</b>
+&nbsp;                        )
+&nbsp;                ));
+&nbsp;
+<b class="fc">&nbsp;                paypalRequest.setApplicationContext(new PaypalRequest.PayPalAppContext()</b>
+<b class="fc">&nbsp;                        .setBrandName(&quot;Electro&quot;)</b>
+<b class="fc">&nbsp;                        .setLandingPage(PaymentLandingPage.BILLING)</b>
+<b class="fc">&nbsp;                        .setReturnUrl(AppConstants.BACKEND_HOST + &quot;/client-api/orders/success&quot;)</b>
+<b class="fc">&nbsp;                        .setCancelUrl(AppConstants.BACKEND_HOST + &quot;/client-api/orders/cancel&quot;));</b>
+&nbsp;
+<b class="fc">&nbsp;                PaypalResponse paypalResponse = payPalHttpClient.createPaypalTransaction(paypalRequest);</b>
+&nbsp;
+&nbsp;                // (3.2.3) Lưu order
+<b class="fc">&nbsp;                order.setPaypalOrderId(paypalResponse.getId());</b>
+<b class="fc">&nbsp;                order.setPaypalOrderStatus(paypalResponse.getStatus().toString());</b>
+&nbsp;
+<b class="fc">&nbsp;                orderRepository.save(order);</b>
+&nbsp;
+&nbsp;                // (3.2.4) Trả về đường dẫn checkout cho user
+<b class="fc">&nbsp;                for (PaypalResponse.Link link : paypalResponse.getLinks()) {</b>
+<b class="fc">&nbsp;                    if (&quot;approve&quot;.equals(link.getRel())) {</b>
+<b class="fc">&nbsp;                        response.setOrderPaypalCheckoutLink(link.getHref());</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            } catch (Exception e) {
+<b class="nc">&nbsp;                throw new RuntimeException(&quot;Cannot create PayPal transaction request!&quot; + e);</b>
+&nbsp;            }
+&nbsp;        } else {
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Cannot identify payment method&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // (4) Vô hiệu cart
+<b class="fc">&nbsp;        cart.setStatus(2); // Status 2: Vô hiệu lực</b>
+<b class="fc">&nbsp;        cartRepository.save(cart);</b>
+&nbsp;
+<b class="fc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void captureTransactionPaypal(String paypalOrderId, String payerId) {
+<b class="fc">&nbsp;        Order order = orderRepository.findByPaypalOrderId(paypalOrderId)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new ResourceNotFoundException(ResourceName.ORDER, FieldName.PAYPAL_ORDER_ID, paypalOrderId));</b>
+&nbsp;
+<b class="fc">&nbsp;        order.setPaypalOrderStatus(OrderStatus.APPROVED.toString());</b>
+&nbsp;
+&nbsp;        try {
+&nbsp;            // (1) Capture
+<b class="fc">&nbsp;            payPalHttpClient.capturePaypalTransaction(paypalOrderId, payerId);</b>
+&nbsp;
+&nbsp;            // (2) Cập nhật order
+<b class="fc">&nbsp;            order.setPaypalOrderStatus(OrderStatus.COMPLETED.toString());</b>
+<b class="fc">&nbsp;            order.setPaymentStatus(2); // Status 2: Đã thanh toán</b>
+&nbsp;
+&nbsp;            // (3) Gửi notification
+<b class="fc">&nbsp;            Notification notification = new Notification()</b>
+<b class="fc">&nbsp;                    .setUser(order.getUser())</b>
+<b class="fc">&nbsp;                    .setType(NotificationType.CHECKOUT_PAYPAL_SUCCESS)</b>
+<b class="fc">&nbsp;                    .setMessage(String.format(&quot;Đơn hàng %s của bạn đã được thanh toán thành công bằng PayPal.&quot;, order.getCode()))</b>
+<b class="fc">&nbsp;                    .setAnchor(&quot;/order/detail/&quot; + order.getCode())</b>
+<b class="fc">&nbsp;                    .setStatus(1);</b>
+&nbsp;
+<b class="fc">&nbsp;            notificationRepository.save(notification);</b>
+&nbsp;
+<b class="fc">&nbsp;            notificationService.pushNotification(order.getUser().getUsername(),</b>
+<b class="fc">&nbsp;                    notificationMapper.entityToResponse(notification));</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            log.error(&quot;Cannot capture transaction: {0}&quot;, e);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        orderRepository.save(order);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private Double calculateDiscountedPrice(Double price, Integer discount) {
+<b class="fc">&nbsp;        return price * (100 - discount) / 100;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-19 22:42</div>
+</div>
+</body>
+</html>

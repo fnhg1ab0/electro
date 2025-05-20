@@ -1,0 +1,223 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ClientNotificationController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.controller.client</a>
+</div>
+
+<h1>Coverage Summary for Class: ClientNotificationController (com.electro.controller.client)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ClientNotificationController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    28.6%
+  </span>
+  <span class="absValue">
+    (2/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    8%
+  </span>
+  <span class="absValue">
+    (2/25)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.controller.client;
+&nbsp;
+&nbsp;import com.electro.constant.AppConstants;
+&nbsp;import com.electro.constant.FieldName;
+&nbsp;import com.electro.constant.ResourceName;
+&nbsp;import com.electro.dto.ListResponse;
+&nbsp;import com.electro.dto.general.EventInitiationResponse;
+&nbsp;import com.electro.dto.general.NotificationRequest;
+&nbsp;import com.electro.dto.general.NotificationResponse;
+&nbsp;import com.electro.entity.general.Notification;
+&nbsp;import com.electro.exception.ResourceNotFoundException;
+&nbsp;import com.electro.mapper.general.NotificationMapper;
+&nbsp;import com.electro.repository.general.NotificationRepository;
+&nbsp;import com.electro.service.general.EmitterService;
+&nbsp;import com.electro.service.general.NotificationService;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.PageRequest;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.lang.Nullable;
+&nbsp;import org.springframework.security.core.Authentication;
+&nbsp;import org.springframework.web.bind.annotation.CrossOrigin;
+&nbsp;import org.springframework.web.bind.annotation.GetMapping;
+&nbsp;import org.springframework.web.bind.annotation.PathVariable;
+&nbsp;import org.springframework.web.bind.annotation.PostMapping;
+&nbsp;import org.springframework.web.bind.annotation.PutMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestBody;
+&nbsp;import org.springframework.web.bind.annotation.RequestMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestParam;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.UUID;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/client-api/notifications&quot;)
+<b class="fc">&nbsp;@AllArgsConstructor</b>
+&nbsp;@CrossOrigin(AppConstants.FRONTEND_HOST)
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;public class ClientNotificationController {
+&nbsp;
+&nbsp;    private final NotificationRepository notificationRepository;
+&nbsp;    private final NotificationMapper notificationMapper;
+&nbsp;    private final EmitterService emitterService;
+&nbsp;    private final NotificationService notificationService;
+&nbsp;
+&nbsp;    @GetMapping
+&nbsp;    public ResponseEntity&lt;ListResponse&lt;NotificationResponse&gt;&gt; getAllNotifications(
+&nbsp;            Authentication authentication,
+&nbsp;            @RequestParam(name = &quot;page&quot;, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
+&nbsp;            @RequestParam(name = &quot;size&quot;, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size,
+&nbsp;            @RequestParam(name = &quot;sort&quot;, defaultValue = AppConstants.DEFAULT_SORT) String sort,
+&nbsp;            @RequestParam(name = &quot;filter&quot;, required = false) @Nullable String filter
+&nbsp;    ) {
+<b class="nc">&nbsp;        String username = authentication.getName();</b>
+<b class="nc">&nbsp;        Page&lt;Notification&gt; notifications = notificationRepository.findAllByUsername(username, sort, filter, PageRequest.of(page - 1, size));</b>
+<b class="nc">&nbsp;        List&lt;NotificationResponse&gt; notificationResponses = notifications.map(notificationMapper::entityToResponse).toList();</b>
+<b class="nc">&nbsp;        return ResponseEntity.status(HttpStatus.OK).body(ListResponse.of(notificationResponses, notifications));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Reference: https://stackoverflow.com/a/62749980
+&nbsp;    @GetMapping(&quot;/init-events&quot;)
+&nbsp;    public ResponseEntity&lt;EventInitiationResponse&gt; initNotificationEvents(Authentication authentication) {
+<b class="nc">&nbsp;        String username = authentication.getName();</b>
+&nbsp;
+&nbsp;        String eventSourceUuid;
+&nbsp;
+<b class="nc">&nbsp;        if (emitterService.isExistEmitterByUniqueKey(username)) {</b>
+<b class="nc">&nbsp;            eventSourceUuid = emitterService.getEmitterUuidByUniqueKey(username);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            eventSourceUuid = UUID.randomUUID().toString();</b>
+<b class="nc">&nbsp;            emitterService.createEmitter(eventSourceUuid, username);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        EventInitiationResponse eventInitiationResponse = new EventInitiationResponse(eventSourceUuid);</b>
+<b class="nc">&nbsp;        return ResponseEntity.status(HttpStatus.OK).body(eventInitiationResponse);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/events&quot;)
+&nbsp;    public SseEmitter subscribeNotificationEvents(@RequestParam String eventSourceUuid) {
+<b class="nc">&nbsp;        return emitterService.getEmitterByUuid(eventSourceUuid);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;NotificationResponse&gt; updateNotification(@PathVariable Long id,
+&nbsp;                                                                   @RequestBody NotificationRequest request) {
+<b class="nc">&nbsp;        NotificationResponse notificationResponse = notificationRepository</b>
+<b class="nc">&nbsp;                .findById(id)</b>
+<b class="nc">&nbsp;                .map(existingEntity -&gt; notificationMapper.partialUpdate(existingEntity, request))</b>
+<b class="nc">&nbsp;                .map(notificationRepository::save)</b>
+<b class="nc">&nbsp;                .map(notificationMapper::entityToResponse)</b>
+<b class="nc">&nbsp;                .orElseThrow(() -&gt; new ResourceNotFoundException(ResourceName.NOTIFICATION, FieldName.ID, id));</b>
+<b class="nc">&nbsp;        return ResponseEntity.status(HttpStatus.OK).body(notificationResponse);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(&quot;/push-events&quot;)
+&nbsp;    public ResponseEntity&lt;NotificationResponse&gt; pushNotification(@RequestBody NotificationRequest request) {
+<b class="nc">&nbsp;        Notification notification = notificationRepository.save(notificationMapper.requestToEntity(request));</b>
+<b class="nc">&nbsp;        NotificationResponse notificationResponse = notificationMapper.entityToResponse(notification);</b>
+<b class="nc">&nbsp;        notificationService.pushNotification(notification.getUser().getUsername(), notificationResponse);</b>
+<b class="nc">&nbsp;        return ResponseEntity.status(HttpStatus.CREATED).body(notificationResponse);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-19 22:42</div>
+</div>
+</body>
+</html>

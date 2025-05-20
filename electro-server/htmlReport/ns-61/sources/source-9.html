@@ -1,0 +1,96 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > StorageLocationMapper</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.mapper.inventory</a>
+</div>
+
+<h1>Coverage Summary for Class: StorageLocationMapper (com.electro.mapper.inventory)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">StorageLocationMapper</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.mapper.inventory;
+&nbsp;
+&nbsp;import com.electro.dto.inventory.StorageLocationRequest;
+&nbsp;import com.electro.dto.inventory.StorageLocationResponse;
+&nbsp;import com.electro.entity.inventory.StorageLocation;
+&nbsp;import com.electro.mapper.GenericMapper;
+&nbsp;import com.electro.mapper.product.VariantMapper;
+&nbsp;import com.electro.utils.MapperUtils;
+&nbsp;import org.mapstruct.Mapper;
+&nbsp;import org.mapstruct.Mapping;
+&nbsp;import org.mapstruct.MappingTarget;
+&nbsp;import org.mapstruct.ReportingPolicy;
+&nbsp;
+&nbsp;@Mapper(componentModel = &quot;spring&quot;, unmappedTargetPolicy = ReportingPolicy.IGNORE,
+&nbsp;        uses = {MapperUtils.class, WarehouseMapper.class, VariantMapper.class})
+&nbsp;public interface StorageLocationMapper extends GenericMapper&lt;StorageLocation, StorageLocationRequest, StorageLocationResponse&gt; {
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Mapping(source = &quot;warehouseId&quot;, target = &quot;warehouse&quot;)
+&nbsp;    @Mapping(source = &quot;variantId&quot;, target = &quot;variant&quot;)
+&nbsp;    StorageLocation requestToEntity(StorageLocationRequest request);
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Mapping(source = &quot;warehouseId&quot;, target = &quot;warehouse&quot;)
+&nbsp;    @Mapping(source = &quot;variantId&quot;, target = &quot;variant&quot;)
+&nbsp;    StorageLocation partialUpdate(@MappingTarget StorageLocation entity, StorageLocationRequest request);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-19 22:42</div>
+</div>
+</body>
+</html>

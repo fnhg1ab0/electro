@@ -1,0 +1,170 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PurchaseOrderVariant</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.entity.inventory</a>
+</div>
+
+<h1>Coverage Summary for Class: PurchaseOrderVariant (com.electro.entity.inventory)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PurchaseOrderVariant</td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (3/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    30%
+  </span>
+  <span class="absValue">
+    (3/10)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">PurchaseOrderVariant$HibernateProxy$ayYS10IV</td>
+  </tr>
+  <tr>
+    <td class="name">PurchaseOrderVariant$HibernateProxy$fwB6pzbA</td>
+  </tr>
+  <tr>
+    <td class="name">PurchaseOrderVariant$HibernateProxy$oRkBQELp</td>
+  </tr>
+  <tr>
+    <td class="name">PurchaseOrderVariant$HibernateProxy$vek7dhci</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (3/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    30%
+  </span>
+  <span class="absValue">
+    (3/10)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.entity.inventory;
+&nbsp;
+&nbsp;import com.electro.entity.product.Variant;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import lombok.Getter;
+&nbsp;import lombok.NoArgsConstructor;
+&nbsp;import lombok.Setter;
+&nbsp;import lombok.experimental.Accessors;
+&nbsp;
+&nbsp;import javax.persistence.Column;
+&nbsp;import javax.persistence.EmbeddedId;
+&nbsp;import javax.persistence.Entity;
+&nbsp;import javax.persistence.JoinColumn;
+&nbsp;import javax.persistence.ManyToOne;
+&nbsp;import javax.persistence.MapsId;
+&nbsp;import javax.persistence.Table;
+&nbsp;
+<b class="nc">&nbsp;@AllArgsConstructor</b>
+<b class="fc">&nbsp;@NoArgsConstructor</b>
+&nbsp;@Getter
+<b class="nc">&nbsp;@Setter</b>
+&nbsp;@Accessors(chain = true)
+&nbsp;@Entity
+&nbsp;@Table(name = &quot;purchase_order_variant&quot;)
+&nbsp;public class PurchaseOrderVariant {
+<b class="fc">&nbsp;    @EmbeddedId</b>
+<b class="fc">&nbsp;    private PurchaseOrderVariantKey purchaseOrderVariantKey = new PurchaseOrderVariantKey();</b>
+&nbsp;
+&nbsp;    @ManyToOne
+&nbsp;    @MapsId(&quot;purchaseOrderId&quot;)
+&nbsp;    @JoinColumn(name = &quot;purchase_order_id&quot;, nullable = false)
+<b class="nc">&nbsp;    private PurchaseOrder purchaseOrder;</b>
+&nbsp;
+&nbsp;    @ManyToOne
+&nbsp;    @MapsId(&quot;variantId&quot;)
+&nbsp;    @JoinColumn(name = &quot;variant_id&quot;, nullable = false)
+<b class="nc">&nbsp;    private Variant variant;</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;cost&quot;, nullable = false)
+<b class="nc">&nbsp;    private Double cost;</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;quantity&quot;, nullable = false)
+<b class="nc">&nbsp;    private Integer quantity;</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;amount&quot;, nullable = false)
+<b class="nc">&nbsp;    private Double amount;</b>
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-19 22:42</div>
+</div>
+</body>
+</html>

@@ -86,6 +86,11 @@ INSERT INTO user (created_at, updated_at, username, password, fullname, email, p
 VALUES ('2022-03-27 11:16:32', '2021-10-03 12:04:10', 'tkorting4',
         '$2a$10$JEBh9Lgk6oByW3XD0/8chu4Y9puZYTc9UVaHYzHx/7//lWSCBI/v.', 'Tanya Korting', 'tkorting4@livejournal.com',
         '0919944735', 'F', 5, null, 1);
+INSERT INTO user (created_at, updated_at, username, password, fullname, email, phone, gender, address_id, avatar,
+                  status)
+VALUES ('2021-09-25 23:14:29', '2021-11-30 17:35:32', 'batonia',
+        '$2a$10$JEBh9Lgk6oByW3XD0/8chu4Y9puZYTc9UVaHYzHx/7//lWSCBI/v.', 'Ngoc Long', 'hoangminh2003223@gmail.com',
+        '0919944709', 'F', 6, 'http://dummyimage.com/222x100.png/ff4444/ffffff', 1);
 
 -- role TABLE: 3 records
 INSERT INTO `role` (created_at, updated_at, code, name, status)

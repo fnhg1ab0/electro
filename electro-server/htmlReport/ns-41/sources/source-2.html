@@ -1,0 +1,338 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ProductRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.repository.product</a>
+</div>
+
+<h1>Coverage Summary for Class: ProductRepository (com.electro.repository.product)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ProductRepository</td>
+<td class="coverageStat">
+  <span class="percent">
+    40%
+  </span>
+  <span class="absValue">
+    (2/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    9.5%
+  </span>
+  <span class="absValue">
+    (7/74)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ProductRepository$MockitoMock$257155632</td>
+  </tr>
+  <tr>
+    <td class="name">ProductRepository$MockitoMock$257155632$auxiliary$1xPadi5x</td>
+  </tr>
+  <tr>
+    <td class="name">ProductRepository$MockitoMock$257155632$auxiliary$flw33gGQ</td>
+  </tr>
+  <tr>
+    <td class="name">ProductRepository$MockitoMock$257155632$auxiliary$jCoMUbZp</td>
+  </tr>
+  <tr>
+    <td class="name">ProductRepository$MockitoMock$257155632$auxiliary$kIiHJgmY</td>
+  </tr>
+  <tr>
+    <td class="name">ProductRepository$MockitoMock$257155632$auxiliary$lA8eeOc6</td>
+  </tr>
+  <tr>
+    <td class="name">ProductRepository$MockitoMock$481957435</td>
+  </tr>
+  <tr>
+    <td class="name">ProductRepository$MockitoMock$481957435$auxiliary$GO5lCSwI</td>
+  </tr>
+  <tr>
+    <td class="name">ProductRepository$MockitoMock$481957435$auxiliary$hn7p20dz</td>
+  </tr>
+  <tr>
+    <td class="name">ProductRepository$MockitoMock$481957435$auxiliary$QUG74wJx</td>
+  </tr>
+  <tr>
+    <td class="name">ProductRepository$MockitoMock$481957435$auxiliary$X67nokXK</td>
+  </tr>
+  <tr>
+    <td class="name">ProductRepository$MockitoMock$481957435$auxiliary$yqKnwNph</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    40%
+  </span>
+  <span class="absValue">
+    (2/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    9.5%
+  </span>
+  <span class="absValue">
+    (7/74)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.repository.product;
+&nbsp;
+&nbsp;import com.electro.constant.SearchFields;
+&nbsp;import com.electro.entity.inventory.Docket;
+&nbsp;import com.electro.entity.inventory.DocketVariant;
+&nbsp;import com.electro.entity.product.Product;
+&nbsp;import com.electro.entity.product.Variant;
+&nbsp;import com.electro.utils.SearchUtils;
+&nbsp;import cz.jirutka.rsql.parser.ast.ComparisonOperator;
+&nbsp;import io.github.perplexhub.rsql.RSQLCustomPredicate;
+&nbsp;import io.github.perplexhub.rsql.RSQLJPASupport;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.PageImpl;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.data.jpa.domain.Specification;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;
+&nbsp;import javax.persistence.criteria.CriteriaBuilder;
+&nbsp;import javax.persistence.criteria.Join;
+&nbsp;import javax.persistence.criteria.Order;
+&nbsp;import javax.persistence.criteria.Predicate;
+&nbsp;import javax.persistence.criteria.Root;
+&nbsp;import javax.persistence.criteria.Subquery;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;public interface ProductRepository extends JpaRepository&lt;Product, Long&gt;, JpaSpecificationExecutor&lt;Product&gt; {
+&nbsp;
+&nbsp;    default Page&lt;Product&gt; findDocketedProducts(Pageable pageable) {
+<b class="fc">&nbsp;        Specification&lt;Product&gt; spec = (root, query, cb) -&gt; {</b>
+<b class="fc">&nbsp;            Join&lt;Product, Variant&gt; variant = root.join(&quot;variants&quot;);</b>
+<b class="fc">&nbsp;            Join&lt;Variant, DocketVariant&gt; docketVariant = variant.join(&quot;docketVariants&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;            query.distinct(true);</b>
+<b class="fc">&nbsp;            query.orderBy(cb.desc(docketVariant.get(&quot;docket&quot;).get(&quot;id&quot;)));</b>
+&nbsp;
+<b class="fc">&nbsp;            return query.getRestriction();</b>
+&nbsp;        };
+&nbsp;
+<b class="fc">&nbsp;        return findAll(spec, pageable);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    default Page&lt;Product&gt; findByParams(String filter,
+&nbsp;                                       String sort,
+&nbsp;                                       String search,
+&nbsp;                                       boolean saleable,
+&nbsp;                                       boolean newable,
+&nbsp;                                       Pageable pageable) {
+&nbsp;        // Xử lý `filter` thành Specification
+<b class="nc">&nbsp;        RSQLCustomPredicate&lt;String&gt; jsonPredicate = new RSQLCustomPredicate&lt;&gt;(</b>
+&nbsp;                new ComparisonOperator(&quot;=json=&quot;, true),
+&nbsp;                String.class,
+&nbsp;                input -&gt; {
+<b class="nc">&nbsp;                    CriteriaBuilder cb = input.getCriteriaBuilder();</b>
+&nbsp;
+&nbsp;                    // Lấy phần còn lại của danh sách `input.getArguments()` sau khi bỏ qua phần tử đầu tiên
+<b class="nc">&nbsp;                    Object[] values = input.getArguments().stream().skip(1).toArray();</b>
+&nbsp;
+<b class="nc">&nbsp;                    return cb.function(&quot;JSON_EXTRACT&quot;, String.class,</b>
+<b class="nc">&nbsp;                            input.getPath(),</b>
+<b class="nc">&nbsp;                            cb.function(&quot;REPLACE&quot;, String.class,</b>
+<b class="nc">&nbsp;                                    cb.function(&quot;JSON_UNQUOTE&quot;, String.class,</b>
+<b class="nc">&nbsp;                                            cb.function(&quot;JSON_SEARCH&quot;, String.class,</b>
+<b class="nc">&nbsp;                                                    input.getPath(),</b>
+<b class="nc">&nbsp;                                                    cb.literal(&quot;one&quot;),</b>
+<b class="nc">&nbsp;                                                    cb.literal(input.getArguments().get(0)))</b>
+&nbsp;                                    ),
+<b class="nc">&nbsp;                                    cb.literal(&quot;.code&quot;),</b>
+<b class="nc">&nbsp;                                    cb.literal(&quot;.value&quot;)</b>
+&nbsp;                            )
+<b class="nc">&nbsp;                    ).in(values);</b>
+&nbsp;                });
+&nbsp;
+<b class="nc">&nbsp;        Specification&lt;Product&gt; filterable = RSQLJPASupport.toSpecification(filter, List.of(jsonPredicate));</b>
+<b class="nc">&nbsp;        Specification&lt;Product&gt; searchable = SearchUtils.parse(search, SearchFields.CLIENT_PRODUCT);</b>
+&nbsp;
+&nbsp;        // Lọc theo `saleable` (có thể bán) và `newable` (thứ tự mới nhất)
+<b class="nc">&nbsp;        Specification&lt;Product&gt; docketable = (root, query, cb) -&gt; {</b>
+<b class="nc">&nbsp;            List&lt;Predicate&gt; wheres = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;            List&lt;Order&gt; orders = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;            Join&lt;Product, Variant&gt; variant = root.join(&quot;variants&quot;);</b>
+<b class="nc">&nbsp;            Join&lt;Variant, DocketVariant&gt; docketVariant = variant.join(&quot;docketVariants&quot;);</b>
+<b class="nc">&nbsp;            Join&lt;DocketVariant, Docket&gt; docket = docketVariant.join(&quot;docket&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;            if (saleable) {</b>
+<b class="nc">&nbsp;                Subquery&lt;Integer&gt; subquery = query.subquery(Integer.class);</b>
+<b class="nc">&nbsp;                Root&lt;Variant&gt; variantSq = subquery.from(Variant.class);</b>
+<b class="nc">&nbsp;                Join&lt;Variant, DocketVariant&gt; docketVariantSq = variantSq.join(&quot;docketVariants&quot;);</b>
+<b class="nc">&nbsp;                Join&lt;DocketVariant, Docket&gt; docketSq = docketVariantSq.join(&quot;docket&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                subquery.select(cb.diff(</b>
+<b class="nc">&nbsp;                        cb.sum(</b>
+<b class="nc">&nbsp;                                cb.&lt;Integer&gt;selectCase()</b>
+<b class="nc">&nbsp;                                        .when(cb.and(cb.equal(docketSq.get(&quot;type&quot;), 1),</b>
+<b class="nc">&nbsp;                                                        cb.equal(docketSq.get(&quot;status&quot;), 3)),</b>
+<b class="nc">&nbsp;                                                docketVariantSq.get(&quot;quantity&quot;))</b>
+<b class="nc">&nbsp;                                        .when(cb.and(cb.equal(docketSq.get(&quot;type&quot;), 2),</b>
+<b class="nc">&nbsp;                                                        cb.equal(docketSq.get(&quot;status&quot;), 3)),</b>
+<b class="nc">&nbsp;                                                cb.prod(docketVariantSq.get(&quot;quantity&quot;), -1))</b>
+<b class="nc">&nbsp;                                        .otherwise(0)</b>
+&nbsp;                        ),
+<b class="nc">&nbsp;                        cb.sum(</b>
+<b class="nc">&nbsp;                                cb.&lt;Integer&gt;selectCase()</b>
+<b class="nc">&nbsp;                                        .when(cb.and(cb.equal(docketSq.get(&quot;type&quot;), 2),</b>
+<b class="nc">&nbsp;                                                        docketSq.get(&quot;status&quot;).in(1, 2)),</b>
+<b class="nc">&nbsp;                                                docketVariantSq.get(&quot;quantity&quot;))</b>
+<b class="nc">&nbsp;                                        .otherwise(0)</b>
+&nbsp;                        )
+&nbsp;                ));
+&nbsp;
+<b class="nc">&nbsp;                subquery.where(cb.equal(variantSq.get(&quot;product&quot;).get(&quot;id&quot;), root.get(&quot;id&quot;)));</b>
+<b class="nc">&nbsp;                subquery.groupBy(variantSq.get(&quot;product&quot;).get(&quot;id&quot;));</b>
+&nbsp;
+<b class="nc">&nbsp;                wheres.add(cb.greaterThan(subquery, 0));</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            if (&quot;lowest-price&quot;.equals(sort)) {</b>
+<b class="nc">&nbsp;                orders.add(cb.asc(cb.min(variant.get(&quot;price&quot;))));</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            if (&quot;highest-price&quot;.equals(sort)) {</b>
+<b class="nc">&nbsp;                orders.add(cb.desc(cb.max(variant.get(&quot;price&quot;))));</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            if (&quot;random&quot;.equals(sort)) {</b>
+<b class="nc">&nbsp;                orders.add(cb.asc(cb.function(&quot;RAND&quot;, Void.class)));</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            if (newable) {</b>
+<b class="nc">&nbsp;                wheres.add(cb.equal(docket.get(&quot;type&quot;), 1));</b>
+<b class="nc">&nbsp;                wheres.add(cb.equal(docket.get(&quot;status&quot;), 3));</b>
+&nbsp;
+<b class="nc">&nbsp;                orders.add(cb.desc(cb.max(docket.get(&quot;createdAt&quot;))));</b>
+<b class="nc">&nbsp;                orders.add(cb.asc(root.get(&quot;id&quot;)));</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            Optional.ofNullable(filterable.toPredicate(root, query, cb)).ifPresent(wheres::add);</b>
+<b class="nc">&nbsp;            Optional.ofNullable(searchable.toPredicate(root, query, cb)).ifPresent(wheres::add);</b>
+&nbsp;
+<b class="nc">&nbsp;            query.where(wheres.toArray(Predicate[]::new));</b>
+<b class="nc">&nbsp;            query.groupBy(root.get(&quot;id&quot;));</b>
+<b class="nc">&nbsp;            query.orderBy(orders);</b>
+&nbsp;
+<b class="nc">&nbsp;            return query.getRestriction();</b>
+&nbsp;        };
+&nbsp;
+&nbsp;        /*
+&nbsp;         * Bug:
+&nbsp;         * https://stackoverflow.com/a/59046245
+&nbsp;         * https://stackoverflow.com/a/37771947
+&nbsp;         *
+&nbsp;         * TODO: Cần tìm cách hiệu quả hơn (sử dụng EntityManager)
+&nbsp;         */
+<b class="nc">&nbsp;        List&lt;Product&gt; products = findAll(docketable);</b>
+<b class="nc">&nbsp;        final int start = (int) pageable.getOffset();</b>
+<b class="nc">&nbsp;        final int end = Math.min(start + pageable.getPageSize(), products.size());</b>
+&nbsp;
+<b class="nc">&nbsp;        return new PageImpl&lt;&gt;(products.subList(start, end), pageable, products.size());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    Optional&lt;Product&gt; findBySlug(String slug);
+&nbsp;
+&nbsp;
+&nbsp;    @Query(&quot;SELECT COUNT(p.id) FROM Product p&quot;)
+&nbsp;    int countByProductId();
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-19 22:42</div>
+</div>
+</body>
+</html>

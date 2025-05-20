@@ -1,0 +1,183 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Image</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.electro.entity.general</a>
+</div>
+
+<h1>Coverage Summary for Class: Image (com.electro.entity.general)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Image</td>
+<td class="coverageStat">
+  <span class="percent">
+    72.7%
+  </span>
+  <span class="absValue">
+    (8/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    72.7%
+  </span>
+  <span class="absValue">
+    (8/11)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Image$HibernateProxy$i8OwJHCe</td>
+  </tr>
+  <tr>
+    <td class="name">Image$HibernateProxy$Lq23KNs3</td>
+  </tr>
+  <tr>
+    <td class="name">Image$HibernateProxy$MoQekdVP</td>
+  </tr>
+  <tr>
+    <td class="name">Image$HibernateProxy$vYs6wxzz</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    72.7%
+  </span>
+  <span class="absValue">
+    (8/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    72.7%
+  </span>
+  <span class="absValue">
+    (8/11)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.electro.entity.general;
+&nbsp;
+&nbsp;import com.electro.entity.BaseEntity;
+&nbsp;import com.electro.entity.product.Product;
+&nbsp;import com.fasterxml.jackson.annotation.JsonBackReference;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import lombok.Getter;
+&nbsp;import lombok.NoArgsConstructor;
+&nbsp;import lombok.Setter;
+&nbsp;import lombok.experimental.Accessors;
+&nbsp;
+&nbsp;import javax.persistence.Column;
+&nbsp;import javax.persistence.Entity;
+&nbsp;import javax.persistence.FetchType;
+&nbsp;import javax.persistence.JoinColumn;
+&nbsp;import javax.persistence.ManyToOne;
+&nbsp;import javax.persistence.Table;
+&nbsp;
+<b class="nc">&nbsp;@AllArgsConstructor</b>
+<b class="fc">&nbsp;@NoArgsConstructor</b>
+&nbsp;@Getter
+<b class="nc">&nbsp;@Setter</b>
+&nbsp;@Accessors(chain = true)
+&nbsp;@Entity
+&nbsp;@Table(name = &quot;image&quot;)
+&nbsp;public class Image extends BaseEntity {
+&nbsp;    @Column(name = &quot;name&quot;, nullable = false, unique = true)
+<b class="fc">&nbsp;    private String name;</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;path&quot;, nullable = false, unique = true)
+<b class="fc">&nbsp;    private String path;</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;content_type&quot;, nullable = false)
+<b class="fc">&nbsp;    private String contentType;</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;size&quot;, nullable = false)
+<b class="fc">&nbsp;    private Long size;</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Có 3 nhóm (group):
+&nbsp;     * &lt;ul&gt;
+&nbsp;     *     &lt;li&gt;P – Product&lt;/li&gt;
+&nbsp;     *     &lt;li&gt;C – Category&lt;/li&gt;
+&nbsp;     *     &lt;li&gt;U – User&lt;/li&gt;
+&nbsp;     * &lt;/ul&gt;
+&nbsp;     */
+&nbsp;    @Column(name = &quot;`group`&quot;, nullable = false)
+<b class="fc">&nbsp;    private String group;</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;is_thumbnail&quot;, nullable = false, columnDefinition = &quot;BOOLEAN&quot;)
+<b class="fc">&nbsp;    private Boolean isThumbnail;</b>
+&nbsp;
+&nbsp;    @Column(name = &quot;is_eliminated&quot;, nullable = false, columnDefinition = &quot;BOOLEAN&quot;)
+<b class="fc">&nbsp;    private Boolean isEliminated;</b>
+&nbsp;
+&nbsp;    @ManyToOne(fetch = FetchType.LAZY)
+&nbsp;    @JoinColumn(name = &quot;product_id&quot;)
+&nbsp;    @JsonBackReference
+<b class="nc">&nbsp;    private Product product;</b>
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-19 22:42</div>
+</div>
+</body>
+</html>

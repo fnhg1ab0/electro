@@ -203,6 +203,36 @@ public class OrderControllerTest {
             assertEquals(Long.valueOf(3L), capturedKeys.get(1).getOrderId());
             assertEquals(Long.valueOf(4L), capturedKeys.get(1).getVariantId());
         }
+        
+        /**
+         * Test Case ID: OC-UT004
+         * Test Name: testEmptyDeleteOrderVariantsController
+         * Objective: Kiểm tra OrderVariantController xóa với danh sách rỗng
+         * Input: Danh sách OrderVariantKeyRequest rỗng
+         * Expected Output: HTTP 204 NO CONTENT và service được gọi với danh sách rỗng
+         * Path Coverage: Đường đi biên với danh sách trống
+         */
+        @Test
+        @DisplayName("Unit Test - Xóa với danh sách order variant rỗng")
+        void testEmptyDeleteOrderVariantsController() {
+            // Given
+            List<OrderVariantKeyRequest> emptyKeyRequests = new ArrayList<>();
+            doNothing().when(orderVariantService).delete(anyList());
+
+            // When
+            ResponseEntity<Void> response = orderVariantController.deleteOrderVariants(emptyKeyRequests);
+
+            // Then
+            assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+
+            ArgumentCaptor<List<OrderVariantKey>> keysCaptor = ArgumentCaptor.forClass(List.class);
+            verify(orderVariantService).delete(keysCaptor.capture());
+
+            // Kiểm tra danh sách đầu vào là rỗng
+            List<OrderVariantKey> capturedKeys = keysCaptor.getValue();
+            assertNotNull(capturedKeys);
+            assertTrue(capturedKeys.isEmpty(), "Danh sách phải rỗng");
+        }
 
         /**
          * Test Case ID: OS-UT001
@@ -1117,6 +1147,65 @@ public class OrderControllerTest {
                     .anyMatch(ov -> ov.getVariant().getId().equals(variantId));
 
             assertFalse(existsAfter, "Order variant không được tồn tại sau khi xóa");
+        }
+
+        /**
+         * Test Case ID: OC-IT008
+         * Test Name: testDeleteMultipleOrderVariants
+         * Objective: Kiểm tra xóa nhiều order variants cùng lúc
+         * Input: Danh sách các OrderVariantKeyRequest
+         * Expected Output: Tất cả order variants trong danh sách bị xóa khỏi database
+         * Path Coverage: Đường đi xóa nhiều order variants
+         */
+        @Test
+        @DisplayName("Integration Test - Xóa nhiều order variants")
+        void testDeleteMultipleOrderVariants() {
+            // Given
+            setupTestData(); // Tạo dữ liệu cơ bản
+            setupOrderVariantTestData(); // Tạo order variant
+            
+            // Tạo các key request để xóa
+            List<OrderVariantKeyRequest> keyRequests = Arrays.asList(
+                    new OrderVariantKeyRequest(1L, 1L),
+                    new OrderVariantKeyRequest(2L, 2L)
+            );
+            
+            // Kiểm tra các order variant tồn tại trước khi xóa
+            Order order1 = orderRepository.findById(1L)
+                    .orElseThrow(() -> new RuntimeException("Order 1 not found"));
+            Order order2 = orderRepository.findById(2L)
+                    .orElseThrow(() -> new RuntimeException("Order 2 not found"));
+                    
+            boolean exists1Before = order1.getOrderVariants().stream()
+                    .anyMatch(ov -> ov.getVariant().getId().equals(1L));
+            boolean exists2Before = order2.getOrderVariants().stream()
+                    .anyMatch(ov -> ov.getVariant().getId().equals(2L));
+                    
+            assertTrue(exists1Before, "Order variant 1 phải tồn tại trước khi xóa");
+            assertTrue(exists2Before, "Order variant 2 phải tồn tại trước khi xóa");
+
+            // When
+            ResponseEntity<Void> response = orderVariantController.deleteOrderVariants(keyRequests);
+
+            // Đảm bảo thay đổi được ghi vào database
+            entityManager.flush();
+
+            // Then
+            assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+
+            // Kiểm tra tất cả order variant đã bị xóa
+            Order updatedOrder1 = orderRepository.findById(1L)
+                    .orElseThrow(() -> new RuntimeException("Order 1 not found"));
+            Order updatedOrder2 = orderRepository.findById(2L)
+                    .orElseThrow(() -> new RuntimeException("Order 2 not found"));
+                    
+            boolean exists1After = updatedOrder1.getOrderVariants().stream()
+                    .anyMatch(ov -> ov.getVariant().getId().equals(1L));
+            boolean exists2After = updatedOrder2.getOrderVariants().stream()
+                    .anyMatch(ov -> ov.getVariant().getId().equals(2L));
+                    
+            assertFalse(exists1After, "Order variant 1 không được tồn tại sau khi xóa");
+            assertFalse(exists2After, "Order variant 2 không được tồn tại sau khi xóa");
         }
     }
 }

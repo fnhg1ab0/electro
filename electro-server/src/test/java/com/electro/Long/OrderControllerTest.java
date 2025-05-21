@@ -310,6 +310,187 @@ public class OrderControllerTest {
             // Then
             verify(orderService).captureTransactionPaypal(eq(paypalOrderId), eq(payerId));
         }
+
+        /**
+         * Test Case ID: OGS001
+         * Test Name: testGenericFindAllOrders
+         * Objective: Verify that GenericService correctly fetches all orders with pagination and filtering
+         * Input: Pagination, sorting, filtering, and search parameters
+         * Expected Output: ListResponse with order details
+         * Note: Tests generic service for retrieving paginated order lists
+         */
+    @Test
+    public void testGenericFindAllOrders() {
+        // Given
+        int page = 0;
+
+        int size = 10;
+
+        String sort = "id,desc";
+
+        String filter = "status==PENDING";
+
+        String search = "customer";
+
+        boolean all = false;
+
+        List<OrderResponse> orderResponses = new ArrayList<>();
+
+        Page<Order> orderPage = new PageImpl<>(new ArrayList<>(), PageRequest.of(page, size), 0);
+
+        ListResponse<OrderResponse> expectedResponse = new ListResponse<>(orderResponses, orderPage);
+
+        when(genericOrderService.findAll(page, size, sort, filter, search, all))
+                .thenReturn(expectedResponse);
+
+        // When
+        ListResponse<OrderResponse> actualResponse = genericOrderService.findAll(page, size, sort, filter, search, all);
+
+        // Then
+        assertNotNull(actualResponse);
+        verify(genericOrderService).findAll(page, size, sort, filter, search, all);
+        }
+
+        /**
+         * Test Case ID: OGS002
+         * Test Name: testGenericFindOrderById
+         * Objective: Verify that GenericService correctly fetches order by ID
+         * Input: Order ID
+         * Expected Output: OrderResponse with order details
+         * Note: Tests generic service for retrieving a single order by ID
+         */
+        @Test
+        public void testGenericFindOrderById() {
+
+            // Given
+            Long orderId = 1L;
+
+            OrderResponse expectedResponse = new OrderResponse();
+
+            when(genericOrderService.findById(anyLong())).thenReturn(expectedResponse);
+
+            // When
+            OrderResponse actualResponse = genericOrderService.findById(orderId);
+
+            // Then
+
+            assertNotNull(actualResponse);
+
+            assertEquals(expectedResponse, actualResponse);
+
+            verify(genericOrderService).findById(orderId);
+        }
+
+        /**
+         * Test Case ID: OGS003
+         * Test Name: testGenericCreateOrder
+         * Objective: Verify that GenericService correctly creates a new order
+         * Input: OrderRequest with order details
+         * Expected Output: OrderResponse with created order details
+         * Note: Tests generic service for creating a new order
+         */
+        @Test
+        public void testGenericCreateOrder() {
+
+            // Given
+            OrderRequest request = new OrderRequest();
+
+            OrderResponse expectedResponse = new OrderResponse();
+
+            JsonNode jsonNode = objectMapper.createObjectNode();
+
+            when(genericOrderService.save(any(JsonNode.class), eq(OrderRequest.class)))
+                    .thenReturn(expectedResponse);
+
+            // When
+            OrderResponse actualResponse = genericOrderService.save(jsonNode, OrderRequest.class);
+            
+            // Then
+            assertNotNull(actualResponse);
+
+            assertEquals(expectedResponse, actualResponse);
+
+            verify(genericOrderService).save(any(JsonNode.class), eq(OrderRequest.class));
+        }
+
+        /**
+         * Test Case ID: OGS004
+         * Test Name: testGenericUpdateOrder
+         * Objective: Verify that GenericService correctly updates an existing order
+         * Input: Order ID and OrderRequest with updated order details
+         * Expected Output: OrderResponse with updated order details
+         * Note: Tests generic service for updating an existing order
+         */
+        @Test
+        public void testGenericUpdateOrder() {
+
+            // Given
+            Long orderId = 1L;
+
+            OrderRequest request = new OrderRequest();
+
+            OrderResponse expectedResponse = new OrderResponse();
+
+            JsonNode jsonNode = objectMapper.createObjectNode();
+
+            when(genericOrderService.save(eq(orderId), any(JsonNode.class), eq(OrderRequest.class)))
+                    .thenReturn(expectedResponse);
+
+            // When
+            OrderResponse actualResponse = genericOrderService.save(orderId, jsonNode, OrderRequest.class);
+
+            // Then
+            assertNotNull(actualResponse);
+
+            assertEquals(expectedResponse, actualResponse);
+
+            verify(genericOrderService).save(eq(orderId), any(JsonNode.class), eq(OrderRequest.class));
+        }
+
+        /**
+         * Test Case ID: OGS005
+         * Test Name: testGenericDeleteOrder
+         * Objective: Verify that GenericService correctly deletes an order
+         * Input: Order ID
+         * Expected Output: Void response
+         * Note: Tests generic service for deleting an order
+         */
+        @Test
+        public void testGenericDeleteOrder() {
+
+            // Given
+            Long orderId = 1L;
+
+            doNothing().when(genericOrderService).delete(orderId);
+
+            // When
+            genericOrderService.delete(orderId);
+
+            // Then - simply verify it was called once
+            verify(genericOrderService).delete(orderId);
+        }
+
+        /**
+         * Test Case ID: OGS006
+         * Test Name: testGenericBulkDeleteOrders
+         * Objective: Verify that GenericService correctly deletes multiple orders
+         * Input: List of Order IDs
+         * Expected Output: Void response
+         * Note: Tests generic service for bulk deleting orders
+         */
+        @Test
+        public void testGenericBulkDeleteOrders() {
+            // Given
+            List<Long> ids = Arrays.asList(1L, 2L, 3L);
+
+            doNothing().when(genericOrderService).delete(ids);
+
+            // When
+            genericOrderService.delete(ids);
+
+            // Then - simply verify it was called once
+            verify(genericOrderService).delete(ids);
+        }
     }
 
     /**

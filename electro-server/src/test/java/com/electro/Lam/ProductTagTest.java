@@ -336,6 +336,8 @@ public class ProductTagTest {
         
         // Assert
         assertTrue(refreshedTag.isPresent(), "Tag should exist");
+        System.out.println("All tags: " + tagRepository.findAll());
+        System.out.println("Refreshed Tag: " + refreshedTag.get().getProducts());
         assertFalse(refreshedTag.get().getProducts().isEmpty(), "Tag should have associated products");
         
         // The product should be in the tag's products collection

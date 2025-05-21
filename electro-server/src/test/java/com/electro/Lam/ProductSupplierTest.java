@@ -16,6 +16,11 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for Supplier entity using Mockito for repository mocking
+ * Uses @Mock to create a mock SupplierRepository
+ * Tests CRUD operations and validation on Supplier objects
+ */
 public class ProductSupplierTest {
 
     @Mock
@@ -36,8 +41,14 @@ public class ProductSupplierTest {
         } catch (JsonProcessingException e) {
             return "Error converting to JSON: " + e.getMessage();
         }
-    }
-
+    }    /**
+     * Test Case ID: PST001
+     * Tên test: testCreateSupplier
+     * Mục tiêu: Kiểm tra việc tạo mới nhà cung cấp
+     * Đầu vào: Một đối tượng Supplier với đầy đủ thông tin (displayName, code, contactFullname, etc.)
+     * Đầu ra mong đợi: Supplier được lưu thành công với thông tin khớp với đầu vào
+     * Ghi chú: Kiểm tra chức năng cơ bản của việc tạo nhà cung cấp với mock repository
+     */
     @Test
     public void testCreateSupplier() {
         // Arrange
@@ -72,8 +83,15 @@ public class ProductSupplierTest {
         assertEquals("nva@example.com", savedSupplier.getContactEmail(), "Contact email should match");
         assertEquals("0123456789", savedSupplier.getContactPhone(), "Contact phone should match");
         verify(supplierRepository, times(1)).save(supplier);
-    }
-
+    }    /**
+     * Test Case ID: PST002
+     * Tên test: testUpdateSupplier
+     * Mục tiêu: Kiểm tra việc cập nhật thông tin nhà cung cấp
+     * Đầu vào: Nhà cung cấp đã tồn tại với displayName="Nhà cung cấp A" và cập nhật thành 
+     *          displayName="Nhà cung cấp B", contactFullname="Trần Văn B", v.v.
+     * Đầu ra mong đợi: Nhà cung cấp được cập nhật thành công với thông tin mới
+     * Ghi chú: Kiểm tra chức năng cập nhật thông tin nhà cung cấp với mock repository
+     */
     @Test
     public void testUpdateSupplier() {
         // Arrange
@@ -110,8 +128,14 @@ public class ProductSupplierTest {
         assertEquals("0987654321", updatedSupplier.getContactPhone(), "Updated contact phone should match");
         verify(supplierRepository, times(1)).findById(1L);
         verify(supplierRepository, times(1)).save(supplierToUpdate);
-    }
-
+    }    /**
+     * Test Case ID: PST003
+     * Tên test: testDeleteSupplier
+     * Mục tiêu: Kiểm tra việc xóa nhà cung cấp
+     * Đầu vào: ID của nhà cung cấp cần xóa
+     * Đầu ra mong đợi: Phương thức deleteById của repository được gọi đúng một lần với ID cần xóa
+     * Ghi chú: Kiểm tra chức năng xóa nhà cung cấp với mock repository
+     */
     @Test
     public void testDeleteSupplier() {
         // Arrange
@@ -125,8 +149,14 @@ public class ProductSupplierTest {
 
         // Assert
         verify(supplierRepository, times(1)).deleteById(supplierId);
-    }
-
+    }    /**
+     * Test Case ID: PST004
+     * Tên test: testGetAllSuppliers
+     * Mục tiêu: Kiểm tra việc lấy danh sách tất cả nhà cung cấp
+     * Đầu vào: Mock trả về một danh sách gồm một nhà cung cấp
+     * Đầu ra mong đợi: Danh sách nhà cung cấp có kích thước bằng 1 và thông tin nhà cung cấp chính xác
+     * Ghi chú: Kiểm tra chức năng lấy danh sách nhà cung cấp với mock repository
+     */
     @Test
     public void testGetAllSuppliers() {
         // Arrange
@@ -148,8 +178,14 @@ public class ProductSupplierTest {
         assertEquals("Nhà cung cấp A", result.get(0).getDisplayName(), "Supplier display name should match");
         assertEquals("SUP001", result.get(0).getCode(), "Supplier code should match");
         verify(supplierRepository, times(1)).findAll();
-    }
-
+    }    /**
+     * Test Case ID: PST005
+     * Tên test: testGetSupplierById
+     * Mục tiêu: Kiểm tra việc tìm kiếm nhà cung cấp theo ID
+     * Đầu vào: ID của nhà cung cấp cần tìm kiếm (1L)
+     * Đầu ra mong đợi: Tìm thấy nhà cung cấp với displayName="Nhà cung cấp A" và code="SUP001"
+     * Ghi chú: Kiểm tra chức năng tìm kiếm nhà cung cấp theo ID với mock repository
+     */
     @Test
     public void testGetSupplierById() {
         // Arrange
@@ -172,8 +208,14 @@ public class ProductSupplierTest {
         assertEquals("Nhà cung cấp A", supplierOptional.get().getDisplayName(), "Supplier display name should match");
         assertEquals("SUP001", supplierOptional.get().getCode(), "Supplier code should match");
         verify(supplierRepository, times(1)).findById(supplierId);
-    }
-
+    }    /**
+     * Test Case ID: PST006
+     * Tên test: testGetSupplierById_NotFound
+     * Mục tiêu: Kiểm tra việc tìm kiếm nhà cung cấp với ID không tồn tại
+     * Đầu vào: ID 1L không tồn tại trong mock repository
+     * Đầu ra mong đợi: Không tìm thấy nhà cung cấp nào (empty Optional)
+     * Ghi chú: Kiểm tra xử lý khi không tìm thấy dữ liệu với mock repository
+     */
     @Test
     public void testGetSupplierById_NotFound() {
         // Arrange

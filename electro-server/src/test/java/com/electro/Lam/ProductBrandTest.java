@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@Transactional
+//@Transactional
 public class ProductBrandTest {
 
     @Autowired
@@ -81,48 +82,48 @@ public class ProductBrandTest {
     @BeforeEach
     public void setUp() {
         // Xóa dữ liệu cũ để đảm bảo môi trường sạch
-        wishRepository.deleteAll();
-        preorderRepository.deleteAll();
-        reviewRepository.deleteAll();
-
-        // Clear variants and associated entities
-        cartVariantRepository.deleteAll();
-        orderVariantRepository.deleteAll();
-        countVariantRepository.deleteAll();
-        docketVariantRepository.deleteAll();
-        purchaseOrderVariantRepository.deleteAll();
-
-        // Clear inventory related entities
-        storageLocationRepository.deleteAll();
-        variantInventoryLimitRepository.deleteAll();
-
-        // Clear product inventory limits
-        productInventoryLimitRepository.deleteAll();
-
-        // Clear images
-        imageRepository.deleteAll();
-
-        // Clear promotion products (join tables for many-to-many relationships)
-        promotionRepository.findAll().forEach(promotion -> {
-            promotion.getProducts().clear();
-            promotionRepository.save(promotion);
-        });
-
-        // Clear variants
-        variantRepository.deleteAll();
-
-        // Clear product_tag join table
-        productRepository.findAll().forEach(product -> {
-            product.getTags().clear();
-            productRepository.save(product);
-        });
-
-        // Now we can safely clear products
-        productRepository.deleteAll();
-        brandRepository.deleteAll();
-        tagRepository.deleteAll();
+//        wishRepository.deleteAll();
+//        preorderRepository.deleteAll();
+//        reviewRepository.deleteAll();
+//
+//        // Clear variants and associated entities
+//        cartVariantRepository.deleteAll();
+//        orderVariantRepository.deleteAll();
+//        countVariantRepository.deleteAll();
+//        docketVariantRepository.deleteAll();
+//        purchaseOrderVariantRepository.deleteAll();
+//
+//        // Clear inventory related entities
+//        storageLocationRepository.deleteAll();
+//        variantInventoryLimitRepository.deleteAll();
+//
+//        // Clear product inventory limits
+//        productInventoryLimitRepository.deleteAll();
+//
+//        // Clear images
+//        imageRepository.deleteAll();
+//
+//        // Clear promotion products (join tables for many-to-many relationships)
+//        promotionRepository.findAll().forEach(promotion -> {
+//            promotion.getProducts().clear();
+//            promotionRepository.save(promotion);
+//        });
+//
+//        // Clear variants
+//        variantRepository.deleteAll();
+//
+//        // Clear product_tag join table
+//        productRepository.findAll().forEach(product -> {
+//            product.getTags().clear();
+//            productRepository.save(product);
+//        });
+//
+//        // Now we can safely clear products
+//        productRepository.deleteAll();
+////        brandRepository.deleteAll();
+//        tagRepository.deleteAll();
     }    /**
-     * Test Case ID: PBIT001
+     * Test Case ID: BIT001
      * Tên test: testGetAllBrands
      * Mục tiêu: Kiểm tra việc lấy tất cả thương hiệu sản phẩm
      * Đầu vào: Hai thương hiệu "Samsung" và "Apple" đã được lưu vào cơ sở dữ liệu
@@ -159,7 +160,7 @@ public class ProductBrandTest {
         // Assert
         assertTrue(brands.size() >= 2, "There should be at least 2 brands");
     }    /**
-     * Test Case ID: PBIT002
+     * Test Case ID: BIT002
      * Tên test: testCreateBrand
      * Mục tiêu: Kiểm tra việc tạo mới thương hiệu sản phẩm
      * Đầu vào: Một đối tượng Brand với name="Samsung", code="SAM123", 
@@ -188,7 +189,7 @@ public class ProductBrandTest {
         assertEquals("Electronics brand", savedBrand.getDescription(), "Brand description should match");
         assertEquals(1, savedBrand.getStatus(), "Brand status should match");
     }    /**
-     * Test Case ID: PBIT003
+     * Test Case ID: BIT003
      * Tên test: testUpdateBrand
      * Mục tiêu: Kiểm tra việc cập nhật thông tin thương hiệu sản phẩm
      * Đầu vào: Thương hiệu đã tồn tại với name="Samsung" và cập nhật thành name="Updated Samsung",
@@ -218,7 +219,7 @@ public class ProductBrandTest {
         assertEquals("Updated Samsung", updatedBrand.getName(), "Updated name should match");
         assertEquals("Updated description", updatedBrand.getDescription(), "Updated description should match");
     }    /**
-     * Test Case ID: PBIT004
+     * Test Case ID: BIT004
      * Tên test: testDeleteBrand
      * Mục tiêu: Kiểm tra việc xóa thương hiệu sản phẩm
      * Đầu vào: ID của thương hiệu đã tồn tại trong cơ sở dữ liệu
@@ -244,8 +245,8 @@ public class ProductBrandTest {
         Optional<Brand> deletedBrand = brandRepository.findById(savedBrand.getId());
         assertFalse(deletedBrand.isPresent(), "Brand should be deleted");
     }    /**
-     * Test Case ID: PBIT005
-     * Tên test: testGetBrandById
+     * Test Case ID: BIT005
+     * Tên test: testGetBrandByIdb
      * Mục tiêu: Kiểm tra việc tìm kiếm thương hiệu theo ID
      * Đầu vào: ID của thương hiệu đã tồn tại trong cơ sở dữ liệu
      * Đầu ra mong đợi: Tìm thấy thương hiệu với name="Samsung"
@@ -264,18 +265,18 @@ public class ProductBrandTest {
 
         // Act
         Optional<Brand> foundBrand = brandRepository.findById(savedBrand.getId());
-        System.out.println("Expected Output: Found brand with name='Samsung'");
+        System.out.println("Expected Output: Found brand with name=" + foundBrand.get().getName());
 
         // Assert
         assertTrue(foundBrand.isPresent(), "Brand should exist");
         assertEquals("Samsung", foundBrand.get().getName(), "Brand name should match");
     }    /**
-     * Test Case ID: PBIT006
+     * Test Case ID: BIT006
      * Tên test: testGetBrandById_NotFound
      * Mục tiêu: Kiểm tra việc tìm kiếm thương hiệu với ID không tồn tại
      * Đầu vào: ID 999L không tồn tại trong cơ sở dữ liệu
      * Đầu ra mong đợi: Không tìm thấy thương hiệu nào (empty Optional)
-     * Ghi chú: Kiểm tra xử lý khi không tìm thấy dữ liệu
+     * Ghi chú: Kiểm tra xử lý khi không tìm thấy dữ liệuBỈ
      */
     @Test
     public void testGetBrandById_NotFound() {

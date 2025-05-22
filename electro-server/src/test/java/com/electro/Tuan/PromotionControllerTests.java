@@ -7,7 +7,10 @@ import com.electro.dto.product.ProductResponse;
 import com.electro.dto.promotion.PromotionRequest;
 import com.electro.dto.promotion.PromotionResponse;
 import com.electro.entity.BaseEntity;
+import com.electro.entity.product.Product;
+import com.electro.entity.promotion.Promotion;
 import com.electro.exception.ResourceNotFoundException;
+import com.electro.repository.product.CategoryRepository;
 import com.electro.repository.promotion.PromotionRepository;
 import com.electro.service.promotion.PromotionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,10 +26,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.electro.utils.TestDataFactory.objectMapperLogger;
@@ -62,6 +62,8 @@ public class PromotionControllerTests {
     private PromotionService promotionService;
     @Autowired
     private PromotionRepository promotionRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
     private int size = Integer.parseInt(AppConstants.DEFAULT_PAGE_SIZE);
     private String sort = AppConstants.DEFAULT_SORT;
     private String filter = null;
@@ -218,6 +220,14 @@ public class PromotionControllerTests {
                 assertTrue(promo.getName().toLowerCase().contains(keyword.toLowerCase()));
             }
         }
+
+        // kiểm tra trực tiếp trong DB với keyword có số lượng bằng số lượng trả về từ controller
+        List<Promotion> promotions = promotionRepository.findAll();
+        List<Promotion> filteredPromotions = promotions.stream()
+                .filter(promotion -> promotion.getName().toLowerCase().contains(keyword.toLowerCase()))
+                .collect(Collectors.toList());
+        assertEquals(filteredPromotions.size(), results.size(),
+                "Số lượng khuyến mãi trong cơ sở dữ liệu không khớp với số lượng trả về từ controller");
     }
 
     /**
@@ -278,6 +288,10 @@ public class PromotionControllerTests {
         assertEquals(200, response.getStatusCodeValue());
         assertNotNull(response.getBody());
         assertEquals(existingId, response.getBody().getId());
+
+        // Kiểm tra tồn tại trong cơ sở dữ liệu
+        assertTrue(promotionRepository.existsById(existingId),
+                "Promotion với ID " + existingId + " không tồn tại trong cơ sở dữ liệu");
     }
 
     /**
@@ -305,6 +319,10 @@ public class PromotionControllerTests {
 
         // Kiểm tra thông báo lỗi
         assertTrue(exception.getMessage().contains(nonExistingId.toString()));
+
+        // Kiểm tra không có dữ liệu trong cơ sở dữ liệu
+        assertFalse(promotionRepository.existsById(nonExistingId),
+                "Promotion với ID " + nonExistingId + " đã tồn tại trong cơ sở dữ liệu");
     }
 
     // ---------------------------------------------------------------------------------
@@ -322,6 +340,8 @@ public class PromotionControllerTests {
      */
     @Test
     public void testCreateResource_ThanhCongProduct_PCT009() throws JsonProcessingException {
+        // count promotion trong DB
+        long count = promotionRepository.count();
         // Chuẩn bị
         PromotionRequest request = new PromotionRequest();
         request.setName("Khuyến mãi Test");
@@ -350,6 +370,20 @@ public class PromotionControllerTests {
         assertNotNull(response.getBody().getId());
         assertEquals("Khuyến mãi Test", response.getBody().getName());
         assertEquals(20, response.getBody().getPercent());
+
+        // Kiểm tra trong cơ sở dữ liệu
+        long newCount = promotionRepository.count();
+        assertEquals(count + 1, newCount, "Promotion đã không được thêm vào cơ sở dữ liệu");
+        Optional<Promotion> promotionOptional = promotionRepository.findById(response.getBody().getId());
+        assertTrue(promotionOptional.isPresent(), "Promotion không tồn tại trong cơ sở dữ liệu");
+        Promotion promotion = promotionOptional.get();
+        assertEquals("Khuyến mãi Test", promotion.getName(), "Tên khuyến mãi không đúng trong cơ sở dữ liệu");
+        assertEquals(1, promotion.getProducts().size(), "Số lượng sản phẩm không đúng trong cơ sở dữ liệu");
+        assertTrue(promotion.getProducts().stream()
+                        .map(BaseEntity::getId)
+                        .collect(Collectors.toSet())
+                        .contains(2L),
+                "Danh sách sản phẩm không đúng trong cơ sở dữ liệu");
     }
 
     /**
@@ -364,6 +398,8 @@ public class PromotionControllerTests {
      */
     @Test
     public void testCreateResource_ThanhCongCategory_PCT010() throws JsonProcessingException {
+        // count promotion trong DB
+        long count = promotionRepository.count();
         // Chuẩn bị
         PromotionRequest request = new PromotionRequest();
         request.setName("Khuyến mãi Test Category");
@@ -388,6 +424,28 @@ public class PromotionControllerTests {
         assertEquals("Khuyến mãi Test Category", response.getBody().getName());
         assertEquals(20, response.getBody().getPercent());
         assertEquals(2, response.getBody().getProducts().size());
+
+        // Kiểm tra trong cơ sở dữ liệu
+        long newCount = promotionRepository.count();
+        assertEquals(count + 1, newCount, "Promotion đã không được thêm vào cơ sở dữ liệu");
+        Optional<Promotion> promotionOptional = promotionRepository.findById(response.getBody().getId());
+        assertTrue(promotionOptional.isPresent(), "Promotion không tồn tại trong cơ sở dữ liệu");
+        Promotion promotion = promotionOptional.get();
+        assertEquals("Khuyến mãi Test Category", promotion.getName(), "Tên khuyến mãi không đúng trong cơ sở dữ liệu");
+        assertEquals(20, promotion.getPercent(), "Phần trăm khuyến mãi không đúng trong cơ sở dữ liệu");
+        assertEquals(2, promotion.getProducts().size(), "Số lượng sản phẩm không đúng trong cơ sở dữ liệu");
+        // find all productIds by categoryIds in DB
+        List<Product> products = categoryRepository.findById(2L)
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "ID", 2L))
+                .getProducts();
+        Set<Long> productIds = products.stream()
+                .map(BaseEntity::getId)
+                .collect(Collectors.toSet());
+        assertTrue(promotion.getProducts().stream()
+                        .map(BaseEntity::getId)
+                        .collect(Collectors.toSet())
+                        .containsAll(productIds),
+                "Danh sách sản phẩm không đúng trong cơ sở dữ liệu");
     }
 
 
@@ -402,6 +460,8 @@ public class PromotionControllerTests {
      */
     @Test
     public void testCreateResource_KhongCoSanPham_PCT011() {
+        // count promotion trong DB
+        long count = promotionRepository.count();
         // Chuẩn bị
         PromotionRequest request = new PromotionRequest();
         request.setName("Khuyến mãi không sản phẩm");
@@ -424,6 +484,10 @@ public class PromotionControllerTests {
         );
 
         assertEquals("Product list of promotion is empty", exception.getMessage());
+
+        // Kiểm tra không có thay đổi trong cơ sở dữ liệu
+        long newCount = promotionRepository.count();
+        assertEquals(count, newCount, "Promotion đã bị thay đổi trong cơ sở dữ liệu");
     }
 
     /**
@@ -437,6 +501,8 @@ public class PromotionControllerTests {
      */
     @Test
     public void testCreateResource_TrungLapKhuyenMai_PCT012() {
+        // count promotion trong DB
+        long count = promotionRepository.count();
         // Chuẩn bị - Tạo khuyến mãi thứ nhất
         PromotionRequest firstRequest = new PromotionRequest();
         firstRequest.setName("Khuyến mãi Đầu tiên");
@@ -455,6 +521,21 @@ public class PromotionControllerTests {
         ResponseEntity<PromotionResponse> firstResponse = promotionController.createResource(firstRequestNode);
 
         assertEquals(201, firstResponse.getStatusCodeValue());
+
+        // Kiểm tra trong cơ sở dữ liệu
+        long newCount = promotionRepository.count();
+        assertEquals(count + 1, newCount, "Promotion đã không được thêm vào cơ sở dữ liệu");
+        Optional<Promotion> firstPromotionOptional = promotionRepository.findById(firstResponse.getBody().getId());
+        assertTrue(firstPromotionOptional.isPresent(), "Promotion không tồn tại trong cơ sở dữ liệu");
+        Promotion firstPromotion = firstPromotionOptional.get();
+        assertEquals("Khuyến mãi Đầu tiên", firstPromotion.getName(), "Tên khuyến mãi không đúng trong cơ sở dữ liệu");
+        assertEquals(10, firstPromotion.getPercent(), "Phần trăm khuyến mãi không đúng trong cơ sở dữ liệu");
+        assertEquals(1, firstPromotion.getProducts().size(), "Số lượng sản phẩm không đúng trong cơ sở dữ liệu");
+        assertTrue(firstPromotion.getProducts().stream()
+                        .map(BaseEntity::getId)
+                        .collect(Collectors.toSet())
+                        .contains(3L),
+                "Danh sách sản phẩm không đúng trong cơ sở dữ liệu");
 
         // Chuẩn bị khuyến mãi thứ hai trùng với khuyến mãi đầu tiên
         PromotionRequest secondRequest = new PromotionRequest();
@@ -479,6 +560,10 @@ public class PromotionControllerTests {
         );
 
         assertTrue(exception.getMessage().contains("Overlap promotion with product id:"));
+
+        // Kiểm tra sản phẩm 2 không lưu db
+        long finalCount = promotionRepository.count();
+        assertEquals(newCount, finalCount, "Promotion đã bị thay đổi trong cơ sở dữ liệu");
     }
 
     /**
@@ -491,6 +576,9 @@ public class PromotionControllerTests {
      */
     @Test
     public void testCreateResource_DuLieuKhongHopLe_PCT013() {
+        // count promotion trong DB
+        long count = promotionRepository.count();
+
         // Chuẩn bị
         PromotionRequest request = new PromotionRequest();
         request.setName("Khuyến mãi Không hợp lệ");
@@ -519,6 +607,10 @@ public class PromotionControllerTests {
 
         // Không cần kiểm tra message cụ thể vì có thể khác nhau tùy vào cài đặt validation
         assertNotNull(exception);
+
+        // Kiểm tra không có thay đổi trong cơ sở dữ liệu
+        long newCount = promotionRepository.count();
+        assertEquals(count, newCount, "Promotion đã bị thay đổi trong cơ sở dữ liệu");
     }
 
     // ----------------------------------------------------------------------------------
@@ -573,6 +665,19 @@ public class PromotionControllerTests {
         assertEquals("Khuyến mãi Cập nhật", response.getBody().getName());
         assertEquals(30, response.getBody().getPercent());
         assertEquals(2, response.getBody().getProducts().size());
+
+        // Kiểm tra thay đổi trong cơ sở dữ liệu
+        Optional<Promotion> promotionOptional = promotionRepository.findById(existingId);
+        assertTrue(promotionOptional.isPresent(), "Promotion không tồn tại trong cơ sở dữ liệu");
+        Promotion promotion = promotionOptional.get();
+        assertEquals("Khuyến mãi Cập nhật", promotion.getName(), "Tên khuyến mãi không đúng trong cơ sở dữ liệu");
+        assertEquals(30, promotion.getPercent(), "Phần trăm khuyến mãi không đúng trong cơ sở dữ liệu");
+        assertEquals(2, promotion.getProducts().size(), "Số lượng sản phẩm không đúng trong cơ sở dữ liệu");
+        assertTrue(promotion.getProducts().stream()
+                        .map(BaseEntity::getId)
+                        .collect(Collectors.toSet())
+                        .containsAll(productIdsLong),
+                "Danh sách sản phẩm không đúng trong cơ sở dữ liệu");
     }
 
     /**
@@ -607,6 +712,10 @@ public class PromotionControllerTests {
                 ResourceNotFoundException.class,
                 () -> promotionController.updateResource(nonExistingId, requestNode)
         );
+
+        // Kiểm tra không có thay đổi trong cơ sở dữ liệu
+        assertFalse(promotionRepository.existsById(nonExistingId),
+                "Promotion với ID " + nonExistingId + " đã bị thay đổi trong cơ sở dữ liệu");
     }
 
     /**
@@ -620,13 +729,10 @@ public class PromotionControllerTests {
     @Test
     public void testUpdateResource_KhongCoSanPham_PCT016() {
         // Chuẩn bị - Lấy một ID tồn tại từ cơ sở dữ liệu
-        Long existingId = promotionRepository.findAll().stream()
-                .findFirst()
-                .map(BaseEntity::getId)
-                .orElse(null);
+        Long existingId = 5L;
 
-        // đảm bảo có ít nhất một promotion trong cơ sở dữ liệu
-        assumeTrue(existingId != null, "Không có promotion trong cơ sở dữ liệu để test");
+        assumeTrue(promotionRepository.existsById(existingId),
+                "ID " + existingId + " không tồn tại trong cơ sở dữ liệu");
 
         // Tạo yêu cầu cập nhật với danh sách sản phẩm rỗng
         PromotionRequest request = new PromotionRequest();
@@ -648,6 +754,15 @@ public class PromotionControllerTests {
         );
 
         assertEquals("Product list of promotion is empty", exception.getMessage());
+
+        // Kiểm tra sản phẩm không thay đổi trong cơ sở dữ liệu bằng promotionRepository.findById()
+        Optional<Promotion> promotionOptional = promotionRepository.findByIdWithProducts(existingId);
+        assertTrue(promotionOptional.isPresent(), "Promotion không tồn tại trong cơ sở dữ liệu");
+        Promotion promotion = promotionOptional.get();
+        Set<Product> products = promotion.getProducts();
+        System.out.println(products.size());
+        assertNotNull(promotion.getProducts(), "Danh sách sản phẩm không tồn tại trong cơ sở dữ liệu");
+        assertFalse(products.isEmpty(), "Danh sách sản phẩm không đúng trong cơ sở dữ liệu");
     }
 
     // ----------------------------------------------------------------------------------
@@ -678,6 +793,9 @@ public class PromotionControllerTests {
 
         // Kiểm tra
         assertEquals(204, response.getStatusCodeValue());
+        // check db delete success
+        assertFalse(promotionRepository.existsById(existingId),
+                "Promotion với ID " + existingId + " vẫn tồn tại trong cơ sở dữ liệu");
     }
 
     /**
@@ -703,6 +821,10 @@ public class PromotionControllerTests {
         );
         // Kiểm tra thông báo lỗi
         assertTrue(exception.getMessage().contains(nonExistingId.toString()));
+
+        // Kiểm tra không có thay đổi nào trong cơ sở dữ liệu
+        assertFalse(promotionRepository.existsById(nonExistingId),
+                "Promotion với ID " + nonExistingId + " vẫn tồn tại trong cơ sở dữ liệu");
     }
 
     // ----------------------------------------------------------------------------------
@@ -733,6 +855,12 @@ public class PromotionControllerTests {
 
         // Kiểm tra
         assertEquals(204, response.getStatusCodeValue());
+
+        // Kiểm tra không còn tồn tại trong cơ sở dữ liệu
+        for (Long id : existingIds) {
+            assertFalse(promotionRepository.existsById(id),
+                    "Promotion với ID " + id + " vẫn tồn tại trong cơ sở dữ liệu");
+        }
     }
 
     /**
@@ -760,5 +888,11 @@ public class PromotionControllerTests {
 
         // Kiểm tra thông báo lỗi
         assertTrue(exception.getMessage().contains("Không tìm thấy tài nguyên với ID: " + nonExistingIds));
+
+        // Kiểm tra không có thay đổi nào trong cơ sở dữ liệu
+        for (Long id : nonExistingIds) {
+            assertFalse(promotionRepository.existsById(id),
+                    "Promotion với ID " + id + " vẫn tồn tại trong cơ sở dữ liệu");
+        }
     }
 }

@@ -75,6 +75,10 @@ public class ClientUserControllerTests {
         assertEquals(200, response.getStatusCodeValue());
         assertNotNull(response.getBody());
         assertEquals(username, response.getBody().getUsername());
+
+        // Xác minh thông tin người dùng
+        User user = userRepository.findByUsername(username).orElseThrow();
+        assertEquals(username, user.getUsername());
     }
 
     /**
@@ -97,6 +101,9 @@ public class ClientUserControllerTests {
                 () -> clientUserController.getUserInfo(auth)
         );
         assertEquals(nonExistingUsername, exception.getMessage());
+
+        // Kiểm tra không có thay đổi nào trong cơ sở dữ liệu
+        assertFalse(userRepository.findByUsername(nonExistingUsername).isPresent());
     }
 
     // -------------------------------------------------------------------------------
@@ -126,6 +133,7 @@ public class ClientUserControllerTests {
         addressRequest.setProvinceId(1L);
         addressRequest.setDistrictId(1L);
         addressRequest.setWardId(1L);
+        request.setAddress(addressRequest);
 
         // Thực hiện
         ResponseEntity<UserResponse> response = clientUserController.updatePersonalSetting(auth, request);
@@ -139,6 +147,12 @@ public class ClientUserControllerTests {
         // Xác minh thay đổi đã được lưu
         User updatedUser = userRepository.findByUsername("testuser").orElseThrow();
         assertEquals("testuser", updatedUser.getUsername());
+        assertEquals("Updated Fullname", updatedUser.getFullname());
+        assertEquals("F", updatedUser.getGender());
+        assertEquals("123 Main St", updatedUser.getAddress().getLine());
+        assertEquals(1L, updatedUser.getAddress().getProvince().getId());
+        assertEquals(1L, updatedUser.getAddress().getDistrict().getId());
+        assertEquals(1L, updatedUser.getAddress().getWard().getId());
     }
 
     /**
@@ -165,6 +179,9 @@ public class ClientUserControllerTests {
                 () -> clientUserController.updatePersonalSetting(auth, request)
         );
         assertEquals(nonExistingUsername, exception.getMessage());
+
+        // Kiểm tra không có thay đổi nào trong cơ sở dữ liệu
+        assertFalse(userRepository.findByUsername(nonExistingUsername).isPresent());
     }
 
     // -------------------------------------------------------------------------------
@@ -225,6 +242,9 @@ public class ClientUserControllerTests {
                 () -> clientUserController.updatePhoneSetting(auth, request)
         );
         assertEquals(nonExistingUsername, exception.getMessage());
+
+        // Kiểm tra không có thay đổi nào trong cơ sở dữ liệu
+        assertFalse(userRepository.findByUsername(nonExistingUsername).isPresent());
     }
 
     // -------------------------------------------------------------------------------
@@ -285,6 +305,9 @@ public class ClientUserControllerTests {
                 () -> clientUserController.updateEmailSetting(auth, request)
         );
         assertEquals(nonExistingUsername, exception.getMessage());
+
+        // Kiểm tra không có thay đổi nào trong cơ sở dữ liệu
+        assertFalse(userRepository.findByUsername(nonExistingUsername).isPresent());
     }
 
     // -------------------------------------------------------------------------------
@@ -388,6 +411,9 @@ public class ClientUserControllerTests {
                 () -> clientUserController.updatePasswordSetting(auth, request)
         );
         assertEquals(nonExistingUsername, exception.getMessage());
+
+        // Kiểm tra không có thay đổi nào trong cơ sở dữ liệu
+        assertFalse(userRepository.findByUsername(nonExistingUsername).isPresent());
     }
 
     // -------------------------------------------------------------------------------
@@ -406,6 +432,9 @@ public class ClientUserControllerTests {
     public void testUpdatePersonalSetting_ThongTinKhongHopLe_CUT012() {
         // Chuẩn bị
         String username = "dnucator0";
+        User user = userRepository.findByUsername(username).orElseThrow();
+        String existingFullname = user.getFullname();
+        String existingGender = user.getGender();
         Authentication auth = createMockAuthentication(username);
 
         ClientPersonalSettingUserRequest request = new ClientPersonalSettingUserRequest();
@@ -418,6 +447,12 @@ public class ClientUserControllerTests {
                 InvalidValueException.class,
                 () -> clientUserController.updatePersonalSetting(auth, request)
         );
+
+        // kiểm tra trực tiếp từ cơ sở dữ liệu
+        user = userRepository.findByUsername(username).orElseThrow();
+        assertEquals(existingFullname, user.getFullname());
+        assertEquals(existingGender, user.getGender());
+        assertEquals(username, user.getUsername());
     }
 
     /**
@@ -432,6 +467,8 @@ public class ClientUserControllerTests {
     public void testUpdatePhoneSetting_SoDienThoaiKhongHopLe_CUT013() {
         // Chuẩn bị
         String username = "dnucator0";
+        User user = userRepository.findByUsername(username).orElseThrow();
+        String existingPhone = user.getPhone();
         Authentication auth = createMockAuthentication(username);
         ClientPhoneSettingUserRequest request = new ClientPhoneSettingUserRequest();
         request.setPhone("invalid_phone_number");
@@ -440,6 +477,10 @@ public class ClientUserControllerTests {
                 InvalidValueException.class,
                 () -> clientUserController.updatePhoneSetting(auth, request)
         );
+
+        // kiểm tra trực tiếp từ cơ sở dữ liệu
+        user = userRepository.findByUsername(username).orElseThrow();
+        assertEquals(existingPhone, user.getPhone());
     }
 
     /**
@@ -454,6 +495,8 @@ public class ClientUserControllerTests {
     public void testUpdatePhoneSetting_SoDienThoaiDaTonTai_CUT014() {
         // Chuẩn bị
         String username = "dnucator0";
+        User user = userRepository.findByUsername(username).orElseThrow();
+        String existingPhone = user.getPhone();
         Authentication auth = createMockAuthentication(username);
         ClientPhoneSettingUserRequest request = new ClientPhoneSettingUserRequest();
         request.setPhone("0919944709");
@@ -462,6 +505,10 @@ public class ClientUserControllerTests {
                 DuplicateKeyException.class,
                 () -> clientUserController.updatePhoneSetting(auth, request)
         );
+
+        // kiểm tra trực tiếp từ cơ sở dữ liệu
+        user = userRepository.findByUsername(username).orElseThrow();
+        assertEquals(existingPhone, user.getPhone());
     }
 
     /**
@@ -476,6 +523,8 @@ public class ClientUserControllerTests {
     public void testUpdateEmailSetting_DiaChiEmailKhongHopLe_CUT015() {
         // Chuẩn bị
         String username = "dnucator0";
+        User user = userRepository.findByUsername(username).orElseThrow();
+        String existingEmail = user.getEmail();
         Authentication auth = createMockAuthentication(username);
         ClientEmailSettingUserRequest request = new ClientEmailSettingUserRequest();
         request.setEmail("invalid_email");
@@ -484,6 +533,10 @@ public class ClientUserControllerTests {
                 InvalidValueException.class,
                 () -> clientUserController.updateEmailSetting(auth, request)
         );
+
+        // kiểm tra trực tiếp từ cơ sở dữ liệu
+        user = userRepository.findByUsername(username).orElseThrow();
+        assertEquals(existingEmail, user.getEmail());
     }
 
     /**
@@ -498,6 +551,8 @@ public class ClientUserControllerTests {
     public void testUpdateEmailSetting_DiaChiEmailDaTonTai_CUT016() {
         // Chuẩn bị
         String username = "dnucator0";
+        User user = userRepository.findByUsername(username).orElseThrow();
+        String existingEmail = user.getEmail();
         Authentication auth = createMockAuthentication(username);
         ClientEmailSettingUserRequest request = new ClientEmailSettingUserRequest();
         request.setEmail("jgratten1@google.co.jp");
@@ -506,5 +561,9 @@ public class ClientUserControllerTests {
                 DuplicateKeyException.class,
                 () -> clientUserController.updateEmailSetting(auth, request)
         );
+
+        // kiểm tra trực tiếp từ cơ sở dữ liệu
+        user = userRepository.findByUsername(username).orElseThrow();
+        assertEquals(existingEmail, user.getEmail());
     }
 }

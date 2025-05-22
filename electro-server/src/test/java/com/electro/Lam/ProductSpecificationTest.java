@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest
 @ActiveProfiles("test")
-@Transactional
+//@Transactional
 public class ProductSpecificationTest {
 
     @Autowired
@@ -88,51 +88,51 @@ public class ProductSpecificationTest {
     @BeforeEach
     public void setUp() {
         // Temporarily disable foreign key checks to handle complex dependencies
-        entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS=0").executeUpdate();
+//        entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS=0").executeUpdate();
         
-        // Clear existing data before each test
-        wishRepository.deleteAll();
-        preorderRepository.deleteAll();
-        reviewRepository.deleteAll();
-
-        // Clear variants and associated entities
-        cartVariantRepository.deleteAll();
-        orderVariantRepository.deleteAll();
-        countVariantRepository.deleteAll();
-        docketVariantRepository.deleteAll();
-        purchaseOrderVariantRepository.deleteAll();
-
-        // Clear product inventory limits
-        productInventoryLimitRepository.deleteAll();
-
-        // Clear images
-        imageRepository.deleteAll();
-
-        // Clear promotion products (join tables for many-to-many relationships)
-        promotionRepository.findAll().forEach(promotion -> {
-            promotion.getProducts().clear();
-            promotionRepository.save(promotion);
-        });
-
-        // Clear variants
-        variantRepository.deleteAll();
-
-        // Clear product_tag join table
-        productRepository.findAll().forEach(product -> {
-            product.getTags().clear();
-            productRepository.save(product);
-        });
-
-        // Now we can safely clear products
-        productRepository.deleteAll();
-        
-        // Clear specifications
-        specificationRepository.deleteAll();
-        
-        tagRepository.deleteAll();
-        
-        // Re-enable foreign key checks
-        entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS=1").executeUpdate();
+//        // Clear existing data before each test
+//        wishRepository.deleteAll();
+//        preorderRepository.deleteAll();
+//        reviewRepository.deleteAll();
+//
+//        // Clear variants and associated entities
+//        cartVariantRepository.deleteAll();
+//        orderVariantRepository.deleteAll();
+//        countVariantRepository.deleteAll();
+//        docketVariantRepository.deleteAll();
+//        purchaseOrderVariantRepository.deleteAll();
+//
+//        // Clear product inventory limits
+//        productInventoryLimitRepository.deleteAll();
+//
+//        // Clear images
+//        imageRepository.deleteAll();
+//
+//        // Clear promotion products (join tables for many-to-many relationships)
+//        promotionRepository.findAll().forEach(promotion -> {
+//            promotion.getProducts().clear();
+//            promotionRepository.save(promotion);
+//        });
+//
+//        // Clear variants
+//        variantRepository.deleteAll();
+//
+//        // Clear product_tag join table
+//        productRepository.findAll().forEach(product -> {
+//            product.getTags().clear();
+//            productRepository.save(product);
+//        });
+//
+//        // Now we can safely clear products
+//        productRepository.deleteAll();
+//
+//        // Clear specifications
+//        specificationRepository.deleteAll();
+//
+//        tagRepository.deleteAll();
+//
+//        // Re-enable foreign key checks
+//        entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS=1").executeUpdate();
     }
 
     /**
@@ -149,7 +149,7 @@ public class ProductSpecificationTest {
         // Arrange
         Specification specification = new Specification();
         specification.setName("Screen Size");
-        specification.setCode("SCREEN_SIZE");
+        specification.setCode("SCREEN_SIZE_Create");
         specification.setDescription("Display dimensions");
         specification.setStatus(1); // Active status
         System.out.println("Input: Specification [name=Screen Size, code=SCREEN_SIZE, description=Display dimensions, status=1]");
@@ -161,7 +161,7 @@ public class ProductSpecificationTest {
         // Assert
         assertNotNull(savedSpecification.getId(), "Saved specification ID should not be null");
         assertEquals("Screen Size", savedSpecification.getName(), "Specification name should match");
-        assertEquals("SCREEN_SIZE", savedSpecification.getCode(), "Specification code should match");
+        assertEquals("SCREEN_SIZE_Create", savedSpecification.getCode(), "Specification code should match");
         assertEquals("Display dimensions", savedSpecification.getDescription(), "Specification description should match");
         assertEquals(1, savedSpecification.getStatus(), "Specification status should match");
     }
@@ -180,7 +180,7 @@ public class ProductSpecificationTest {
         // Arrange - Create and save a specification
         Specification specification = new Specification();
         specification.setName("Screen Size");
-        specification.setCode("SCREEN_SIZE");
+        specification.setCode("SCREEN_SIZE_Update");
         specification.setDescription("Display dimensions");
         specification.setStatus(1);
         Specification savedSpecification = specificationRepository.save(specification);
@@ -196,7 +196,7 @@ public class ProductSpecificationTest {
         // Assert
         assertEquals("Display Size", updatedSpecification.getName(), "Updated name should match");
         assertEquals("Updated display dimensions", updatedSpecification.getDescription(), "Updated description should match");
-        assertEquals("SCREEN_SIZE", updatedSpecification.getCode(), "Code should remain unchanged");
+        assertEquals("SCREEN_SIZE_Update", updatedSpecification.getCode(), "Code should remain unchanged");
         assertEquals(1, updatedSpecification.getStatus(), "Status should remain unchanged");
     }
     
@@ -213,7 +213,7 @@ public class ProductSpecificationTest {
         // Arrange - Create and save a specification
         Specification specification = new Specification();
         specification.setName("Screen Size");
-        specification.setCode("SCREEN_SIZE");
+        specification.setCode("SCREEN_SIZE_Delete");
         specification.setDescription("Display dimensions");
         specification.setStatus(1);
         Specification savedSpecification = specificationRepository.save(specification);
@@ -242,14 +242,14 @@ public class ProductSpecificationTest {
         // Arrange - Create and save multiple specifications
         Specification specification1 = new Specification();
         specification1.setName("Screen Size");
-        specification1.setCode("SCREEN_SIZE");
+        specification1.setCode("SCREEN_SIZE_GetAll");
         specification1.setDescription("Display dimensions");
         specification1.setStatus(1);
         specificationRepository.save(specification1);
         
         Specification specification2 = new Specification();
         specification2.setName("RAM");
-        specification2.setCode("RAM");
+        specification2.setCode("RAM_GetAll");
         specification2.setDescription("Memory capacity");
         specification2.setStatus(1);
         specificationRepository.save(specification2);
@@ -261,9 +261,9 @@ public class ProductSpecificationTest {
         
         // Assert
         assertTrue(specifications.size() >= 2, "Should have at least 2 specifications");
-        assertTrue(specifications.stream().anyMatch(spec -> "SCREEN_SIZE".equals(spec.getCode())), 
+        assertTrue(specifications.stream().anyMatch(spec -> "SCREEN_SIZE_GetAll".equals(spec.getCode())),
                   "Should contain specification with code SCREEN_SIZE");
-        assertTrue(specifications.stream().anyMatch(spec -> "RAM".equals(spec.getCode())), 
+        assertTrue(specifications.stream().anyMatch(spec -> "RAM_GetAll".equals(spec.getCode())),
                   "Should contain specification with code RAM");
     }
     
@@ -280,7 +280,7 @@ public class ProductSpecificationTest {
         // Arrange - Create and save a specification
         Specification specification = new Specification();
         specification.setName("Screen Size");
-        specification.setCode("SCREEN_SIZE");
+        specification.setCode("SCREEN_SIZE_GetById");
         specification.setDescription("Display dimensions");
         specification.setStatus(1);
         Specification savedSpecification = specificationRepository.save(specification);
@@ -295,7 +295,7 @@ public class ProductSpecificationTest {
         assertTrue(foundSpecification.isPresent(), "Specification should be found");
         assertEquals(specificationId, foundSpecification.get().getId(), "Found specification ID should match");
         assertEquals("Screen Size", foundSpecification.get().getName(), "Specification name should match");
-        assertEquals("SCREEN_SIZE", foundSpecification.get().getCode(), "Specification code should match");
+        assertEquals("SCREEN_SIZE_GetById", foundSpecification.get().getCode(), "Specification code should match");
     }
     
     /**
@@ -349,7 +349,7 @@ public class ProductSpecificationTest {
         // Arrange - Create and save a specification with active status
         Specification specification = new Specification();
         specification.setName("Screen Size");
-        specification.setCode("SCREEN_SIZE");
+        specification.setCode("SCREEN_SIZE_Deactivate");
         specification.setDescription("Display dimensions");
         specification.setStatus(1); // Active status
         Specification savedSpecification = specificationRepository.save(specification);

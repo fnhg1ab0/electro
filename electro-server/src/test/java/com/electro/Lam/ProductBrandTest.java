@@ -173,7 +173,7 @@ public class ProductBrandTest {
         // Arrange
         Brand brand = new Brand();
         brand.setName("Samsung");
-        brand.setCode("SAM123");
+        brand.setCode("SAM123Create");
         brand.setDescription("Electronics brand");
         brand.setStatus(1);
         System.out.println("Input: Brand [name=Samsung, code=SAM123, description=Electronics brand, status=1]");
@@ -185,7 +185,7 @@ public class ProductBrandTest {
         // Assert
         assertNotNull(savedBrand.getId(), "Saved brand ID should not be null");
         assertEquals("Samsung", savedBrand.getName(), "Brand name should match");
-        assertEquals("SAM123", savedBrand.getCode(), "Brand code should match");
+        assertEquals("SAM123Create", savedBrand.getCode(), "Brand code should match");
         assertEquals("Electronics brand", savedBrand.getDescription(), "Brand description should match");
         assertEquals(1, savedBrand.getStatus(), "Brand status should match");
     }    /**
@@ -202,7 +202,7 @@ public class ProductBrandTest {
         // Arrange
         Brand brand = new Brand();
         brand.setName("Samsung");
-        brand.setCode("SAM123");
+        brand.setCode("SAM123Update");
         brand.setDescription("Electronics brand");
         brand.setStatus(1);
         Brand savedBrand = brandRepository.save(brand);
@@ -231,7 +231,7 @@ public class ProductBrandTest {
         // Arrange
         Brand brand = new Brand();
         brand.setName("Samsung");
-        brand.setCode("SAM123");
+        brand.setCode("SAM123Delete");
         brand.setDescription("Electronics brand");
         brand.setStatus(1);
         Brand savedBrand = brandRepository.save(brand);
@@ -257,7 +257,7 @@ public class ProductBrandTest {
         // Arrange
         Brand brand = new Brand();
         brand.setName("Samsung");
-        brand.setCode("SAM123");
+        brand.setCode("SAM123GetId");
         brand.setDescription("Electronics brand");
         brand.setStatus(1);
         Brand savedBrand = brandRepository.save(brand);

@@ -40,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Uses @ActiveProfiles("test") to use test-specific properties
  */
 @SpringBootTest
+//@Transactional
 @ActiveProfiles("test")
 public class ProductTest {
     
@@ -104,8 +105,8 @@ public class ProductTest {
         // Arrange
         Product product = new Product();
         product.setName("Laptop Dell XPS 13");
-        product.setCode("LAP001");
-        product.setSlug("laptop-dell-xps-13");
+        product.setCode("LAP001Create");
+        product.setSlug("laptop-dell-xps-13-create");
         product.setShortDescription("Laptop cao cấp cho doanh nhân");
         product.setDescription("Laptop Dell XPS 13 là một trong những laptop cao cấp tốt nhất hiện nay");
         product.setStatus(1);
@@ -118,8 +119,8 @@ public class ProductTest {
         // Assert
         assertNotNull(savedProduct.getId(), "Saved product ID should not be null");
         assertEquals("Laptop Dell XPS 13", savedProduct.getName(), "Product name should match");
-        assertEquals("LAP001", savedProduct.getCode(), "Product code should match");
-        assertEquals("laptop-dell-xps-13", savedProduct.getSlug(), "Product slug should match");
+        assertEquals("LAP001Create", savedProduct.getCode(), "Product code should match");
+        assertEquals("laptop-dell-xps-13-create", savedProduct.getSlug(), "Product slug should match");
         assertEquals(1, savedProduct.getStatus(), "Product status should match");
     }
     
@@ -559,7 +560,7 @@ public class ProductTest {
         
         Brand brand = new Brand();
         brand.setName("Dell");
-        brand.setCode("DELL");
+        brand.setCode("DELLComplete");
         brand.setStatus(1);
         Brand savedBrand = brandRepository.save(brand);
         
@@ -576,7 +577,7 @@ public class ProductTest {
         
         Tag tag1 = new Tag();
         tag1.setName("Gaming");
-        tag1.setSlug("gaming");
+        tag1.setSlug("gamingComplete");
         tag1.setStatus(1);
         Tag savedTag1 = tagRepository.save(tag1);
         
@@ -590,7 +591,7 @@ public class ProductTest {
         Product product = new Product();
         product.setName("Dell Alienware m15");
         product.setCode("LAP012");
-        product.setSlug("dell-alienware-m15");
+        product.setSlug("dell-alienware-m15-Complete");
         product.setShortDescription("Laptop gaming cao cấp");
         product.setDescription("Laptop gaming Dell Alienware m15 với hiệu năng mạnh mẽ");
         product.setStatus(1);

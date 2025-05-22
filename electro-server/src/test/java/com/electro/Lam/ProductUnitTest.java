@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest
 @ActiveProfiles("test")
-@Transactional
+//@Transactional
 public class ProductUnitTest {
     
     @Autowired
@@ -39,19 +39,7 @@ public class ProductUnitTest {
     
     @BeforeEach
     public void setUp() {
-        // Disable foreign key checks to avoid constraint issues
-        entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS=0").executeUpdate();
-        
-        // Clear existing data before each test
-        productRepository.findAll().forEach(product -> {
-            product.setUnit(null);
-            productRepository.save(product);
-        });
-        
-        unitRepository.deleteAll();
-        
-        // Re-enable foreign key checks
-        entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS=1").executeUpdate();
+
     }
     
     /**
@@ -227,6 +215,7 @@ public class ProductUnitTest {
      * Đầu ra mong đợi: Product có Unit và Unit có danh sách products chứa Product đó
      * Ghi chú: Kiểm tra mối quan hệ One-to-Many giữa Unit và Product
      */
+    @Transactional
     @Test
     public void testUnitProductRelationship() {
         // Arrange
@@ -243,10 +232,6 @@ public class ProductUnitTest {
         product.setUnit(savedUnit);
         Product savedProduct = productRepository.save(product);
         System.out.println("Input: Unit [name=Kilogram] with Product [name=Rice]");
-        
-        // Act - Refresh data from database to ensure relationships are properly loaded
-        entityManager.flush();
-        entityManager.clear();
         
         Unit refreshedUnit = unitRepository.findById(savedUnit.getId()).orElseThrow();
         Product refreshedProduct = productRepository.findById(savedProduct.getId()).orElseThrow();

@@ -47,6 +47,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class InventoryControllerTest {
 
+    // ========= UNIT TESTS =========
     @Nested
     @DisplayName("Unit Tests")
     @ExtendWith(MockitoExtension.class)
@@ -63,6 +64,7 @@ public class InventoryControllerTest {
         private Product product;
         private Variant variant;
 
+        // Tạo dữ liệu mẫu trước mỗi test
         @BeforeEach
         void setup() {
             product = new Product();
@@ -72,6 +74,7 @@ public class InventoryControllerTest {
             variant.setId(1L);
         }
 
+        // Test API getProductInventories logic với mock
         @Test
         @DisplayName("IC-UT001 - getProductInventories returns OK")
         void testGetProductInventories() {
@@ -84,6 +87,7 @@ public class InventoryControllerTest {
             assertEquals(HttpStatus.OK, response.getStatusCode());
         }
 
+        // Test API getVariantInventories logic với mock
         @Test
         @DisplayName("IC-UT002 - getVariantInventories returns OK")
         void testGetVariantInventories() {
@@ -96,6 +100,7 @@ public class InventoryControllerTest {
             assertEquals(HttpStatus.OK, response.getStatusCode());
         }
 
+        // Test API getVariantInventory theo ID với mock
         @Test
         @DisplayName("IC-UT003 - getVariantInventory returns OK")
         void testGetVariantInventory() {
@@ -109,6 +114,7 @@ public class InventoryControllerTest {
         }
     }
 
+    // ========= INTEGRATION TESTS =========
     @Nested
     @DisplayName("Integration Tests")
     @SpringBootTest
@@ -123,24 +129,27 @@ public class InventoryControllerTest {
         @Autowired private VariantRepository variantRepository;
         @Autowired private ProductRepository productRepository;
 
+        // Test endpoint /product-inventories với MockMvc
         @Test
-        @DisplayName("IC-IT001 - GET /product-inventories returns OK")
+        @DisplayName("IC-IT004 - GET /product-inventories returns OK")
         void testGetProductInventoriesIntegration() throws Exception {
             mockMvc.perform(get("/api/product-inventories?page=1&size=10"))
                     .andExpect(status().isOk());
         }
 
+        // Test endpoint /variant-inventories với MockMvc
         @Test
-        @DisplayName("IC-IT002 - GET /variant-inventories returns OK")
+        @DisplayName("IC-IT005 - GET /variant-inventories returns OK")
         void testGetVariantInventoriesIntegration() throws Exception {
             mockMvc.perform(get("/api/variant-inventories?page=1&size=10"))
                     .andExpect(status().isOk());
         }
 
+        // Test endpoint /variant-inventories/{id} trả về đúng và in ra response
         @Test
-        @DisplayName("IC-IT003 - GET /variant-inventories/{id} returns OK and prints response")
+        @DisplayName("IC-IT006 - GET /variant-inventories/{id} returns OK and prints response")
         void testGetVariantInventoryIntegration() throws Exception {
-            // Setup dữ liệu
+            // Tạo product mẫu
             Product product = (Product) new Product()
                     .setName("Sample Product")
                     .setCode("P123")
@@ -148,9 +157,9 @@ public class InventoryControllerTest {
                     .setStatus(1)
                     .setCreatedAt(Instant.now())
                     .setUpdatedAt(Instant.now());
-
             product = productRepository.save(product);
 
+            // Tạo variant mẫu gắn với product
             Variant variant = (Variant) new Variant()
                     .setSku("SKU-123")
                     .setPrice(100000.0)
@@ -159,10 +168,12 @@ public class InventoryControllerTest {
                     .setStatus(1)
                     .setCreatedAt(Instant.now())
                     .setUpdatedAt(Instant.now());
-
             variant = variantRepository.save(variant);
+
+            // Flush để đảm bảo dữ liệu đã lưu vào DB
             entityManager.flush();
 
+            // Gửi request và kiểm tra kết quả trả về
             MvcResult result = mockMvc.perform(get("/api/variant-inventories/" + variant.getId()))
                     .andDo(MockMvcResultHandlers.print())
                     .andExpect(status().isOk())

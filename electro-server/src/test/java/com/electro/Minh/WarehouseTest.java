@@ -188,7 +188,7 @@ public class WarehouseTest {
     @Test
     public void testGetAllResources_TimKiem_WHT004() throws JsonProcessingException {
         // Lấy từ khóa từ một warehouse có trong DB
-        String keyword = "khuyến mãi"; // Từ khóa phổ biến tiếng Việt cho warehouses
+        String keyword = "Kho B"; // Từ khóa phổ biến tiếng Việt cho warehouses
 
         // Thực hiện tìm kiếm
         ResponseEntity<ListResponse<WarehouseResponse>> response =

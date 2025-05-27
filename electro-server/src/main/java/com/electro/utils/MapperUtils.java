@@ -180,31 +180,37 @@ public abstract class MapperUtils {
     @AfterMapping
     @Named("attachOrder")
     public Order attachOrder(@MappingTarget Order order) {
-        order.getOrderVariants().forEach(orderVariant -> {
-            orderVariant.setOrderVariantKey(new OrderVariantKey(order.getId(), orderVariant.getVariant().getId()));
-            orderVariant.setOrder(order);
-        });
+        if (order.getOrderVariants() != null) {
+            order.getOrderVariants().forEach(orderVariant -> {
+                orderVariant.setOrderVariantKey(new OrderVariantKey(order.getId(), orderVariant.getVariant().getId()));
+                orderVariant.setOrder(order);
+            });
+        }
         return order;
     }
 
     @AfterMapping
     @Named("attachDocket")
     public Docket attachDocket(@MappingTarget Docket docket) {
-        docket.getDocketVariants().forEach(docketVariant -> {
-            docketVariant.setDocketVariantKey(new DocketVariantKey(docket.getId(), docketVariant.getVariant().getId()));
-            docketVariant.setDocket(docket);
-        });
+        if (docket.getDocketVariants() != null) {
+            docket.getDocketVariants().forEach(docketVariant -> {
+                docketVariant.setDocketVariantKey(new DocketVariantKey(docket.getId(), docketVariant.getVariant().getId()));
+                docketVariant.setDocket(docket);
+            });
+        }
         return docket;
     }
 
     @AfterMapping
     @Named("attachPurchaseOrder")
     public PurchaseOrder attachPurchaseOrder(@MappingTarget PurchaseOrder purchaseOrder) {
-        purchaseOrder.getPurchaseOrderVariants().forEach(purchaseOrderVariant -> {
-            purchaseOrderVariant.setPurchaseOrderVariantKey(
-                    new PurchaseOrderVariantKey(purchaseOrder.getId(), purchaseOrderVariant.getVariant().getId()));
-            purchaseOrderVariant.setPurchaseOrder(purchaseOrder);
-        });
+        if (purchaseOrder.getPurchaseOrderVariants() != null) {
+            purchaseOrder.getPurchaseOrderVariants().forEach(purchaseOrderVariant -> {
+                purchaseOrderVariant.setPurchaseOrderVariantKey(
+                        new PurchaseOrderVariantKey(purchaseOrder.getId(), purchaseOrderVariant.getVariant().getId()));
+                purchaseOrderVariant.setPurchaseOrder(purchaseOrder);
+            });
+        }
         return purchaseOrder;
     }
 

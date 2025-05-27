@@ -45,6 +45,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -73,19 +74,29 @@ import static org.mockito.Mockito.*;
 import com.electro.repository.inventory.StorageLocationRepository;
 import com.electro.repository.order.OrderVariantRepository;
 import com.electro.repository.cart.CartVariantRepository;
+import com.electro.repository.address.ProvinceRepository;
+import com.electro.repository.address.DistrictRepository;
+import com.electro.repository.address.WardRepository;
+import com.electro.repository.order.OrderResourceRepository;
+import com.electro.repository.address.AddressRepository;
+import com.electro.repository.authentication.RoleRepository;
+import com.electro.repository.product.ProductRepository;
+import com.electro.repository.product.VariantRepository;
+import com.electro.mapper.order.OrderMapper;
 
 /**
- * Whitebox Testing cho OrderController
- * - Unit test: Kiểm tra các hàm không tương tác với database
- * - Integration test: Kiểm tra các hàm tương tác với database
+ * Tests for OrderController and OrderVariantController
+ * - Unit tests: Test controller and service logic without database interaction
+ * - Integration tests: Test full functionality with database interaction
  */
 public class OrderControllerTest {
+    
     /**
-     * Unit Tests sử dụng Mockito để giả lập các dependency
-     * Kiểm tra logic của controller và service mà không cần tương tác với database thật
+     * Unit Tests using Mockito to mock dependencies
+     * Tests controller and service logic without database interaction
      */
     @Nested
-    @DisplayName("Unit Tests - Kiểm tra logic không tương tác với database")
+    @DisplayName("Unit Tests - Logic without database interaction")
     @ExtendWith(MockitoExtension.class)
     class UnitTests {
         @Mock
@@ -93,9 +104,6 @@ public class OrderControllerTest {
 
         @Mock
         private OrderVariantService orderVariantService;
-
-        @Mock
-        private OrderRepository orderRepository;
 
         @Mock
         private GenericService<Order, OrderRequest, OrderResponse> genericOrderService;
@@ -116,13 +124,12 @@ public class OrderControllerTest {
         /**
          * Test Case ID: OC-UT001
          * Test Name: testCancelOrderController
-         * Objective: Kiểm tra OrderController hủy đơn hàng
-         * Input: Mã đơn hàng
-         * Expected Output: HTTP 200 OK và service được gọi đúng cách
-         * Path Coverage: Đường đi thành công của cancelOrder
+         * Objective: Verify OrderController cancels an order
+         * Input: Order code
+         * Expected Output: HTTP 200 OK and service called correctly
          */
         @Test
-        @DisplayName("Unit Test - Hủy đơn hàng")
+        @DisplayName("Unit Test - Cancel order via controller")
         void testCancelOrderController() {
             // Given
             String orderCode = "ORD123456";
@@ -140,13 +147,12 @@ public class OrderControllerTest {
         /**
          * Test Case ID: OC-UT002
          * Test Name: testDeleteOrderVariantController
-         * Objective: Kiểm tra OrderVariantController xóa một order variant
+         * Objective: Verify OrderVariantController deletes a single order variant
          * Input: orderId=1L, variantId=2L
-         * Expected Output: HTTP 204 NO CONTENT và service được gọi đúng cách
-         * Path Coverage: Đường đi thành công của deleteOrderVariant
+         * Expected Output: HTTP 204 NO CONTENT and service called correctly
          */
         @Test
-        @DisplayName("Unit Test - Xóa đơn order variant")
+        @DisplayName("Unit Test - Delete a single order variant")
         void testDeleteOrderVariantController() {
             // Given
             Long orderId = 1L;
@@ -170,13 +176,12 @@ public class OrderControllerTest {
         /**
          * Test Case ID: OC-UT003
          * Test Name: testDeleteOrderVariantsController
-         * Objective: Kiểm tra OrderVariantController xóa nhiều order variant
-         * Input: Danh sách OrderVariantKeyRequest
-         * Expected Output: HTTP 204 NO CONTENT và service được gọi đúng cách
-         * Path Coverage: Đường đi thành công của deleteOrderVariants
+         * Objective: Verify OrderVariantController deletes multiple order variants
+         * Input: List of OrderVariantKeyRequest
+         * Expected Output: HTTP 204 NO CONTENT and service called correctly
          */
         @Test
-        @DisplayName("Unit Test - Xóa nhiều order variant")
+        @DisplayName("Unit Test - Delete multiple order variants")
         void testDeleteOrderVariantsController() {
             // Given
             List<OrderVariantKeyRequest> keyRequests = Arrays.asList(
@@ -194,7 +199,6 @@ public class OrderControllerTest {
             ArgumentCaptor<List<OrderVariantKey>> keysCaptor = ArgumentCaptor.forClass(List.class);
             verify(orderVariantService).delete(keysCaptor.capture());
 
-            // Kiểm tra danh sách không null và có đúng số lượng phần tử
             List<OrderVariantKey> capturedKeys = keysCaptor.getValue();
             assertNotNull(capturedKeys);
             assertEquals(2, capturedKeys.size());
@@ -207,13 +211,12 @@ public class OrderControllerTest {
         /**
          * Test Case ID: OC-UT004
          * Test Name: testEmptyDeleteOrderVariantsController
-         * Objective: Kiểm tra OrderVariantController xóa với danh sách rỗng
-         * Input: Danh sách OrderVariantKeyRequest rỗng
-         * Expected Output: HTTP 204 NO CONTENT và service được gọi với danh sách rỗng
-         * Path Coverage: Đường đi biên với danh sách trống
+         * Objective: Verify OrderVariantController handles empty list of variants to delete
+         * Input: Empty list of OrderVariantKeyRequest
+         * Expected Output: HTTP 204 NO CONTENT and service called with empty list
          */
         @Test
-        @DisplayName("Unit Test - Xóa với danh sách order variant rỗng")
+        @DisplayName("Unit Test - Delete with empty order variant list")
         void testEmptyDeleteOrderVariantsController() {
             // Given
             List<OrderVariantKeyRequest> emptyKeyRequests = new ArrayList<>();
@@ -228,177 +231,83 @@ public class OrderControllerTest {
             ArgumentCaptor<List<OrderVariantKey>> keysCaptor = ArgumentCaptor.forClass(List.class);
             verify(orderVariantService).delete(keysCaptor.capture());
 
-            // Kiểm tra danh sách đầu vào là rỗng
             List<OrderVariantKey> capturedKeys = keysCaptor.getValue();
             assertNotNull(capturedKeys);
-            assertTrue(capturedKeys.isEmpty(), "Danh sách phải rỗng");
+            assertTrue(capturedKeys.isEmpty(), "List should be empty");
         }
 
         /**
-         * Test Case ID: OS-UT001
-         * Test Name: testCancelOrderService
-         * Objective: Kiểm tra OrderService xử lý hủy đơn hàng
-         * Input: Mã đơn hàng
-         * Expected Output: Service được gọi đúng cách
-         * Path Coverage: Đường đi thành công của cancelOrder trong service
+         * Test Case ID: GS-UT001
+         * Test Name: testGenericFindAllOrders
+         * Objective: Verify GenericService correctly fetches paginated orders
+         * Input: Pagination, sort, filter and search parameters
+         * Expected Output: ListResponse with order details
          */
         @Test
-        @DisplayName("Unit Test - OrderService hủy đơn hàng")
-        void testCancelOrderService() {
+        @DisplayName("Unit Test - GenericService find all orders with pagination")
+        public void testGenericFindAllOrders() {
             // Given
-            String orderCode = "ORD123456";
-            doNothing().when(orderService).cancelOrder(orderCode);
-
-            // When
-            orderService.cancelOrder(orderCode);
-
-            // Then
-            verify(orderService).cancelOrder(eq(orderCode));
-        }
-
-
-        /**
-         * Test Case ID: OS-UT002
-         * Test Name: testCreateClientOrderService
-         * Objective: Kiểm tra OrderService tạo đơn hàng mới
-         * Input: ClientSimpleOrderRequest
-         * Expected Output: Service được gọi đúng cách và trả về kết quả
-         * Path Coverage: Đường đi thành công của createClientOrder
-         */
-        @Test
-        @DisplayName("Unit Test - OrderService tạo đơn hàng mới")
-        void testCreateClientOrderService() {
-            // Given
-            ClientSimpleOrderRequest request = new ClientSimpleOrderRequest();
-            request.setPaymentMethodType(PaymentMethodType.CASH);
-
-            ClientConfirmedOrderResponse expectedResponse = new ClientConfirmedOrderResponse();
-            expectedResponse.setOrderCode("ORD123456");
-
-            when(orderService.createClientOrder(any(ClientSimpleOrderRequest.class)))
+            int page = 0;
+            int size = 10;
+            String sort = "id,desc";
+            String filter = "status==PENDING";
+            String search = "customer";
+            boolean all = false;
+            
+            List<OrderResponse> orderResponses = new ArrayList<>();
+            Page<Order> orderPage = new PageImpl<>(new ArrayList<>(), PageRequest.of(page, size), 0);
+            ListResponse<OrderResponse> expectedResponse = new ListResponse<>(orderResponses, orderPage);
+            
+            when(genericOrderService.findAll(anyInt(), anyInt(), anyString(), anyString(), anyString(), anyBoolean()))
                     .thenReturn(expectedResponse);
 
             // When
-            ClientConfirmedOrderResponse actualResponse = orderService.createClientOrder(request);
-
-
-            // Then
-            assertEquals(expectedResponse, actualResponse);
-            verify(orderService).createClientOrder(any(ClientSimpleOrderRequest.class));
-        }
-
-
-        /**
-         * Test Case ID: OS-UT003
-         * Test Name: testCaptureTransactionPaypalService
-         * Objective: Kiểm tra OrderService xử lý giao dịch PayPal
-         * Input: PayPal order ID và payer ID
-         * Expected Output: Service được gọi đúng cách
-         * Path Coverage: Đường đi thành công của captureTransactionPaypal
-         */
-        @Test
-        @DisplayName("Unit Test - OrderService xử lý giao dịch PayPal")
-        void testCaptureTransactionPaypalService() {
-            // Given
-            String paypalOrderId = "PAY123456";
-            String payerId = "PAYER789";
-            doNothing().when(orderService).captureTransactionPaypal(anyString(), anyString());
-
-            // When
-            orderService.captureTransactionPaypal(paypalOrderId, payerId);
+            ListResponse<OrderResponse> actualResponse = genericOrderService.findAll(page, size, sort, filter, search, all);
 
             // Then
-            verify(orderService).captureTransactionPaypal(eq(paypalOrderId), eq(payerId));
+            assertNotNull(actualResponse);
+            verify(genericOrderService).findAll(page, size, sort, filter, search, all);
         }
 
         /**
-         * Test Case ID: OGS001
-         * Test Name: testGenericFindAllOrders
-         * Objective: Verify that GenericService correctly fetches all orders with pagination and filtering
-         * Input: Pagination, sorting, filtering, and search parameters
-         * Expected Output: ListResponse with order details
-         * Note: Tests generic service for retrieving paginated order lists
-         */
-    @Test
-    public void testGenericFindAllOrders() {
-        // Given
-        int page = 0;
-
-        int size = 10;
-
-        String sort = "id,desc";
-
-        String filter = "status==PENDING";
-
-        String search = "customer";
-
-        boolean all = false;
-
-        List<OrderResponse> orderResponses = new ArrayList<>();
-
-        Page<Order> orderPage = new PageImpl<>(new ArrayList<>(), PageRequest.of(page, size), 0);
-
-        ListResponse<OrderResponse> expectedResponse = new ListResponse<>(orderResponses, orderPage);
-
-        when(genericOrderService.findAll(page, size, sort, filter, search, all))
-                .thenReturn(expectedResponse);
-
-        // When
-        ListResponse<OrderResponse> actualResponse = genericOrderService.findAll(page, size, sort, filter, search, all);
-
-        // Then
-        assertNotNull(actualResponse);
-        verify(genericOrderService).findAll(page, size, sort, filter, search, all);
-        }
-
-        /**
-         * Test Case ID: OGS002
+         * Test Case ID: GS-UT002
          * Test Name: testGenericFindOrderById
-         * Objective: Verify that GenericService correctly fetches order by ID
+         * Objective: Verify GenericService correctly fetches an order by ID
          * Input: Order ID
          * Expected Output: OrderResponse with order details
-         * Note: Tests generic service for retrieving a single order by ID
          */
         @Test
+        @DisplayName("Unit Test - GenericService find order by ID")
         public void testGenericFindOrderById() {
-
             // Given
             Long orderId = 1L;
-
             OrderResponse expectedResponse = new OrderResponse();
-
+            
             when(genericOrderService.findById(anyLong())).thenReturn(expectedResponse);
 
             // When
             OrderResponse actualResponse = genericOrderService.findById(orderId);
 
             // Then
-
             assertNotNull(actualResponse);
-
             assertEquals(expectedResponse, actualResponse);
-
             verify(genericOrderService).findById(orderId);
         }
 
         /**
-         * Test Case ID: OGS003
+         * Test Case ID: GS-UT003
          * Test Name: testGenericCreateOrder
-         * Objective: Verify that GenericService correctly creates a new order
+         * Objective: Verify GenericService correctly creates a new order
          * Input: OrderRequest with order details
          * Expected Output: OrderResponse with created order details
-         * Note: Tests generic service for creating a new order
          */
         @Test
+        @DisplayName("Unit Test - GenericService create new order")
         public void testGenericCreateOrder() {
-
             // Given
-            OrderRequest request = new OrderRequest();
-
             OrderResponse expectedResponse = new OrderResponse();
-
             JsonNode jsonNode = objectMapper.createObjectNode();
-
+            
             when(genericOrderService.save(any(JsonNode.class), eq(OrderRequest.class)))
                     .thenReturn(expectedResponse);
 
@@ -407,32 +316,25 @@ public class OrderControllerTest {
             
             // Then
             assertNotNull(actualResponse);
-
             assertEquals(expectedResponse, actualResponse);
-
             verify(genericOrderService).save(any(JsonNode.class), eq(OrderRequest.class));
         }
 
         /**
-         * Test Case ID: OGS004
+         * Test Case ID: GS-UT004
          * Test Name: testGenericUpdateOrder
-         * Objective: Verify that GenericService correctly updates an existing order
-         * Input: Order ID and OrderRequest with updated order details
+         * Objective: Verify GenericService correctly updates an existing order
+         * Input: Order ID and OrderRequest with updated details
          * Expected Output: OrderResponse with updated order details
-         * Note: Tests generic service for updating an existing order
          */
         @Test
+        @DisplayName("Unit Test - GenericService update existing order")
         public void testGenericUpdateOrder() {
-
             // Given
             Long orderId = 1L;
-
-            OrderRequest request = new OrderRequest();
-
             OrderResponse expectedResponse = new OrderResponse();
-
             JsonNode jsonNode = objectMapper.createObjectNode();
-
+            
             when(genericOrderService.save(eq(orderId), any(JsonNode.class), eq(OrderRequest.class)))
                     .thenReturn(expectedResponse);
 
@@ -441,167 +343,166 @@ public class OrderControllerTest {
 
             // Then
             assertNotNull(actualResponse);
-
             assertEquals(expectedResponse, actualResponse);
-
             verify(genericOrderService).save(eq(orderId), any(JsonNode.class), eq(OrderRequest.class));
         }
 
         /**
-         * Test Case ID: OGS005
+         * Test Case ID: GS-UT005
          * Test Name: testGenericDeleteOrder
-         * Objective: Verify that GenericService correctly deletes an order
+         * Objective: Verify GenericService correctly deletes an order
          * Input: Order ID
          * Expected Output: Void response
-         * Note: Tests generic service for deleting an order
          */
         @Test
+        @DisplayName("Unit Test - GenericService delete order")
         public void testGenericDeleteOrder() {
-
             // Given
             Long orderId = 1L;
-
             doNothing().when(genericOrderService).delete(orderId);
 
             // When
             genericOrderService.delete(orderId);
 
-            // Then - simply verify it was called once
+            // Then
             verify(genericOrderService).delete(orderId);
         }
 
         /**
-         * Test Case ID: OGS006
+         * Test Case ID: GS-UT006
          * Test Name: testGenericBulkDeleteOrders
-         * Objective: Verify that GenericService correctly deletes multiple orders
+         * Objective: Verify GenericService correctly deletes multiple orders
          * Input: List of Order IDs
          * Expected Output: Void response
-         * Note: Tests generic service for bulk deleting orders
          */
         @Test
+        @DisplayName("Unit Test - GenericService bulk delete orders")
         public void testGenericBulkDeleteOrders() {
             // Given
             List<Long> ids = Arrays.asList(1L, 2L, 3L);
-
             doNothing().when(genericOrderService).delete(ids);
 
             // When
             genericOrderService.delete(ids);
 
-            // Then - simply verify it was called once
+            // Then
             verify(genericOrderService).delete(ids);
         }
     }
-
+    
     /**
-     * Integration Tests tương tác với database thật
-     * Kiểm tra tương tác với database và xác nhận dữ liệu được lưu/đọc/cập nhật/xóa thực sự
+     * Integration Tests interacting with a real database
+     * Tests functionality with actual database operations and verifies the results
      */
     @Nested
-    @DisplayName("Integration Tests - Kiểm tra tương tác với database")
+    @DisplayName("Integration Tests - Database interactions")
     @SpringBootTest
     @ActiveProfiles("test")
     @Sql(scripts = { "classpath:schema.sql" }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Transactional
-    class DatabaseTests {
-
+    class IntegrationTests {
         @Autowired
         private OrderController orderController;
-
+        
         @Autowired
         private OrderVariantController orderVariantController;
-
+        
         @Autowired
         private OrderService orderService;
-
+        
+        @Autowired
+        private GenericService<Order, OrderRequest, OrderResponse> genericOrderService;
+        
         @Autowired
         private OrderRepository orderRepository;
-
+        
         @Autowired
         private WaybillRepository waybillRepository;
-
+        
         @Autowired
         private UserRepository userRepository;
-
+        
         @Autowired
         private CartRepository cartRepository;
-
+        
         @Autowired
         private NotificationRepository notificationRepository;
-
+        
         @Autowired
         private EntityManager entityManager;
-
+        
         @Autowired
         private StorageLocationRepository storageLocationRepository;
+        
         @Autowired
         private OrderVariantRepository orderVariantRepository;
+        
         @Autowired
         private CartVariantRepository cartVariantRepository;
-
+        
         @Autowired
-        private com.electro.repository.address.ProvinceRepository provinceRepository;
+        private ProvinceRepository provinceRepository;
+        
         @Autowired
-        private com.electro.repository.address.DistrictRepository districtRepository;
+        private DistrictRepository districtRepository;
+        
         @Autowired
-        private com.electro.repository.address.WardRepository wardRepository;
-
+        private WardRepository wardRepository;
+        
         @Autowired
-        private com.electro.repository.inventory.ProductInventoryLimitRepository productInventoryLimitRepository;
-
+        private OrderResourceRepository orderResourceRepository;
+        
         @Autowired
-        private com.electro.repository.inventory.VariantInventoryLimitRepository variantInventoryLimitRepository;
-
+        private AddressRepository addressRepository;
+        
         @Autowired
-        private com.electro.repository.inventory.CountVariantRepository countVariantRepository;
-
+        private RoleRepository roleRepository;
+        
         @Autowired
-        private com.electro.repository.inventory.DocketVariantRepository docketVariantRepository;
-
+        private ProductRepository productRepository;
+        
         @Autowired
-        private com.electro.repository.inventory.PurchaseOrderVariantRepository purchaseOrderVariantRepository;
-
-
-        // Thêm các repository khác cần thiết cho việc tạo dữ liệu test
+        private VariantRepository variantRepository;
+        
         @Autowired
-        private com.electro.repository.order.OrderResourceRepository orderResourceRepository;
-
+        private ApplicationContext applicationContext;
+        
         @Autowired
-        private com.electro.repository.address.AddressRepository addressRepository;
-
-        @Autowired
-        private com.electro.repository.authentication.RoleRepository roleRepository;
-
-        @Autowired
-        private com.electro.repository.product.ProductRepository productRepository;
-
-        @Autowired
-        private com.electro.repository.product.VariantRepository variantRepository;
-
+        private OrderMapper orderMapper;
+        
+        @BeforeEach
+        void setup() {
+            // Initialize the GenericService with required dependencies
+            ((GenericService)genericOrderService).init(
+                orderRepository,
+                orderMapper,
+                com.electro.constant.SearchFields.ORDER,
+                com.electro.constant.ResourceName.ORDER
+            );
+        }
+        
         /**
-         * Tạo mã ngẫu nhiên cho OrderResource
+         * Generate a random code for OrderResource
          */
         private String generateRandomResourceCode() {
             return "RES-" + UUID.randomUUID().toString().substring(0, 6).toUpperCase();
         }
-
-
+        
         /**
-         * Kiểm tra và tạo OrderResource nếu chưa tồn tại
+         * Check and create OrderResource if it doesn't exist
          */
         private OrderResource getOrCreateOrderResource() {
-            // Thử tìm OrderResource có sẵn
+            // Try to find existing OrderResource
             List<OrderResource> existingResources = orderResourceRepository.findAll();
             Optional<OrderResource> existingResource = existingResources.stream()
                     .filter(resource -> "WEB".equals(resource.getCode()))
                     .findFirst();
-
+            
             if (existingResource.isPresent()) {
                 return existingResource.get();
             }
-
-
-            // Nếu không có, tạo mới với mã ngẫu nhiên
+            
+            // If not found, create a new one with random code
             OrderResource orderResource = new OrderResource();
             orderResource.setName("Web");
             orderResource.setCode(generateRandomResourceCode());
@@ -611,24 +512,23 @@ public class OrderControllerTest {
             orderResource.setUpdatedAt(new Date().toInstant());
             return orderResourceRepository.save(orderResource);
         }
-
-
+        
         /**
-         * Tạo dữ liệu test trực tiếp trong code thay vì sử dụng file SQL
+         * Create test data directly in code instead of using SQL files
          */
         private void setupTestData() {
-            // Tạo OrderResource
+            // Create OrderResource
             OrderResource orderResource = getOrCreateOrderResource();
-
-            // Lấy province, district, ward có sẵn trong DB
+            
+            // Get existing province, district, ward from DB
             com.electro.entity.address.Province province = provinceRepository.findAll().stream()
                     .findFirst().orElseThrow(() -> new RuntimeException("No province found"));
             com.electro.entity.address.District district = districtRepository.findAll().stream()
                     .findFirst().orElseThrow(() -> new RuntimeException("No district found"));
             com.electro.entity.address.Ward ward = wardRepository.findAll().stream()
                     .findFirst().orElseThrow(() -> new RuntimeException("No ward found"));
-
-            // Tạo mới address1, address2 và lưu vào DB
+            
+            // Create new addresses and save to DB
             Address address1 = new Address();
             address1.setLine("123 Test Street");
             address1.setProvince(province);
@@ -637,7 +537,7 @@ public class OrderControllerTest {
             address1.setCreatedAt(new Date().toInstant());
             address1.setUpdatedAt(new Date().toInstant());
             address1 = addressRepository.save(address1);
-
+            
             Address address2 = new Address();
             address2.setLine("456 Admin Street");
             address2.setProvince(province);
@@ -646,9 +546,8 @@ public class OrderControllerTest {
             address2.setCreatedAt(new Date().toInstant());
             address2.setUpdatedAt(new Date().toInstant());
             address2 = addressRepository.save(address2);
-
-
-            // Tạo Role chỉ khi chưa tồn tại
+            
+            // Create Role if it doesn't exist
             com.electro.entity.authentication.Role roleUser = roleRepository.findByCode("ROLE_USER")
                 .orElseGet(() -> {
                     com.electro.entity.authentication.Role r = new com.electro.entity.authentication.Role();
@@ -659,7 +558,7 @@ public class OrderControllerTest {
                     r.setUpdatedAt(new Date().toInstant());
                     return roleRepository.save(r);
                 });
-
+            
             com.electro.entity.authentication.Role roleAdmin = roleRepository.findByCode("ROLE_ADMIN")
                 .orElseGet(() -> {
                     com.electro.entity.authentication.Role r = new com.electro.entity.authentication.Role();
@@ -669,9 +568,8 @@ public class OrderControllerTest {
                     r.setCreatedAt(new Date().toInstant());
                     return roleRepository.save(r);
                 });
-
-
-            // Tạo User
+            
+            // Create Users
             User user1 = new User();
             user1.setUsername("testuser");
             user1.setPassword("$2a$10$J8/bwFiQEwJBvK3QJcWKU.J7O4.CD3fQlJCcUrgL0Vp.hcqgXWXdW");
@@ -683,7 +581,7 @@ public class OrderControllerTest {
             user1.setStatus(1);
             user1.setCreatedAt(new Date().toInstant());
             user1.setUpdatedAt(new Date().toInstant());
-
+            
             User user2 = new User();
             user2.setUsername("admin");
             user2.setPassword("$2a$10$J8/bwFiQEwJBvK3QJcWKU.J7O4.CD3fQlJCcUrgL0Vp.hcqgXWXdW");
@@ -695,21 +593,20 @@ public class OrderControllerTest {
             user2.setStatus(1);
             user2.setCreatedAt(new Date().toInstant());
             user2.setUpdatedAt(new Date().toInstant());
-
-            // Thiết lập roles cho users
+            
+            // Setup roles for users
             Set<com.electro.entity.authentication.Role> user1Roles = new HashSet<>();
             user1Roles.add(roleUser);
             user1.setRoles(user1Roles);
-
+            
             Set<com.electro.entity.authentication.Role> user2Roles = new HashSet<>();
             user2Roles.add(roleUser);
             user2Roles.add(roleAdmin);
             user2.setRoles(user2Roles);
-
+            
             userRepository.saveAll(Arrays.asList(user1, user2));
-
-
-            // Tạo Products và Variants
+            
+            // Create Products and Variants
             Product product1 = new Product();
             product1.setId(1L);
             product1.setName("Test Product 1");
@@ -720,7 +617,7 @@ public class OrderControllerTest {
             product1.setStatus(1);
             product1.setCreatedAt(new Date().toInstant());
             product1.setUpdatedAt(new Date().toInstant());
-
+            
             Product product2 = new Product();
             product2.setId(2L);
             product2.setName("Test Product 2");
@@ -731,9 +628,9 @@ public class OrderControllerTest {
             product2.setStatus(1);
             product2.setCreatedAt(new Date().toInstant());
             product2.setUpdatedAt(new Date().toInstant());
-
+            
             productRepository.saveAll(Arrays.asList(product1, product2));
-
+            
             Variant variant1 = new Variant();
             variant1.setId(1L);
             variant1.setProduct(product1);
@@ -743,7 +640,7 @@ public class OrderControllerTest {
             variant1.setStatus(1);
             variant1.setCreatedAt(new Date().toInstant());
             variant1.setUpdatedAt(new Date().toInstant());
-
+            
             Variant variant2 = new Variant();
             variant2.setId(2L);
             variant2.setProduct(product2);
@@ -753,11 +650,10 @@ public class OrderControllerTest {
             variant2.setStatus(1);
             variant2.setCreatedAt(new Date().toInstant());
             variant2.setUpdatedAt(new Date().toInstant());
-
+            
             variantRepository.saveAll(Arrays.asList(variant1, variant2));
-
-
-            // Tạo Orders với mã ngẫu nhiên
+            
+            // Create Orders with random codes
             Order order1 = new Order();
             order1.setId(1L);
             order1.setCode(generateRandomResourceCode());
@@ -778,7 +674,7 @@ public class OrderControllerTest {
             order1.setPaymentStatus(1);
             order1.setCreatedAt(new Date().toInstant());
             order1.setUpdatedAt(new Date().toInstant());
-
+            
             Order order2 = new Order();
             order2.setId(2L);
             order2.setCode(generateRandomResourceCode());
@@ -799,7 +695,7 @@ public class OrderControllerTest {
             order2.setPaymentStatus(1);
             order2.setCreatedAt(new Date().toInstant());
             order2.setUpdatedAt(new Date().toInstant());
-
+            
             Order order3 = new Order();
             order3.setId(3L);
             order3.setCode(generateRandomResourceCode());
@@ -820,31 +716,31 @@ public class OrderControllerTest {
             order3.setPaymentStatus(2);
             order3.setCreatedAt(new Date().toInstant());
             order3.setUpdatedAt(new Date().toInstant());
-
+            
             orderRepository.saveAll(Arrays.asList(order1, order2, order3));
-            // Đảm bảo dữ liệu đã được ghi vào database
+            
+            // Ensure data is written to database
             entityManager.flush();
         }
-
-
+        
         /**
-         * Tạo đơn hàng đã giao cho test
+         * Create a delivered order for testing
          */
         private void setupDeliveredOrderTestData() {
-            // Sử dụng lại OrderResource đã tạo
+            // Reuse existing OrderResource
             OrderResource orderResource = getOrCreateOrderResource();
             User user = userRepository.findById(1L).orElse(null);
-
+            
             if (user == null) {
-                setupTestData(); // Đảm bảo dữ liệu cơ bản đã được tạo
+                setupTestData(); // Ensure basic data exists
                 user = userRepository.findById(1L).orElse(null);
             }
-
-            // Tạo đơn hàng đã giao với mã ngẫu nhiên
+            
+            // Create delivered order with random code
             Order order = new Order();
             order.setId(5L);
             order.setCode(generateRandomResourceCode());
-            order.setStatus(4); // 4 = Đã giao
+            order.setStatus(4); // 4 = Delivered
             order.setToName("Test User");
             order.setToPhone("0123456789");
             order.setToAddress("123 Test Street");
@@ -858,28 +754,27 @@ public class OrderControllerTest {
             order.setShippingCost(BigDecimal.valueOf(20000));
             order.setTotalPay(BigDecimal.valueOf(185000));
             order.setPaymentMethodType(PaymentMethodType.CASH);
-            order.setPaymentStatus(2); // 2 = Đã thanh toán
-            order.setCreatedAt(new java.util.Date().toInstant());
-            order.setUpdatedAt(new java.util.Date().toInstant());
-
+            order.setPaymentStatus(2); // 2 = Paid
+            order.setCreatedAt(new Date().toInstant());
+            order.setUpdatedAt(new Date().toInstant());
+            
             orderRepository.save(order);
         }
-
-
+        
         /**
-         * Tạo đơn hàng với PayPal cho test
+         * Create an order with PayPal for testing
          */
         private void setupPaypalOrderTestData() {
-            // Sử dụng lại OrderResource đã tạo
+            // Reuse existing OrderResource
             OrderResource orderResource = getOrCreateOrderResource();
             User user = userRepository.findById(1L).orElse(null);
-
+            
             if (user == null) {
-                setupTestData(); // Đảm bảo dữ liệu cơ bản đã được tạo
+                setupTestData(); // Ensure basic data exists
                 user = userRepository.findById(1L).orElse(null);
             }
-
-            // Tạo đơn hàng với PayPal và mã ngẫu nhiên
+            
+            // Create PayPal order with random code
             Order order = new Order();
             order.setId(4L);
             order.setCode(generateRandomResourceCode());
@@ -902,30 +797,29 @@ public class OrderControllerTest {
             order.setPaypalOrderStatus("CREATED");
             order.setCreatedAt(new Date().toInstant());
             order.setUpdatedAt(new Date().toInstant());
-
+            
             orderRepository.save(order);
         }
-
-
+        
         /**
-         * Tạo các OrderVariant cho test
+         * Create OrderVariants for testing
          */
         private void setupOrderVariantTestData() {
-            // Đảm bảo Order và Variant đã tồn tại
+            // Ensure Order and Variant exist
             Order order1 = orderRepository.findById(1L).orElse(null);
             Order order2 = orderRepository.findById(2L).orElse(null);
             Variant variant1 = variantRepository.findById(1L).orElse(null);
             Variant variant2 = variantRepository.findById(2L).orElse(null);
-
+            
             if (order1 == null || order2 == null || variant1 == null || variant2 == null) {
-                setupTestData(); // Đảm bảo dữ liệu cơ bản đã được tạo
+                setupTestData(); // Ensure basic data exists
                 order1 = orderRepository.findById(1L).orElse(null);
                 order2 = orderRepository.findById(2L).orElse(null);
                 variant1 = variantRepository.findById(1L).orElse(null);
                 variant2 = variantRepository.findById(2L).orElse(null);
             }
-
-            // Tạo OrderVariant
+            
+            // Create OrderVariants
             OrderVariant orderVariant1 = new OrderVariant();
             orderVariant1.setOrderVariantKey(new OrderVariantKey(1L, 1L));
             orderVariant1.setOrder(order1);
@@ -933,7 +827,7 @@ public class OrderControllerTest {
             orderVariant1.setPrice(BigDecimal.valueOf(100000));
             orderVariant1.setQuantity(2);
             orderVariant1.setAmount(BigDecimal.valueOf(200000));
-
+            
             OrderVariant orderVariant2 = new OrderVariant();
             orderVariant2.setOrderVariantKey(new OrderVariantKey(2L, 2L));
             orderVariant2.setOrder(order2);
@@ -941,33 +835,32 @@ public class OrderControllerTest {
             orderVariant2.setPrice(BigDecimal.valueOf(150000));
             orderVariant2.setQuantity(1);
             orderVariant2.setAmount(BigDecimal.valueOf(150000));
-
-            // Cập nhật OrderVariants trong Order
+            
+            // Update OrderVariants in Orders
             Set<OrderVariant> orderVariants1 = new HashSet<>();
             orderVariants1.add(orderVariant1);
             order1.setOrderVariants(orderVariants1);
-
+            
             Set<OrderVariant> orderVariants2 = new HashSet<>();
             orderVariants2.add(orderVariant2);
             order2.setOrderVariants(orderVariants2);
-
+            
             orderRepository.saveAll(Arrays.asList(order1, order2));
         }
-
-
+        
         /**
-         * Tạo Waybill cho test
+         * Create Waybill for testing
          */
         private void setupWaybillTestData() {
-            // Đảm bảo Order đã tồn tại
+            // Ensure Order exists
             Order order = orderRepository.findById(2L).orElse(null);
-
+            
             if (order == null) {
-                setupTestData(); // Đảm bảo dữ liệu cơ bản đã được tạo
+                setupTestData(); // Ensure basic data exists
                 order = orderRepository.findById(2L).orElse(null);
             }
-
-            // Tạo Waybill
+            
+            // Create Waybill
             Waybill waybill = new Waybill();
             waybill.setId(1L);
             waybill.setCode("WB123456");
@@ -976,7 +869,7 @@ public class OrderControllerTest {
             waybill.setShippingDate(new Date().toInstant());
             waybill.setExpectedDeliveryTime(java.time.LocalDate.now().plusDays(3).atStartOfDay().toInstant(java.time.ZoneOffset.UTC));
             waybill.setCodAmount(0);
-            waybill.setShippingFee(20000); // Changed from BigDecimal to Integer
+            waybill.setShippingFee(20000); 
             waybill.setWeight(500);
             waybill.setLength(20);
             waybill.setWidth(15);
@@ -985,146 +878,160 @@ public class OrderControllerTest {
             waybill.setGhnRequiredNote(RequiredNote.valueOf("CHOXEMHANGKHONGTHU"));
             waybill.setCreatedAt(new Date().toInstant());
             waybill.setUpdatedAt(new Date().toInstant());
-
+            
             waybillRepository.save(waybill);
         }
-
-
+        
         /**
-         * Tạo Cart và CartVariant cho test
+         * Create Cart and CartVariant for testing
          */
         private void setupCartTestData() {
-            // Sử dụng lại User đã tạo ở trên
-            User user = userRepository.findById(1L).orElse(null);
+            // Reuse existing User - find by username to match authentication
+            User user = userRepository.findByUsername("testuser").orElse(null);
             Variant variant1 = variantRepository.findById(1L).orElse(null);
             Variant variant2 = variantRepository.findById(2L).orElse(null);
-
+            
             if (user == null || variant1 == null || variant2 == null) {
-                setupTestData(); // Đảm bảo dữ liệu cơ bản đã được tạo
-                user = userRepository.findById(1L).orElse(null);
+                setupTestData(); // Ensure basic data exists
+                user = userRepository.findByUsername("testuser").orElseThrow(() -> 
+                    new RuntimeException("User 'testuser' not found after setupTestData"));
                 variant1 = variantRepository.findById(1L).orElse(null);
                 variant2 = variantRepository.findById(2L).orElse(null);
             }
-
-            // Tạo Cart
+            
+            // Check if cart already exists for this user
+            Optional<Cart> existingCart = cartRepository.findAll().stream()
+                .filter(c -> c.getUser().getUsername().equals("testuser"))
+                .findFirst();
+            
+            if (existingCart.isPresent()) {
+                // Update existing cart
+                Cart cart = existingCart.get();
+                cart.setStatus(1); // Ensure cart is active
+                cart.setUpdatedAt(new Date().toInstant());
+                cartRepository.save(cart);
+                return;
+            }
+            
+            // Create Cart
             Cart cart = new Cart();
-            cart.setId(1L);
+            // Let the database generate the ID to avoid conflicts
             cart.setUser(user);
             cart.setStatus(1);
             cart.setCreatedAt(new Date().toInstant());
             cart.setUpdatedAt(new Date().toInstant());
-
+            
             cartRepository.save(cart);
-
-            // Tạo CartVariant
+            
+            // Create CartVariants
             CartVariant cartVariant1 = new CartVariant();
-            cartVariant1.setCartVariantKey(new com.electro.entity.cart.CartVariantKey(1L, 1L));
+            cartVariant1.setCartVariantKey(new com.electro.entity.cart.CartVariantKey(cart.getId(), 1L));
             cartVariant1.setCart(cart);
             cartVariant1.setVariant(variant1);
             cartVariant1.setQuantity(2);
             cartVariant1.setCreatedAt(new Date().toInstant());
-
+            
             CartVariant cartVariant2 = new CartVariant();
-            cartVariant2.setCartVariantKey(new com.electro.entity.cart.CartVariantKey(1L, 2L));
+            cartVariant2.setCartVariantKey(new com.electro.entity.cart.CartVariantKey(cart.getId(), 2L));
             cartVariant2.setCart(cart);
             cartVariant2.setVariant(variant2);
             cartVariant2.setQuantity(1);
             cartVariant2.setCreatedAt(new Date().toInstant());
-
-            // Cập nhật CartVariants trong Cart
+            
+            // Update CartVariants in Cart
             Set<CartVariant> cartVariants = new HashSet<>();
             cartVariants.add(cartVariant1);
             cartVariants.add(cartVariant2);
             cart.setCartVariants(cartVariants);
-
+            
             cartRepository.save(cart);
+            
+            // Ensure changes are visible
+            entityManager.flush();
         }
-
+        
         /**
          * Test Case ID: OC-IT001
          * Test Name: testCancelOrderWithDatabase
-         * Objective: Kiểm tra OrderController hủy đơn hàng trong database
-         * Input: Mã đơn hàng từ dữ liệu test
-         * Expected Output: Trạng thái đơn hàng được cập nhật thành hủy (5) trong database
-         * Path Coverage: Đường đi thành công và xác minh thay đổi database
+         * Objective: Verify OrderController cancels an order in database
+         * Input: Order code from test data
+         * Expected Output: Order status is updated to canceled (5) in database
          */
         @Test
-        @DisplayName("Integration Test - Hủy đơn hàng với database")
+        @DisplayName("Integration Test - Cancel order with database")
         void testCancelOrderWithDatabase() {
             // Given
             setupTestData();
-            Order testOrder = orderRepository.findAll().get(0); // Lấy đơn hàng đầu tiên
+            Order testOrder = orderRepository.findAll().get(0); // Get first order
             String orderCode = testOrder.getCode();
-
+            
             // When
             ResponseEntity<ObjectNode> response = orderController.cancelOrder(orderCode);
-
-            // Đảm bảo thay đổi được ghi vào database
+            
+            // Ensure changes are written to database
             entityManager.flush();
-
+            
             // Then
             assertTrue(response.getStatusCode().is2xxSuccessful());
-
-            // Kiểm tra thay đổi trong database
+            
+            // Check database changes
             Order cancelledOrder = orderRepository.findByCode(orderCode)
                     .orElseThrow(() -> new RuntimeException("Order not found"));
-
-            // Trạng thái 5 = Đã hủy
-            assertEquals(5, cancelledOrder.getStatus(), "Trạng thái đơn hàng phải được cập nhật thành 5 (Đã hủy)");
+            
+            // Status 5 = Canceled
+            assertEquals(5, cancelledOrder.getStatus(), "Order status must be updated to 5 (Canceled)");
         }
-
+        
         /**
          * Test Case ID: OC-IT002
-         * Test Name: testCancelOrderWithWaybillDatabase
-         * Objective: Kiểm tra OrderController hủy đơn hàng có vận đơn
-         * Input: Mã đơn hàng có vận đơn từ dữ liệu test
-         * Expected Output: Trạng thái đơn hàng và vận đơn được cập nhật trong database
-         * Path Coverage: Đường đi có vận đơn và xác minh thay đổi database
+         * Test Name: testCancelOrderWithWaybill
+         * Objective: Verify OrderController cancels an order with waybill
+         * Input: Order code with waybill from test data
+         * Expected Output: Order and waybill statuses are updated in database
          */
         @Test
-        @DisplayName("Integration Test - Hủy đơn hàng có vận đơn với database")
-        void testCancelOrderWithWaybillUpdate() {
+        @DisplayName("Integration Test - Cancel order with waybill")
+        void testCancelOrderWithWaybill() {
             // Given
             setupTestData();
             setupWaybillTestData();
-
+            
             Order testOrder = orderRepository.findAll().stream()
                     .filter(order -> waybillRepository.findByOrderId(order.getId()).isPresent())
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("No order with waybill found"));
             String orderCode = testOrder.getCode();
-
+            
             // When
             ResponseEntity<ObjectNode> response = orderController.cancelOrder(orderCode);
-
-            // Đảm bảo thay đổi được ghi vào database
+            
+            // Ensure changes are written to database
             entityManager.flush();
-
+            
             // Then
             assertTrue(response.getStatusCode().is2xxSuccessful());
-
-            // Kiểm tra đơn hàng đã bị hủy
+            
+            // Check order is canceled
             Order cancelledOrder = orderRepository.findByCode(orderCode)
                     .orElseThrow(() -> new RuntimeException("Order not found"));
-            assertEquals(5, cancelledOrder.getStatus(), "Trạng thái đơn hàng phải được cập nhật thành 5 (Đã hủy)");
-
-            // Kiểm tra vận đơn đã bị hủy
+            assertEquals(5, cancelledOrder.getStatus(), "Order status must be updated to 5 (Canceled)");
+            
+            // Check waybill is canceled
             Waybill waybill = waybillRepository.findByOrderId(cancelledOrder.getId())
                     .orElseThrow(() -> new RuntimeException("Waybill not found"));
-            assertEquals(4, waybill.getStatus(), "Trạng thái vận đơn phải được cập nhật thành 4 (Đã hủy)");
+            assertEquals(4, waybill.getStatus(), "Waybill status must be updated to 4 (Canceled)");
         }
-
+        
         /**
          * Test Case ID: OC-IT003
-         * Test Name: testCancelOrderAlreadyDelivered
-         * Objective: Kiểm tra xử lý ngoại lệ khi hủy đơn hàng đã giao
-         * Input: Mã đơn hàng đã giao từ dữ liệu test
-         * Expected Output: RuntimeException được ném ra
-         * Path Coverage: Đường đi ngoại lệ khi đơn hàng không thể hủy
+         * Test Name: testCancelDeliveredOrder
+         * Objective: Verify exception handling when canceling a delivered order
+         * Input: Delivered order code from test data
+         * Expected Output: RuntimeException is thrown
          */
         @Test
-        @DisplayName("Integration Test - Hủy đơn hàng đã giao")
-        void testCancelOrderAlreadyDelivered() {
+        @DisplayName("Integration Test - Cannot cancel delivered order")
+        void testCancelDeliveredOrder() {
             // Given
             setupDeliveredOrderTestData();
             Order deliveredOrder = orderRepository.findAll().stream()
@@ -1132,226 +1039,240 @@ public class OrderControllerTest {
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("No delivered order found"));
             String orderCode = deliveredOrder.getCode();
-
+            
             // When & Then
             assertThrows(RuntimeException.class, () -> {
                 orderController.cancelOrder(orderCode);
-            }, "Phải ném ngoại lệ khi hủy đơn hàng đã giao");
+            }, "Should throw exception when canceling a delivered order");
         }
-
+        
         /**
          * Test Case ID: OC-IT004
-         * Test Name: testCreateClientOrderCashPayment
-         * Objective: Kiểm tra tạo đơn hàng mới với thanh toán tiền mặt
-         * Input: ClientSimpleOrderRequest với PaymentMethodType.CASH
-         * Expected Output: Đơn hàng mới được tạo trong database
-         * Path Coverage: Đường đi tạo đơn hàng với thanh toán tiền mặt
+         * Test Name: testCreateOrderWithCashPayment
+         * Objective: Verify creating a new order with cash payment
+         * Input: ClientSimpleOrderRequest with PaymentMethodType.CASH
+         * Expected Output: New order is created in database
          */
         @Test
-        @DisplayName("Integration Test - Tạo đơn hàng với thanh toán tiền mặt")
-        void testCreateClientOrderCashPayment() {
+        @DisplayName("Integration Test - Create order with cash payment")
+        void testCreateOrderWithCashPayment() {
             // Given
-            setupTestData(); // Tạo dữ liệu cơ bản
-            setupCartTestData(); // Tạo giỏ hàng cho user
-
-            // Thiết lập authentication
+            setupTestData(); // Create basic data
+            setupCartTestData(); // Create cart for user
+            
+            // Get the cart before we start
+            Cart cartBefore = cartRepository.findByUsername("testuser")
+                .orElseThrow(() -> new RuntimeException("Cart not found for user 'testuser'"));
+            
+            // Ensure cart is active before the test
+            assertEquals(1, cartBefore.getStatus(), "Cart should be active (status 1) before order creation");
+            
+            // Setup authentication
             Authentication auth = new UsernamePasswordAuthenticationToken("testuser", null, new ArrayList<>());
             SecurityContextHolder.getContext().setAuthentication(auth);
-
-            // Tạo request với phương thức thanh toán tiền mặt
+            
+            // Create request with cash payment method
             ClientSimpleOrderRequest request = new ClientSimpleOrderRequest();
             request.setPaymentMethodType(PaymentMethodType.CASH);
-
-            // Đếm số đơn hàng trước khi tạo
+            
+            // Count orders before creation
             long orderCountBefore = orderRepository.count();
-
+            
             // When
             ClientConfirmedOrderResponse response = orderService.createClientOrder(request);
-
-            // Đảm bảo thay đổi được ghi vào database
+            
+            // Ensure changes are written to database
             entityManager.flush();
-
+            
             // Then
-            assertNotNull(response, "Phải trả về response không null");
-            assertNotNull(response.getOrderCode(), "Phải có mã đơn hàng");
-
-            // Kiểm tra đơn hàng mới được tạo
+            assertNotNull(response, "Response must not be null");
+            assertNotNull(response.getOrderCode(), "Must have order code");
+            
+            // Check new order is created
             long orderCountAfter = orderRepository.count();
-            assertEquals(orderCountBefore + 1, orderCountAfter, "Số lượng đơn hàng phải tăng thêm 1");
-
-            // Kiểm tra chi tiết đơn hàng
+            assertEquals(orderCountBefore + 1, orderCountAfter, "Order count must increase by 1");
+            
+            // Check order details
             Order createdOrder = orderRepository.findByCode(response.getOrderCode())
                     .orElseThrow(() -> new RuntimeException("Created order not found"));
-
-            assertEquals(PaymentMethodType.CASH, createdOrder.getPaymentMethodType(), "Phương thức thanh toán phải là CASH");
-            assertEquals(1, createdOrder.getStatus(), "Trạng thái phải là 1 (Đơn hàng mới)");
-            assertEquals(1, createdOrder.getPaymentStatus(), "Trạng thái thanh toán phải là 1 (Chưa thanh toán)");
-
-            // Kiểm tra giỏ hàng đã bị vô hiệu hóa
-            Cart cart = cartRepository.findByUsername("testuser")
-                    .orElseThrow(() -> new RuntimeException("Cart not found"));
-            assertEquals(2, cart.getStatus(), "Trạng thái giỏ hàng phải là 2 (Đã vô hiệu hóa)");
+            
+            assertEquals(PaymentMethodType.CASH, createdOrder.getPaymentMethodType(), "Payment method must be CASH");
+            assertEquals(1, createdOrder.getStatus(), "Status must be 1 (New order)");
+            assertEquals(1, createdOrder.getPaymentStatus(), "Payment status must be 1 (Not paid)");
+            
+            // Check cart is disabled - find the cart again after the operation
+            Cart cartAfter = cartRepository.findById(cartBefore.getId())
+                    .orElseThrow(() -> new RuntimeException("Cart not found after order creation"));
+            assertEquals(2, cartAfter.getStatus(), "Cart status must be 2 (Disabled)");
         }
-
+        
         /**
          * Test Case ID: OC-IT005
-         * Test Name: testCreateClientOrderPayPalPayment
-         * Objective: Kiểm tra tạo đơn hàng mới với thanh toán PayPal
-         * Input: ClientSimpleOrderRequest với PaymentMethodType.PAYPAL
-         * Expected Output: Đơn hàng mới được tạo với thông tin PayPal
-         * Path Coverage: Đường đi tạo đơn hàng với thanh toán PayPal
+         * Test Name: testCreateOrderWithPayPalPayment
+         * Objective: Verify creating a new order with PayPal payment
+         * Input: ClientSimpleOrderRequest with PaymentMethodType.PAYPAL
+         * Expected Output: New order is created with PayPal information
          */
         @Test
-        @DisplayName("Integration Test - Tạo đơn hàng với thanh toán PayPal")
-        void testCreateClientOrderPayPalPayment() {
+        @DisplayName("Integration Test - Create order with PayPal payment")
+        void testCreateOrderWithPayPalPayment() {
             // Given
-            setupTestData(); // Tạo dữ liệu cơ bản
-            setupCartTestData(); // Tạo giỏ hàng cho user
-
-            // Thiết lập authentication
+            setupTestData(); // Create basic data
+            setupCartTestData(); // Create cart for user
+            
+            // Get the cart before we start
+            Cart cartBefore = cartRepository.findByUsername("testuser")
+                .orElseThrow(() -> new RuntimeException("Cart not found for user 'testuser'"));
+            
+            // Ensure cart is active before the test
+            assertEquals(1, cartBefore.getStatus(), "Cart should be active (status 1) before order creation");
+            
+            // Setup authentication
             Authentication auth = new UsernamePasswordAuthenticationToken("testuser", null, new ArrayList<>());
             SecurityContextHolder.getContext().setAuthentication(auth);
-
-            // Tạo request với phương thức thanh toán PayPal
+            
+            // Create request with PayPal payment method
             ClientSimpleOrderRequest request = new ClientSimpleOrderRequest();
             request.setPaymentMethodType(PaymentMethodType.PAYPAL);
-
+            
             // When
             ClientConfirmedOrderResponse response = orderService.createClientOrder(request);
-
-            // Đảm bảo thay đổi được ghi vào database
+            
+            // Ensure changes are written to database
             entityManager.flush();
-
+            
             // Then
-            assertNotNull(response, "Phải trả về response không null");
-            assertNotNull(response.getOrderCode(), "Phải có mã đơn hàng");
-            assertNotNull(response.getOrderPaypalCheckoutLink(), "Phải có link thanh toán PayPal");
-
-            // Kiểm tra đơn hàng có paypalOrderId
+            assertNotNull(response, "Response must not be null");
+            assertNotNull(response.getOrderCode(), "Must have order code");
+            assertNotNull(response.getOrderPaypalCheckoutLink(), "Must have PayPal checkout link");
+            
+            // Check order has paypalOrderId
             Order createdOrder = orderRepository.findByCode(response.getOrderCode())
                     .orElseThrow(() -> new RuntimeException("Created order not found"));
-
-            assertEquals(PaymentMethodType.PAYPAL, createdOrder.getPaymentMethodType(), "Phương thức thanh toán phải là PAYPAL");
-            assertNotNull(createdOrder.getPaypalOrderId(), "Phải có PayPal Order ID");
-            assertEquals("CREATED", createdOrder.getPaypalOrderStatus(), "Trạng thái PayPal phải là CREATED");
+            
+            assertEquals(PaymentMethodType.PAYPAL, createdOrder.getPaymentMethodType(), "Payment method must be PAYPAL");
+            assertNotNull(createdOrder.getPaypalOrderId(), "Must have PayPal Order ID");
+            assertEquals("CREATED", createdOrder.getPaypalOrderStatus(), "PayPal status must be CREATED");
+            
+            // Check cart is disabled - find the cart again after the operation
+            Cart cartAfter = cartRepository.findById(cartBefore.getId())
+                    .orElseThrow(() -> new RuntimeException("Cart not found after order creation"));
+            assertEquals(2, cartAfter.getStatus(), "Cart status must be 2 (Disabled)");
         }
-
+        
         /**
          * Test Case ID: OC-IT006
-         * Test Name: testCaptureTransactionPaypal
-         * Objective: Kiểm tra xử lý giao dịch PayPal thành công
-         * Input: PayPal order ID và payer ID
-         * Expected Output: Đơn hàng được cập nhật và thông báo được tạo
-         * Path Coverage: Đường đi xử lý thanh toán PayPal thành công
+         * Test Name: testCapturePayPalTransaction
+         * Objective: Verify handling successful PayPal transaction
+         * Input: PayPal order ID and payer ID
+         * Expected Output: Order is updated and notification is created
          */
         @Test
-        @DisplayName("Integration Test - Xử lý thanh toán PayPal thành công")
-        void testCaptureTransactionPaypal() {
+        @DisplayName("Integration Test - Process successful PayPal payment")
+        void testCapturePayPalTransaction() {
             // Given
-            setupTestData(); // Tạo dữ liệu cơ bản
-            setupPaypalOrderTestData(); // Tạo đơn hàng PayPal
-
+            setupTestData(); // Create basic data
+            setupPaypalOrderTestData(); // Create PayPal order
+            
             String paypalOrderId = "TEST-PAYPAL-ORDER-ID";
             String payerId = "TEST-PAYER-ID";
-
-            // Đếm số thông báo trước khi xử lý
+            
+            // Count notifications before processing
             long notificationCountBefore = notificationRepository.count();
-
+            
             // When
             orderService.captureTransactionPaypal(paypalOrderId, payerId);
-
-            // Đảm bảo thay đổi được ghi vào database
+            
+            // Ensure changes are written to database
             entityManager.flush();
-
+            
             // Then
-            // Kiểm tra đơn hàng đã được cập nhật
+            // Check order is updated
             Order order = orderRepository.findByPaypalOrderId(paypalOrderId)
                     .orElseThrow(() -> new RuntimeException("Order not found"));
-
-            assertEquals("COMPLETED", order.getPaypalOrderStatus(), "Trạng thái PayPal phải là COMPLETED");
-            assertEquals(2, order.getPaymentStatus(), "Trạng thái thanh toán phải là 2 (Đã thanh toán)");
-
-            // Kiểm tra thông báo đã được tạo
+            
+            assertEquals("COMPLETED", order.getPaypalOrderStatus(), "PayPal status must be COMPLETED");
+            assertEquals(2, order.getPaymentStatus(), "Payment status must be 2 (Paid)");
+            
+            // Check notification is created
             long notificationCountAfter = notificationRepository.count();
-            assertEquals(notificationCountBefore + 1, notificationCountAfter, "Số lượng thông báo phải tăng thêm 1");
-
-            // Kiểm tra chi tiết thông báo
+            assertEquals(notificationCountBefore + 1, notificationCountAfter, "Notification count must increase by 1");
+            
+            // Check notification details
             Notification notification = notificationRepository.findAll().stream()
-                    .reduce((first, second) -> second) // Lấy thông báo cuối cùng
+                    .reduce((first, second) -> second) // Get last notification
                     .orElse(null);
-
-            assertNotNull(notification, "Phải có thông báo được tạo");
-            assertEquals(order.getUser().getId(), notification.getUser().getId(), "User ID phải khớp");
+            
+            assertNotNull(notification, "Notification must be created");
+            assertEquals(order.getUser().getId(), notification.getUser().getId(), "User ID must match");
         }
-
+        
         /**
          * Test Case ID: OC-IT007
          * Test Name: testDeleteOrderVariant
-         * Objective: Kiểm tra xóa một order variant
-         * Input: Order ID và variant ID
-         * Expected Output: Order variant bị xóa khỏi database
-         * Path Coverage: Đường đi xóa một order variant
+         * Objective: Verify deletion of a single order variant
+         * Input: Order ID and variant ID
+         * Expected Output: Order variant is removed from database
          */
         @Test
-        @DisplayName("Integration Test - Xóa một order variant")
+        @DisplayName("Integration Test - Delete a single order variant")
         void testDeleteOrderVariant() {
             // Given
-            setupTestData(); // Tạo dữ liệu cơ bản
-            setupOrderVariantTestData(); // Tạo order variant
-
+            setupTestData(); // Create basic data
+            setupOrderVariantTestData(); // Create order variant
+            
             Long orderId = 1L;
             Long variantId = 1L;
-
-            // Kiểm tra order variant tồn tại trước khi xóa
+            
+            // Check order variant exists before deletion
             Order order = orderRepository.findById(orderId)
                     .orElseThrow(() -> new RuntimeException("Order not found"));
-
+            
             boolean existsBefore = order.getOrderVariants().stream()
                     .anyMatch(ov -> ov.getVariant().getId().equals(variantId));
-
-            assertTrue(existsBefore, "Order variant phải tồn tại trước khi xóa");
-
+            
+            assertTrue(existsBefore, "Order variant must exist before deletion");
+            
             // When
             ResponseEntity<Void> response = orderVariantController.deleteOrderVariant(orderId, variantId);
-
-            // Đảm bảo thay đổi được ghi vào database
+            
+            // Ensure changes are written to database
             entityManager.flush();
-
+            
             // Then
             assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-
-            // Kiểm tra order variant đã bị xóa
+            
+            // Check order variant is deleted
             Order updatedOrder = orderRepository.findById(orderId)
                     .orElseThrow(() -> new RuntimeException("Order not found"));
-
+            
             boolean existsAfter = updatedOrder.getOrderVariants().stream()
                     .anyMatch(ov -> ov.getVariant().getId().equals(variantId));
-
-            assertFalse(existsAfter, "Order variant không được tồn tại sau khi xóa");
+            
+            assertFalse(existsAfter, "Order variant must not exist after deletion");
         }
-
+        
         /**
          * Test Case ID: OC-IT008
          * Test Name: testDeleteMultipleOrderVariants
-         * Objective: Kiểm tra xóa nhiều order variants cùng lúc
-         * Input: Danh sách các OrderVariantKeyRequest
-         * Expected Output: Tất cả order variants trong danh sách bị xóa khỏi database
-         * Path Coverage: Đường đi xóa nhiều order variants
+         * Objective: Verify deletion of multiple order variants simultaneously
+         * Input: List of OrderVariantKeyRequest
+         * Expected Output: All order variants in the list are removed from database
          */
         @Test
-        @DisplayName("Integration Test - Xóa nhiều order variants")
+        @DisplayName("Integration Test - Delete multiple order variants")
         void testDeleteMultipleOrderVariants() {
             // Given
-            setupTestData(); // Tạo dữ liệu cơ bản
-            setupOrderVariantTestData(); // Tạo order variant
+            setupTestData(); // Create basic data
+            setupOrderVariantTestData(); // Create order variant
             
-            // Tạo các key request để xóa
+            // Create key requests for deletion
             List<OrderVariantKeyRequest> keyRequests = Arrays.asList(
                     new OrderVariantKeyRequest(1L, 1L),
                     new OrderVariantKeyRequest(2L, 2L)
             );
             
-            // Kiểm tra các order variant tồn tại trước khi xóa
+            // Check order variants exist before deletion
             Order order1 = orderRepository.findById(1L)
                     .orElseThrow(() -> new RuntimeException("Order 1 not found"));
             Order order2 = orderRepository.findById(2L)
@@ -1362,19 +1283,19 @@ public class OrderControllerTest {
             boolean exists2Before = order2.getOrderVariants().stream()
                     .anyMatch(ov -> ov.getVariant().getId().equals(2L));
                     
-            assertTrue(exists1Before, "Order variant 1 phải tồn tại trước khi xóa");
-            assertTrue(exists2Before, "Order variant 2 phải tồn tại trước khi xóa");
-
+            assertTrue(exists1Before, "Order variant 1 must exist before deletion");
+            assertTrue(exists2Before, "Order variant 2 must exist before deletion");
+            
             // When
             ResponseEntity<Void> response = orderVariantController.deleteOrderVariants(keyRequests);
-
-            // Đảm bảo thay đổi được ghi vào database
+            
+            // Ensure changes are written to database
             entityManager.flush();
-
+            
             // Then
             assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-
-            // Kiểm tra tất cả order variant đã bị xóa
+            
+            // Check all order variants are deleted
             Order updatedOrder1 = orderRepository.findById(1L)
                     .orElseThrow(() -> new RuntimeException("Order 1 not found"));
             Order updatedOrder2 = orderRepository.findById(2L)
@@ -1385,8 +1306,222 @@ public class OrderControllerTest {
             boolean exists2After = updatedOrder2.getOrderVariants().stream()
                     .anyMatch(ov -> ov.getVariant().getId().equals(2L));
                     
-            assertFalse(exists1After, "Order variant 1 không được tồn tại sau khi xóa");
-            assertFalse(exists2After, "Order variant 2 không được tồn tại sau khi xóa");
+            assertFalse(exists1After, "Order variant 1 must not exist after deletion");
+            assertFalse(exists2After, "Order variant 2 must not exist after deletion");
+        }
+        
+        /**
+         * Test Case ID: GS-IT001
+         * Test Name: testGenericServiceFindAllOrders
+         * Objective: Verify GenericService integration with repository for finding orders
+         * Input: Pagination, sort, and filter parameters
+         * Expected Output: ListResponse containing order data from database
+         */
+        @Test
+        @DisplayName("Integration Test - GenericService find all orders with database")
+        void testGenericServiceFindAllOrders() {
+            // Given
+            setupTestData(); // Create basic data with orders
+            
+            int page = 1;
+            int size = 10;
+            String sort = "id,desc";
+            
+            // When - use the genericOrderService for CRUD operations
+            ListResponse<OrderResponse> response = genericOrderService.findAll(page, size, sort, null, null, false);
+            
+            // Then
+            assertNotNull(response);
+            assertNotNull(response.getContent());
+            assertFalse(response.getContent().isEmpty(), "Should return orders from database");
+            assertTrue(response.getTotalElements() >= 3, "Should have at least 3 orders");
+        }
+        
+        /**
+         * Test Case ID: GS-IT002
+         * Test Name: testGenericServiceFindOrderById
+         * Objective: Verify GenericService integration with repository for finding order by ID
+         * Input: Order ID
+         * Expected Output: OrderResponse with data from database
+         */
+        @Test
+        @DisplayName("Integration Test - GenericService find order by ID from database")
+        void testGenericServiceFindOrderById() {
+            // Given
+            setupTestData(); // Create basic data with orders
+            Long orderId = 1L;
+            
+            // When - use the genericOrderService
+            OrderResponse response = genericOrderService.findById(orderId);
+            
+            // Then
+            assertNotNull(response);
+            assertEquals(orderId, response.getId());
+        }
+        
+        /**
+         * Test Case ID: GS-IT003
+         * Test Name: testGenericServiceCreateOrder
+         * Objective: Verify GenericService integration with repository for creating order
+         * Input: OrderRequest with order details
+         * Expected Output: New order created in database
+         */
+        @Test
+        @DisplayName("Integration Test - GenericService create order in database")
+        void testGenericServiceCreateOrder() {
+            // Given
+            setupTestData(); // Create basic data
+            
+            // Count orders before creation
+            long countBefore = orderRepository.count();
+            
+            // Create request JSON
+            ObjectMapper objectMapper = new ObjectMapper();
+            OrderRequest orderRequest = new OrderRequest();
+            orderRequest.setCode(generateRandomResourceCode()); // Generate a unique code
+            orderRequest.setOrderResourceId(getOrCreateOrderResource().getId());
+            orderRequest.setUserId(userRepository.findByUsername("testuser").get().getId());
+            orderRequest.setToName("New Test Order");
+            orderRequest.setToPhone("0123456789");
+            orderRequest.setToAddress("Test Address");
+            orderRequest.setToWardName("Test Ward");
+            orderRequest.setToDistrictName("Test District");
+            orderRequest.setToProvinceName("Test Province");
+            orderRequest.setTotalAmount(BigDecimal.valueOf(100000));
+            orderRequest.setTax(BigDecimal.valueOf(0.1));
+            orderRequest.setShippingCost(BigDecimal.valueOf(20000));
+            orderRequest.setTotalPay(BigDecimal.valueOf(130000));
+            orderRequest.setPaymentMethodType(PaymentMethodType.CASH);
+            orderRequest.setStatus(1);
+            orderRequest.setPaymentStatus(1);
+            // Initialize empty orderVariants collection to prevent NullPointerException
+            orderRequest.setOrderVariants(new HashSet<>());
+            
+            JsonNode jsonNode = objectMapper.valueToTree(orderRequest);
+            
+            // When - use the genericOrderService
+            OrderResponse response = genericOrderService.save(jsonNode, OrderRequest.class);
+            
+            // Ensure changes are written to database
+            entityManager.flush();
+            
+            // Then
+            assertNotNull(response);
+            assertNotNull(response.getId());
+            
+            // Check database count increased
+            long countAfter = orderRepository.count();
+            assertEquals(countBefore + 1, countAfter, "Order count should increase by 1");
+            
+            // Verify order in database
+            Order savedOrder = orderRepository.findById(response.getId())
+                    .orElseThrow(() -> new RuntimeException("Saved order not found"));
+            
+            assertEquals("New Test Order", savedOrder.getToName());
+            assertEquals(PaymentMethodType.CASH, savedOrder.getPaymentMethodType());
+            assertEquals(1, savedOrder.getStatus());
+        }
+        
+        /**
+         * Test Case ID: GS-IT004
+         * Test Name: testGenericServiceUpdateOrder
+         * Objective: Verify GenericService integration with repository for updating order
+         * Input: Order ID and OrderRequest with updated details
+         * Expected Output: Order updated in database
+         */
+        @Test
+        @DisplayName("Integration Test - GenericService update order in database")
+        void testGenericServiceUpdateOrder() {
+            // Given
+            setupTestData(); // Create basic data
+            
+            // Get an existing order
+            Order existingOrder = orderRepository.findAll().get(0);
+            Long orderId = existingOrder.getId();
+            
+            // Create update request JSON
+            ObjectMapper objectMapper = new ObjectMapper();
+            OrderRequest orderRequest = new OrderRequest();
+            orderRequest.setCode(existingOrder.getCode()); // Must include code as it's required
+            orderRequest.setOrderResourceId(existingOrder.getOrderResource().getId());
+            orderRequest.setUserId(existingOrder.getUser().getId());
+            orderRequest.setToName("Updated Order Name");
+            orderRequest.setToPhone(existingOrder.getToPhone());
+            orderRequest.setToAddress(existingOrder.getToAddress());
+            orderRequest.setToWardName(existingOrder.getToWardName());
+            orderRequest.setToDistrictName(existingOrder.getToDistrictName());
+            orderRequest.setToProvinceName(existingOrder.getToProvinceName());
+            orderRequest.setTotalAmount(existingOrder.getTotalAmount());
+            orderRequest.setTax(existingOrder.getTax());
+            orderRequest.setShippingCost(existingOrder.getShippingCost());
+            orderRequest.setTotalPay(existingOrder.getTotalPay());
+            orderRequest.setPaymentMethodType(existingOrder.getPaymentMethodType());
+            orderRequest.setStatus(2); // Changed status to 2
+            orderRequest.setPaymentStatus(existingOrder.getPaymentStatus());
+            // Initialize empty orderVariants collection to prevent NullPointerException
+            orderRequest.setOrderVariants(new HashSet<>());
+            
+            JsonNode jsonNode = objectMapper.valueToTree(orderRequest);
+            
+            // When - use the genericOrderService
+            OrderResponse response = genericOrderService.save(orderId, jsonNode, OrderRequest.class);
+            
+            // Ensure changes are written to database
+            entityManager.flush();
+            
+            // Then
+            assertNotNull(response);
+            assertEquals(orderId, response.getId());
+            assertEquals("Updated Order Name", response.getToName());
+            assertEquals(2, response.getStatus());
+            
+            // Verify order in database
+            Order updatedOrder = orderRepository.findById(orderId)
+                    .orElseThrow(() -> new RuntimeException("Updated order not found"));
+            
+            assertEquals("Updated Order Name", updatedOrder.getToName());
+            assertEquals(2, updatedOrder.getStatus());
+        }
+        
+        /**
+         * Test Case ID: GS-IT005
+         * Test Name: testGenericServiceDeleteOrder
+         * Objective: Verify GenericService integration with repository for deleting order
+         * Input: Order ID
+         * Expected Output: Order removed from database
+         */
+        @Test
+        @DisplayName("Integration Test - GenericService delete order from database")
+        void testGenericServiceDeleteOrder() {
+            // Given
+            setupTestData(); // Create basic data
+            
+            // Get an existing order that can be deleted
+            Order existingOrder = orderRepository.findAll().stream()
+                    .filter(order -> order.getStatus() == 1)
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("No suitable order found for deletion"));
+            
+            Long orderId = existingOrder.getId();
+            
+            // Count orders before deletion
+            long countBefore = orderRepository.count();
+            
+            // When - use the genericOrderService
+            genericOrderService.delete(orderId);
+            
+            // Ensure changes are written to database
+            entityManager.flush();
+            
+            // Then
+            // Check database count decreased
+            long countAfter = orderRepository.count();
+            assertEquals(countBefore - 1, countAfter, "Order count should decrease by 1");
+            
+            // Verify order not in database
+            assertThrows(ResourceNotFoundException.class, () -> {
+                genericOrderService.findById(orderId);
+            }, "Order should not be found after deletion");
         }
     }
 }

@@ -75,11 +75,11 @@ public class ProductTest {
         product.setShortDescription("Laptop cao cấp cho doanh nhân");
         product.setDescription("Laptop Dell XPS 13 là một trong những laptop cao cấp tốt nhất hiện nay");
         product.setStatus(1);
-        System.out.println("Input: Product[name=Laptop Dell XPS 13, code=LAP001Create, slug=laptop-dell-xps-13-create, status=1]");
+        System.out.println("Input: ProductName" + product.getName() + ", code=" + product.getCode() + ", slug=" + product.getSlug() + ", status=" + product.getStatus());
 
         // Act
         Product savedProduct = productRepository.save(product);
-        System.out.println("Expected Output: id!=null, name=Laptop Dell XPS 13, code=LAP001Create, slug=laptop-dell-xps-13-create, status=1");
+        System.out.println("Expected Output: Product saved with ID=" + savedProduct.getId() + ", name=" + savedProduct.getName() + ", code=" + savedProduct.getCode() + ", slug=" + savedProduct.getSlug() + ", status=" + savedProduct.getStatus());
 
         // Assert
         assertNotNull(savedProduct.getId());
@@ -113,7 +113,7 @@ public class ProductTest {
         initial.setSlug("laptop-dell-xps-15");
         initial.setShortDescription("Laptop cao cấp cho doanh nhân và đồ họa");
         Product updated = productRepository.save(initial);
-        System.out.println("Expected Output: id=" + updated.getId() + ", name=Laptop Dell XPS 15, slug=laptop-dell-xps-15, shortDescription=...");
+        System.out.println("Expected Output: id=" + updated.getId() + ", name = " + updated.getName() + ", slug = " + updated.getSlug() + ", shortDescription = " + updated.getShortDescription());
 
         // Assert
         assertEquals("Laptop Dell XPS 15", updated.getName());
@@ -192,7 +192,7 @@ public class ProductTest {
 
         // Act
         Optional<Product> found = productRepository.findById(saved.getId());
-        System.out.println("Expected Output: found.isPresent=" + found.isPresent());
+        System.out.println("Expected Output: found.isPresent=" + found.isPresent() + ", name=" + (found.isPresent() ? found.get().getName() : "not found") + ", code=" + (found.isPresent() ? found.get().getCode() : "not found"));
 
         // Assert
         assertTrue(found.isPresent());
@@ -216,13 +216,14 @@ public class ProductTest {
         Product product = new Product(); product.setName("Laptop Dell XPS 13"); product.setCode("LAP006"); product.setSlug("laptop-dell-xps-13-category"); product.setStatus(1);
         product.setCategory(savedCat);
         Product saved = productRepository.save(product);
-        System.out.println("Input: productId=" + saved.getId() + ", categoryId=" + savedCat.getId());
+        System.out.println("Input: productId = " + saved.getId() + ", categoryId = " + savedCat.getId() + ", categoryName = " + savedCat.getName() + ", productName = " + saved.getName());
+
 
         // Act
         entityManager.flush(); entityManager.clear();
         Product refProd = productRepository.findById(saved.getId()).orElseThrow();
         Category refCat = categoryRepository.findById(savedCat.getId()).orElseThrow();
-        System.out.println("Expected Output: refProd.category.id=" + refProd.getCategory().getId());
+        System.out.println("Expected Output: refProd.category.id=" + refProd.getCategory().getId() + ", categoryName=" + refCat.getName());
 
         // Assert
         assertEquals(savedCat.getId(), refProd.getCategory().getId());
@@ -235,7 +236,7 @@ public class ProductTest {
      * Mục tiêu: Kiểm tra mối quan hệ Product-Tag
      * Đầu vào: một Product và hai Tag
      * Đầu ra mong đợi: liên kết đúng hai bên
-     * Ghi chú: Quan hệ Many-to-Many
+     * Ghi chú:
      */
      @Test
     public void testProductWithTagsRelationship() {
@@ -247,14 +248,14 @@ public class ProductTest {
         Product product = new Product(); product.setName("Laptop Gaming"); product.setCode("LAP007"); product.setSlug("laptop-gaming"); product.setStatus(1);
         product.setTags(new HashSet<>(Set.of(saved1, saved2)));
         Product saved = productRepository.save(product);
-        System.out.println("Input: productId=" + saved.getId() + ", tagIds=[" + saved1.getId() + "," + saved2.getId() + "]");
+        System.out.println("Input: productId=" + saved.getId() + ", tagIds=[" + saved1.getId() + "," + saved2.getId() + "] " + "ProductName=" + saved.getName() + ", Tags=[" + saved1.getName() + "," + saved2.getName() + "]");
 
         // Act
         entityManager.flush(); entityManager.clear();
         Product refProd = productRepository.findById(saved.getId()).orElseThrow();
         Tag ref1 = tagRepository.findById(saved1.getId()).orElseThrow();
         Tag ref2 = tagRepository.findById(saved2.getId()).orElseThrow();
-        System.out.println("Expected Output: refProd.tags.size=" + refProd.getTags().size());
+        System.out.println("Expected Output: ProductName: " + refProd.getName() + " Tags.size=" + refProd.getTags().size());
 
         // Assert
         assertEquals(2, refProd.getTags().size());
@@ -278,12 +279,12 @@ public class ProductTest {
         Product product = new Product(); product.setName("Laptop Dell XPS 13"); product.setCode("LAP008"); product.setSlug("laptop-dell-xps-13-unit"); product.setStatus(1);
         product.setUnit(savedUnit);
         Product saved = productRepository.save(product);
-        System.out.println("Input: productId=" + saved.getId() + ", unitId=" + savedUnit.getId());
+        System.out.println("Input: productId=" + saved.getId() + ", unitId=" + savedUnit.getId() + " ProductName=" + saved.getName() + ", UnitName=" + savedUnit.getName());
 
         // Act
         entityManager.flush(); entityManager.clear();
         Product refProd = productRepository.findById(saved.getId()).orElseThrow();
-        System.out.println("Expected Output: refProd.unit.id=" + refProd.getUnit().getId());
+        System.out.println("Expected Output: ProductName: " + refProd.getName() + "UnitName" + refProd.getUnit().getName());
 
         // Assert
         assertEquals(savedUnit.getId(), refProd.getUnit().getId());
@@ -305,12 +306,12 @@ public class ProductTest {
         Product product = new Product(); product.setName("Laptop Dell XPS 13"); product.setCode("LAP009"); product.setSlug("laptop-dell-xps-13-brand"); product.setStatus(1);
         product.setBrand(savedBrand);
         Product saved = productRepository.save(product);
-        System.out.println("Input: productId=" + saved.getId() + ", brandId=" + savedBrand.getId());
+        System.out.println("Input: productId=" + saved.getId() + ", brandId=" + savedBrand.getId() + ", ProductName=" + saved.getName() + ", BrandName=" + savedBrand.getName());
 
         // Act
         entityManager.flush();	entityManager.clear();
         Product refProd = productRepository.findById(saved.getId()).orElseThrow();
-        System.out.println("Expected Output: refProd.brand.id=" + refProd.getBrand().getId());
+        System.out.println("Expected Output: ProductName: " + refProd.getName() + ", BrandName: " + refProd.getBrand().getName() + ", BrandId: " + refProd.getBrand().getId());
 
         // Assert
         assertEquals(savedBrand.getId(), refProd.getBrand().getId());
@@ -332,12 +333,12 @@ public class ProductTest {
         Product product = new Product(); product.setName("Laptop Dell XPS 13"); product.setCode("LAP010"); product.setSlug("laptop-dell-xps-13-supplier"); product.setStatus(1);
         product.setSupplier(savedSupplier);
         Product saved = productRepository.save(product);
-        System.out.println("Input: productId=" + saved.getId() + ", supplierId=" + savedSupplier.getId());
+        System.out.println("Input: ProductName = " + saved.getName() + ", SupplierName = " + savedSupplier.getDisplayName() + ", productId = " + saved.getId() + ", supplierId = " + savedSupplier.getId());
 
         // Act
         entityManager.flush(); entityManager.clear();
         Product refProd = productRepository.findById(saved.getId()).orElseThrow();
-        System.out.println("Expected Output: refProd.supplier.id=" + refProd.getSupplier().getId());
+        System.out.println("Expected Output: ProductName: " + refProd.getName() + ", SupplierName: " + refProd.getSupplier().getDisplayName() + ", SupplierId: " + refProd.getSupplier().getId());
 
         // Assert
         assertEquals(savedSupplier.getId(), refProd.getSupplier().getId());
@@ -364,7 +365,9 @@ public class ProductTest {
         entityManager.flush(); entityManager.clear();
         Product refProd = productRepository.findById(saved.getId()).orElseThrow();
         JsonNode actual = refProd.getSpecifications();
-        System.out.println("Expected Output: cpu=" + actual.get("cpu").asText());
+        System.out.println("Expected Output: ProductName: " + refProd.getName() + " cpu=" + actual.get("cpu").asText() +
+                           ", ram=" + actual.get("ram").asText() + ", storage=" + actual.get("storage").asText() +
+                           ", display=" + actual.get("display").asText());
 
         // Assert
         assertEquals("Intel Core i7", actual.get("cpu").asText());
@@ -394,7 +397,7 @@ public class ProductTest {
         product.setCategory(savedCat); product.setBrand(savedBrand); product.setSupplier(savedSup); product.setUnit(savedUnit);
         product.setTags(new HashSet<>(Set.of(sTag1, sTag2)));
         ObjectNode specs2 = objectMapper.createObjectNode(); specs2.put("cpu","Intel Core i9"); specs2.put("ram","32GB"); specs2.put("gpu","NVIDIA RTX 3080"); product.setSpecifications(specs2);
-        System.out.println("Input: complete product with relations and specs");
+        System.out.println("Input: ProductName" + product.getName() + ", Category=" + savedCat.getName() + ", Brand=" + savedBrand.getName() + ", Supplier=" + savedSup.getDisplayName() + ", Unit=" + savedUnit.getName() + ", Tags=[" + sTag1.getName() + "," + sTag2.getName() + "], Specifications=" + specs2.toString());
 
         // Act
         Product saved = productRepository.save(product);

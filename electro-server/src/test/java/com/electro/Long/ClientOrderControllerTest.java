@@ -48,14 +48,13 @@ import org.springframework.web.servlet.view.RedirectView;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -74,10 +73,19 @@ import com.electro.repository.cart.CartVariantRepository;
 import com.electro.repository.authentication.UserRepository;
 import com.electro.entity.order.OrderResource;
 
+/**
+ * Tests for ClientOrderController
+ * - Unit tests: Test controller logic without database interaction
+ * - Integration tests: Test controller with actual database operations
+ */
 public class ClientOrderControllerTest {
 
-    // Mockito tests for unit testing
+    /**
+     * Unit Tests for ClientOrderController
+     * Test functionality without database interaction
+     */
     @Nested
+    @DisplayName("Unit Tests - Without database interaction")
     @ExtendWith(MockitoExtension.class)
     class UnitTests {
         @Mock
@@ -113,9 +121,9 @@ public class ClientOrderControllerTest {
          * Objective: Verify that the controller correctly retrieves all orders for a user
          * Input: Page=1, Size=10, Sort="id,desc", Filter="status==1", Username="testuser"
          * Expected Output: HTTP 200 OK with a ListResponse containing orders
-         * Note: Tests pagination and filtering functionality for client orders
          */
         @Test
+        @DisplayName("Unit Test - Get all orders for user")
         public void testGetAllOrders() {
             // Given
             int page = 1;
@@ -148,9 +156,9 @@ public class ClientOrderControllerTest {
          * Objective: Verify that the controller correctly retrieves a specific order by code
          * Input: orderCode="ORDER123"
          * Expected Output: HTTP 200 OK with order details
-         * Note: Tests the retrieval of a single order's details
          */
         @Test
+        @DisplayName("Unit Test - Get order by code")
         public void testGetOrder() {
             // Given
             String orderCode = "ORDER123";
@@ -176,9 +184,9 @@ public class ClientOrderControllerTest {
          * Objective: Verify that the controller throws ResourceNotFoundException when order not found
          * Input: orderCode="NONEXISTENT"
          * Expected Output: ResourceNotFoundException
-         * Note: Tests error handling for non-existent orders
          */
         @Test
+        @DisplayName("Unit Test - Get order not found")
         public void testGetOrderNotFound() {
             // Given
             String orderCode = "NONEXISTENT";
@@ -195,9 +203,9 @@ public class ClientOrderControllerTest {
          * Objective: Verify that the controller correctly cancels an order
          * Input: orderCode="ORDER123"
          * Expected Output: HTTP 200 OK with empty response body
-         * Note: Tests order cancellation functionality
          */
         @Test
+        @DisplayName("Unit Test - Cancel order")
         public void testCancelOrder() {
             // Given
             String orderCode = "ORDER123";
@@ -217,9 +225,9 @@ public class ClientOrderControllerTest {
          * Objective: Verify that the controller correctly creates a new client order
          * Input: ClientSimpleOrderRequest object
          * Expected Output: HTTP 201 CREATED with order confirmation details
-         * Note: Tests order creation functionality
          */
         @Test
+        @DisplayName("Unit Test - Create client order")
         public void testCreateClientOrder() {
             // Given
             ClientSimpleOrderRequest request = new ClientSimpleOrderRequest();
@@ -242,9 +250,9 @@ public class ClientOrderControllerTest {
          * Objective: Verify handling of successful PayPal payments
          * Input: PayPal token="PAY123", PayerID="PAYER456"
          * Expected Output: Redirect to success page
-         * Note: Tests the PayPal payment success flow
          */
         @Test
+        @DisplayName("Unit Test - Payment success and capture transaction")
         public void testPaymentSuccessAndCaptureTransaction() {
             // Given
             String paypalOrderId = "PAY123";
@@ -269,9 +277,9 @@ public class ClientOrderControllerTest {
          * Objective: Verify handling of cancelled PayPal payments
          * Input: PayPal token="PAY123"
          * Expected Output: Redirect to cancel page and notification creation
-         * Note: Tests PayPal payment cancellation flow and notification generation
          */
         @Test
+        @DisplayName("Unit Test - Payment cancel")
         public void testPaymentCancel() {
             // Given
             String paypalOrderId = "PAY123";
@@ -319,9 +327,9 @@ public class ClientOrderControllerTest {
          * Objective: Verify error handling when cancelled order is not found
          * Input: PayPal token="NONEXISTENT"
          * Expected Output: ResourceNotFoundException
-         * Note: Tests error handling for non-existent orders during payment cancellation
          */
         @Test
+        @DisplayName("Unit Test - Payment cancel order not found")
         public void testPaymentCancelOrderNotFound() {
             // Given
             String paypalOrderId = "NONEXISTENT";
@@ -335,8 +343,12 @@ public class ClientOrderControllerTest {
         }
     }
 
+    /**
+     * Integration Tests for ClientOrderController
+     * Test functionality with actual database operations
+     */
     @Nested
-    @DisplayName("Integration Tests - Verify ClientOrderController DB interactions")
+    @DisplayName("Integration Tests - Database interactions")
     @SpringBootTest
     @ActiveProfiles("test")
     @Sql(scripts = { "classpath:schema.sql" }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -357,19 +369,34 @@ public class ClientOrderControllerTest {
         @Autowired private EntityManager entityManager;
         @Autowired private CartVariantRepository cartVariantRepository;
         @Autowired private UserRepository userRepository;
+        @Autowired private NotificationRepository notificationRepository;
 
+        /**
+         * Setup base test data needed for integration tests
+         */
         private void setupBaseData() {
             // Create Location data
             Province province = new Province(); province.setName("TestProv"); province.setCode("TP"); province = provinceRepository.save(province);
             District district = new District(); district.setName("TestDist"); district.setCode("TD"); district.setProvince(province); district = districtRepository.save(district);
             Ward ward = new Ward(); ward.setName("TestWard"); ward.setCode("TW"); ward.setDistrict(district); ward = wardRepository.save(ward);
+            
             // Create Address
-            Address address = new Address(); address.setLine("123 Test St"); address.setProvince(province); address.setDistrict(district); address.setWard(ward);
+            Address address = new Address(); 
+            address.setLine("123 Test St"); 
+            address.setProvince(province); 
+            address.setDistrict(district); 
+            address.setWard(ward);
             address = addressRepository.save(address);
+            
             // Create Role
             Role role = roleRepository.findByCode("ROLE_USER").orElseGet(() -> {
-                Role r = new Role(); r.setCode("ROLE_USER"); r.setName("User"); r.setStatus(1); return roleRepository.save(r);
+                Role r = new Role(); 
+                r.setCode("ROLE_USER"); 
+                r.setName("User"); 
+                r.setStatus(1); 
+                return roleRepository.save(r);
             });
+            
             // Create default OrderResource
             OrderResource orderResource = new OrderResource(); 
             orderResource.setCode("DEFAULT"); 
@@ -377,18 +404,100 @@ public class ClientOrderControllerTest {
             orderResource.setColor("Gray"); 
             orderResource.setStatus(1); 
             orderResource = orderResourceRepository.save(orderResource);
+            
             // Create User
-            User user = new User(); user.setUsername("testuser"); user.setPassword("pass"); user.setEmail("test@test.com"); user.setFullname("Test User"); user.setPhone("0123456789"); user.setGender("M"); user.setAddress(address);
-            user.setStatus(1); user.setRoles(Set.of(role)); user = userRepository.save(user);
+            User user = new User(); 
+            user.setUsername("testuser"); 
+            user.setPassword("pass"); 
+            user.setEmail("test@test.com"); 
+            user.setFullname("Test User"); 
+            user.setPhone("0123456789"); 
+            user.setGender("M"); 
+            user.setAddress(address);
+            user.setStatus(1); 
+            user.setRoles(Set.of(role)); 
+            user = userRepository.save(user);
+            
             // Create Product and Variant
-            Product product = new Product(); product.setName("Prod"); product.setCode("P1"); product.setSlug("prod-1"); product.setStatus(1); product = productRepository.save(product);
-            Variant variant = new Variant(); variant.setProduct(product); variant.setSku("V1"); variant.setPrice(100.0); variant.setCost(50.0); variant.setStatus(1); variant = variantRepository.save(variant);
+            Product product = new Product(); 
+            product.setName("Prod"); 
+            product.setCode("P1"); 
+            product.setSlug("prod-1"); 
+            product.setStatus(1); 
+            product = productRepository.save(product);
+            
+            Variant variant = new Variant(); 
+            variant.setProduct(product); 
+            variant.setSku("V1"); 
+            variant.setPrice(100.0); 
+            variant.setCost(50.0); 
+            variant.setStatus(1); 
+            variant = variantRepository.save(variant);
+            
             // Create Cart and persist CartVariant
-            Cart cart = new Cart(); cart.setUser(user); cart.setStatus(1); cart = cartRepository.save(cart);
-            CartVariant cv = new CartVariant(); cv.setCart(cart); cv.setVariant(variant); cv.setQuantity(2);
+            Cart cart = new Cart(); 
+            cart.setUser(user); 
+            cart.setStatus(1); 
+            cart = cartRepository.save(cart);
+            
+            CartVariant cv = new CartVariant(); 
+            cv.setCart(cart); 
+            cv.setVariant(variant); 
+            cv.setQuantity(2);
             cv = cartVariantRepository.save(cv);
+            
             cart.setCartVariants(new java.util.HashSet<>(java.util.List.of(cv)));
             entityManager.flush();
+        }
+
+        /**
+         * Create an order with PayPal payment for integration tests
+         */
+        private Order setupPaypalOrder() {
+            // Create a user if not exists
+            User user = userRepository.findByUsername("testuser").orElseThrow(() -> 
+                new RuntimeException("Test user not found, run setupBaseData first"));
+            
+            // Find or create order resource
+            OrderResource orderResource = orderResourceRepository.findAll().stream()
+                .filter(res -> "DEFAULT".equals(res.getCode()))
+                .findFirst()
+                .orElseGet(() -> {
+                    OrderResource res = new OrderResource();
+                    res.setCode("DEFAULT");
+                    res.setName("Default");
+                    res.setColor("Gray");
+                    res.setStatus(1);
+                    return orderResourceRepository.save(res);
+                });
+            
+            // Create PayPal order
+            Order order = new Order();
+            order.setCode("TEST-" + UUID.randomUUID().toString().substring(0, 8));
+            order.setStatus(1);
+            order.setToName("Test User");
+            order.setToPhone("0123456789");
+            order.setToAddress("123 Test St");
+            order.setToWardName("Test Ward");
+            order.setToDistrictName("Test District");
+            order.setToProvinceName("Test Province");
+            order.setOrderResource(orderResource);
+            order.setUser(user);
+            order.setPaymentMethodType(PaymentMethodType.PAYPAL);
+            order.setPaymentStatus(1);
+            order.setPaypalOrderId("TEST-PAYPAL-ORDER-ID");
+            order.setPaypalOrderStatus("CREATED");
+            
+            // Set required non-null fields
+            order.setTotalAmount(java.math.BigDecimal.valueOf(100000));
+            order.setTax(java.math.BigDecimal.valueOf(0.1));
+            order.setShippingCost(java.math.BigDecimal.valueOf(20000));
+            order.setTotalPay(java.math.BigDecimal.valueOf(130000));
+            
+            order.setCreatedAt(new Date().toInstant());
+            order.setUpdatedAt(new Date().toInstant());
+            
+            return orderRepository.save(order);
         }
 
         /**
@@ -397,24 +506,34 @@ public class ClientOrderControllerTest {
          * Objective: Verify that the controller creates a client order with cash payment in the database
          * Input: ClientSimpleOrderRequest with PaymentMethodType.CASH
          * Expected Output: Order created in database with valid order code
-         * Note: Tests full integration with database for order creation
          */
         @Test
         @DisplayName("Integration Test - Create client order with cash payment")
         void testCreateClientOrderIntegration() {
             setupBaseData();
-            // authenticate testuser and create cart
+            
+            // Authenticate testuser
             ClientSimpleOrderRequest request = new ClientSimpleOrderRequest();
             request.setPaymentMethodType(PaymentMethodType.CASH);
             Authentication auth = new UsernamePasswordAuthenticationToken("testuser", null);
             SecurityContextHolder.getContext().setAuthentication(auth);
-            // call endpoint
+            
+            // Call endpoint
             ResponseEntity<ClientConfirmedOrderResponse> response = clientOrderController.createClientOrder(request);
             entityManager.flush();
+            
+            // Verify response
             assertEquals(HttpStatus.CREATED, response.getStatusCode());
             assertNotNull(response.getBody().getOrderCode());
-            // verify order exists in DB
+            
+            // Verify order exists in DB
             assertTrue(orderRepository.findByCode(response.getBody().getOrderCode()).isPresent());
+            
+            // Find cart, using findByUsername which might return null
+            Cart cart = cartRepository.findByUsername("testuser").orElse(null);
+            if (cart != null) {
+                assertEquals(2, cart.getStatus(), "Cart should be disabled after order creation");
+            }
         }
 
         /**
@@ -423,28 +542,168 @@ public class ClientOrderControllerTest {
          * Objective: Verify that the controller correctly cancels an existing order in the database
          * Input: Valid order code from previously created order
          * Expected Output: Order status changed to 5 (cancelled) in database
-         * Note: Tests full integration with database for order cancellation
          */
         @Test
-        @DisplayName("Integration Test - Cancel client order with database")
+        @DisplayName("Integration Test - Cancel client order")
         void testCancelClientOrderIntegration() {
             setupBaseData();
-            // prepare and authenticate user
+            
+            // Prepare and authenticate user
             ClientSimpleOrderRequest request = new ClientSimpleOrderRequest();
             request.setPaymentMethodType(PaymentMethodType.CASH);
             Authentication auth = new UsernamePasswordAuthenticationToken("testuser", null);
             SecurityContextHolder.getContext().setAuthentication(auth);
-            // create order via controller
+            
+            // Create order via controller
             ResponseEntity<ClientConfirmedOrderResponse> createResponse = clientOrderController.createClientOrder(request);
             String code = createResponse.getBody().getOrderCode();
             entityManager.flush();
-            // cancel via controller
+            
+            // Cancel via controller
             ResponseEntity<ObjectNode> result = clientOrderController.cancelOrder(code);
             entityManager.flush();
+            
+            // Verify response
             assertEquals(HttpStatus.OK, result.getStatusCode());
-            // verify cancelled status in database
+            
+            // Verify cancelled status in database
             Order cancelled = orderRepository.findByCode(code).orElseThrow();
-            assertEquals(5, cancelled.getStatus());
+            assertEquals(5, cancelled.getStatus(), "Order status should be 5 (cancelled)");
+        }
+        
+        /**
+         * Test Case ID: CRO011
+         * Test Name: testGetAllOrdersIntegration
+         * Objective: Verify that the controller correctly retrieves all orders for a user from the database
+         * Input: Authentication with username "testuser"
+         * Expected Output: HTTP 200 OK with a ListResponse containing orders from database
+         */
+        @Test
+        @DisplayName("Integration Test - Get all orders for user from database")
+        void testGetAllOrdersIntegration() {
+            setupBaseData();
+            
+            // Create order first
+            ClientSimpleOrderRequest request = new ClientSimpleOrderRequest();
+            request.setPaymentMethodType(PaymentMethodType.CASH);
+            Authentication auth = new UsernamePasswordAuthenticationToken("testuser", null);
+            SecurityContextHolder.getContext().setAuthentication(auth);
+            clientOrderController.createClientOrder(request);
+            entityManager.flush();
+            
+            // Test getAllOrders endpoint
+            ResponseEntity<ListResponse<ClientSimpleOrderResponse>> response = 
+                clientOrderController.getAllOrders(auth, 1, 10, "id,desc", null);
+            
+            // Verify response
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            assertNotNull(response.getBody());
+            assertFalse(response.getBody().getContent().isEmpty(), "Should return at least one order");
+        }
+        
+        /**
+         * Test Case ID: CRO012
+         * Test Name: testGetOrderIntegration
+         * Objective: Verify that the controller correctly retrieves a specific order from the database
+         * Input: Valid order code
+         * Expected Output: HTTP 200 OK with order details from database
+         */
+        @Test
+        @DisplayName("Integration Test - Get order by code from database")
+        void testGetOrderIntegration() {
+            setupBaseData();
+            
+            // Create order first
+            ClientSimpleOrderRequest request = new ClientSimpleOrderRequest();
+            request.setPaymentMethodType(PaymentMethodType.CASH);
+            Authentication auth = new UsernamePasswordAuthenticationToken("testuser", null);
+            SecurityContextHolder.getContext().setAuthentication(auth);
+            ResponseEntity<ClientConfirmedOrderResponse> createResponse = clientOrderController.createClientOrder(request);
+            String orderCode = createResponse.getBody().getOrderCode();
+            entityManager.flush();
+            
+            // Test getOrder endpoint
+            ResponseEntity<ClientOrderDetailResponse> response = clientOrderController.getOrder(orderCode);
+            
+            // Verify response
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            assertNotNull(response.getBody());
+            assertEquals(orderCode, response.getBody().getOrderCode());
+        }
+        
+        /**
+         * Test Case ID: CRO013
+         * Test Name: testPaymentSuccessAndCaptureTransactionIntegration
+         * Objective: Verify handling of successful PayPal payments with database
+         * Input: HttpServletRequest with PayPal token and PayerID
+         * Expected Output: Redirect to success page and order updated in database
+         */
+        @Test
+        @DisplayName("Integration Test - Handle PayPal payment success")
+        void testPaymentSuccessAndCaptureTransactionIntegration() {
+            setupBaseData();
+            Order paypalOrder = setupPaypalOrder();
+            
+            // Setup HttpServletRequest mock
+            HttpServletRequest request = mock(HttpServletRequest.class);
+            when(request.getParameter("token")).thenReturn(paypalOrder.getPaypalOrderId());
+            when(request.getParameter("PayerID")).thenReturn("TEST-PAYER-ID");
+            
+            // Call endpoint
+            RedirectView result = clientOrderController.paymentSuccessAndCaptureTransaction(request);
+            entityManager.flush();
+            
+            // Verify redirect
+            assertNotNull(result);
+            assertEquals(AppConstants.FRONTEND_HOST + "/payment/success", result.getUrl());
+            
+            // Verify order updated in database
+            Order updatedOrder = orderRepository.findById(paypalOrder.getId()).orElseThrow();
+            assertEquals("COMPLETED", updatedOrder.getPaypalOrderStatus());
+            assertEquals(2, updatedOrder.getPaymentStatus(), "Payment status should be 2 (paid)");
+        }
+        
+        /**
+         * Test Case ID: CRO014
+         * Test Name: testPaymentCancelIntegration
+         * Objective: Verify handling of cancelled PayPal payments with database
+         * Input: HttpServletRequest with PayPal token
+         * Expected Output: Redirect to cancel page and notification created in database
+         */
+        @Test
+        @DisplayName("Integration Test - Handle PayPal payment cancel")
+        void testPaymentCancelIntegration() {
+            setupBaseData();
+            Order paypalOrder = setupPaypalOrder();
+            
+            // Count notifications before test
+            long notificationCountBefore = notificationRepository.count();
+            
+            // Setup HttpServletRequest mock
+            HttpServletRequest request = mock(HttpServletRequest.class);
+            when(request.getParameter("token")).thenReturn(paypalOrder.getPaypalOrderId());
+            
+            // Call endpoint
+            RedirectView result = clientOrderController.paymentCancel(request);
+            entityManager.flush();
+            
+            // Verify redirect
+            assertNotNull(result);
+            assertEquals(AppConstants.FRONTEND_HOST + "/payment/cancel", result.getUrl());
+            
+            // Verify notification created in database
+            long notificationCountAfter = notificationRepository.count();
+            assertEquals(notificationCountBefore + 1, notificationCountAfter, "Should create one notification");
+            
+            // Verify notification details
+            List<Notification> notifications = notificationRepository.findAll();
+            Optional<Notification> paypalCancelNotification = notifications.stream()
+                .filter(n -> n.getType() == NotificationType.CHECKOUT_PAYPAL_CANCEL && 
+                       n.getMessage().contains(paypalOrder.getCode()))
+                .findFirst();
+            
+            assertTrue(paypalCancelNotification.isPresent(), "PayPal cancel notification should exist");
+            assertEquals(paypalOrder.getUser().getId(), paypalCancelNotification.get().getUser().getId());
         }
     }
 }

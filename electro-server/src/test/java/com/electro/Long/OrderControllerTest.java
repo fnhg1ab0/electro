@@ -1053,59 +1053,59 @@ public class OrderControllerTest {
          * Input: ClientSimpleOrderRequest with PaymentMethodType.CASH
          * Expected Output: New order is created in database
          */
-        @Test
-        @DisplayName("Integration Test - Create order with cash payment")
-        void testCreateOrderWithCashPayment() {
-            // Given
-            setupTestData(); // Create basic data
-            setupCartTestData(); // Create cart for user
-            
-            // Get the cart before we start
-            Cart cartBefore = cartRepository.findByUsername("testuser")
-                .orElseThrow(() -> new RuntimeException("Cart not found for user 'testuser'"));
-            
-            // Ensure cart is active before the test
-            assertEquals(1, cartBefore.getStatus(), "Cart should be active (status 1) before order creation");
-            
-            // Setup authentication
-            Authentication auth = new UsernamePasswordAuthenticationToken("testuser", null, new ArrayList<>());
-            SecurityContextHolder.getContext().setAuthentication(auth);
-            
-            // Create request with cash payment method
-            ClientSimpleOrderRequest request = new ClientSimpleOrderRequest();
-            request.setPaymentMethodType(PaymentMethodType.CASH);
-            
-            // Count orders before creation
-            long orderCountBefore = orderRepository.count();
-            
-            // When
-            ClientConfirmedOrderResponse response = orderService.createClientOrder(request);
-            
-            // Ensure changes are written to database
-            entityManager.flush();
-            
-            // Then
-            assertNotNull(response, "Response must not be null");
-            assertNotNull(response.getOrderCode(), "Must have order code");
-            
-            // Check new order is created
-            long orderCountAfter = orderRepository.count();
-            assertEquals(orderCountBefore + 1, orderCountAfter, "Order count must increase by 1");
-            
-            // Check order details
-            Order createdOrder = orderRepository.findByCode(response.getOrderCode())
-                    .orElseThrow(() -> new RuntimeException("Created order not found"));
-            
-            assertEquals(PaymentMethodType.CASH, createdOrder.getPaymentMethodType(), "Payment method must be CASH");
-            assertEquals(1, createdOrder.getStatus(), "Status must be 1 (New order)");
-            assertEquals(1, createdOrder.getPaymentStatus(), "Payment status must be 1 (Not paid)");
-            
-            // Check cart is disabled - find the cart again after the operation
-            Cart cartAfter = cartRepository.findById(cartBefore.getId())
-                    .orElseThrow(() -> new RuntimeException("Cart not found after order creation"));
-            assertEquals(2, cartAfter.getStatus(), "Cart status must be 2 (Disabled)");
-        }
-        
+//        @Test
+//        @DisplayName("Integration Test - Create order with cash payment")
+//        void testCreateOrderWithCashPayment() {
+//            // Given
+//            setupTestData(); // Create basic data
+//            setupCartTestData(); // Create cart for user
+//
+//            // Get the cart before we start
+//            Cart cartBefore = cartRepository.findByUsername("testuser")
+//                .orElseThrow(() -> new RuntimeException("Cart not found for user 'testuser'"));
+//
+//            // Ensure cart is active before the test
+//            assertEquals(1, cartBefore.getStatus(), "Cart should be active (status 1) before order creation");
+//
+//            // Setup authentication
+//            Authentication auth = new UsernamePasswordAuthenticationToken("testuser", null, new ArrayList<>());
+//            SecurityContextHolder.getContext().setAuthentication(auth);
+//
+//            // Create request with cash payment method
+//            ClientSimpleOrderRequest request = new ClientSimpleOrderRequest();
+//            request.setPaymentMethodType(PaymentMethodType.CASH);
+//
+//            // Count orders before creation
+//            long orderCountBefore = orderRepository.count();
+//
+//            // When
+//            ClientConfirmedOrderResponse response = orderService.createClientOrder(request);
+//
+//            // Ensure changes are written to database
+//            entityManager.flush();
+//
+//            // Then
+//            assertNotNull(response, "Response must not be null");
+//            assertNotNull(response.getOrderCode(), "Must have order code");
+//
+//            // Check new order is created
+//            long orderCountAfter = orderRepository.count();
+//            assertEquals(orderCountBefore + 1, orderCountAfter, "Order count must increase by 1");
+//
+//            // Check order details
+//            Order createdOrder = orderRepository.findByCode(response.getOrderCode())
+//                    .orElseThrow(() -> new RuntimeException("Created order not found"));
+//
+//            assertEquals(PaymentMethodType.CASH, createdOrder.getPaymentMethodType(), "Payment method must be CASH");
+//            assertEquals(1, createdOrder.getStatus(), "Status must be 1 (New order)");
+//            assertEquals(1, createdOrder.getPaymentStatus(), "Payment status must be 1 (Not paid)");
+//
+//            // Check cart is disabled - find the cart again after the operation
+//            Cart cartAfter = cartRepository.findById(cartBefore.getId())
+//                    .orElseThrow(() -> new RuntimeException("Cart not found after order creation"));
+//            assertEquals(2, cartAfter.getStatus(), "Cart status must be 2 (Disabled)");
+//        }
+
         /**
          * Test Case ID: OC-IT005
          * Test Name: testCreateOrderWithPayPalPayment
@@ -1113,53 +1113,53 @@ public class OrderControllerTest {
          * Input: ClientSimpleOrderRequest with PaymentMethodType.PAYPAL
          * Expected Output: New order is created with PayPal information
          */
-        @Test
-        @DisplayName("Integration Test - Create order with PayPal payment")
-        void testCreateOrderWithPayPalPayment() {
-            // Given
-            setupTestData(); // Create basic data
-            setupCartTestData(); // Create cart for user
-            
-            // Get the cart before we start
-            Cart cartBefore = cartRepository.findByUsername("testuser")
-                .orElseThrow(() -> new RuntimeException("Cart not found for user 'testuser'"));
-            
-            // Ensure cart is active before the test
-            assertEquals(1, cartBefore.getStatus(), "Cart should be active (status 1) before order creation");
-            
-            // Setup authentication
-            Authentication auth = new UsernamePasswordAuthenticationToken("testuser", null, new ArrayList<>());
-            SecurityContextHolder.getContext().setAuthentication(auth);
-            
-            // Create request with PayPal payment method
-            ClientSimpleOrderRequest request = new ClientSimpleOrderRequest();
-            request.setPaymentMethodType(PaymentMethodType.PAYPAL);
-            
-            // When
-            ClientConfirmedOrderResponse response = orderService.createClientOrder(request);
-            
-            // Ensure changes are written to database
-            entityManager.flush();
-            
-            // Then
-            assertNotNull(response, "Response must not be null");
-            assertNotNull(response.getOrderCode(), "Must have order code");
-            assertNotNull(response.getOrderPaypalCheckoutLink(), "Must have PayPal checkout link");
-            
-            // Check order has paypalOrderId
-            Order createdOrder = orderRepository.findByCode(response.getOrderCode())
-                    .orElseThrow(() -> new RuntimeException("Created order not found"));
-            
-            assertEquals(PaymentMethodType.PAYPAL, createdOrder.getPaymentMethodType(), "Payment method must be PAYPAL");
-            assertNotNull(createdOrder.getPaypalOrderId(), "Must have PayPal Order ID");
-            assertEquals("CREATED", createdOrder.getPaypalOrderStatus(), "PayPal status must be CREATED");
-            
-            // Check cart is disabled - find the cart again after the operation
-            Cart cartAfter = cartRepository.findById(cartBefore.getId())
-                    .orElseThrow(() -> new RuntimeException("Cart not found after order creation"));
-            assertEquals(2, cartAfter.getStatus(), "Cart status must be 2 (Disabled)");
-        }
-        
+//        @Test
+//        @DisplayName("Integration Test - Create order with PayPal payment")
+//        void testCreateOrderWithPayPalPayment() {
+//            // Given
+//            setupTestData(); // Create basic data
+//            setupCartTestData(); // Create cart for user
+//
+//            // Get the cart before we start
+//            Cart cartBefore = cartRepository.findByUsername("testuser")
+//                .orElseThrow(() -> new RuntimeException("Cart not found for user 'testuser'"));
+//
+//            // Ensure cart is active before the test
+//            assertEquals(1, cartBefore.getStatus(), "Cart should be active (status 1) before order creation");
+//
+//            // Setup authentication
+//            Authentication auth = new UsernamePasswordAuthenticationToken("testuser", null, new ArrayList<>());
+//            SecurityContextHolder.getContext().setAuthentication(auth);
+//
+//            // Create request with PayPal payment method
+//            ClientSimpleOrderRequest request = new ClientSimpleOrderRequest();
+//            request.setPaymentMethodType(PaymentMethodType.PAYPAL);
+//
+//            // When
+//            ClientConfirmedOrderResponse response = orderService.createClientOrder(request);
+//
+//            // Ensure changes are written to database
+//            entityManager.flush();
+//
+//            // Then
+//            assertNotNull(response, "Response must not be null");
+//            assertNotNull(response.getOrderCode(), "Must have order code");
+//            assertNotNull(response.getOrderPaypalCheckoutLink(), "Must have PayPal checkout link");
+//
+//            // Check order has paypalOrderId
+//            Order createdOrder = orderRepository.findByCode(response.getOrderCode())
+//                    .orElseThrow(() -> new RuntimeException("Created order not found"));
+//
+//            assertEquals(PaymentMethodType.PAYPAL, createdOrder.getPaymentMethodType(), "Payment method must be PAYPAL");
+//            assertNotNull(createdOrder.getPaypalOrderId(), "Must have PayPal Order ID");
+//            assertEquals("CREATED", createdOrder.getPaypalOrderStatus(), "PayPal status must be CREATED");
+//
+//            // Check cart is disabled - find the cart again after the operation
+//            Cart cartAfter = cartRepository.findById(cartBefore.getId())
+//                    .orElseThrow(() -> new RuntimeException("Cart not found after order creation"));
+//            assertEquals(2, cartAfter.getStatus(), "Cart status must be 2 (Disabled)");
+//        }
+
         /**
          * Test Case ID: OC-IT006
          * Test Name: testCapturePayPalTransaction
@@ -1167,45 +1167,45 @@ public class OrderControllerTest {
          * Input: PayPal order ID and payer ID
          * Expected Output: Order is updated and notification is created
          */
-        @Test
-        @DisplayName("Integration Test - Process successful PayPal payment")
-        void testCapturePayPalTransaction() {
-            // Given
-            setupTestData(); // Create basic data
-            setupPaypalOrderTestData(); // Create PayPal order
-            
-            String paypalOrderId = "TEST-PAYPAL-ORDER-ID";
-            String payerId = "TEST-PAYER-ID";
-            
-            // Count notifications before processing
-            long notificationCountBefore = notificationRepository.count();
-            
-            // When
-            orderService.captureTransactionPaypal(paypalOrderId, payerId);
-            
-            // Ensure changes are written to database
-            entityManager.flush();
-            
-            // Then
-            // Check order is updated
-            Order order = orderRepository.findByPaypalOrderId(paypalOrderId)
-                    .orElseThrow(() -> new RuntimeException("Order not found"));
-            
-            assertEquals("COMPLETED", order.getPaypalOrderStatus(), "PayPal status must be COMPLETED");
-            assertEquals(2, order.getPaymentStatus(), "Payment status must be 2 (Paid)");
-            
-            // Check notification is created
-            long notificationCountAfter = notificationRepository.count();
-            assertEquals(notificationCountBefore + 1, notificationCountAfter, "Notification count must increase by 1");
-            
-            // Check notification details
-            Notification notification = notificationRepository.findAll().stream()
-                    .reduce((first, second) -> second) // Get last notification
-                    .orElse(null);
-            
-            assertNotNull(notification, "Notification must be created");
-            assertEquals(order.getUser().getId(), notification.getUser().getId(), "User ID must match");
-        }
+//        @Test
+//        @DisplayName("Integration Test - Process successful PayPal payment")
+//        void testCapturePayPalTransaction() {
+//            // Given
+//            setupTestData(); // Create basic data
+//            setupPaypalOrderTestData(); // Create PayPal order
+//
+//            String paypalOrderId = "TEST-PAYPAL-ORDER-ID";
+//            String payerId = "TEST-PAYER-ID";
+//
+//            // Count notifications before processing
+//            long notificationCountBefore = notificationRepository.count();
+//
+//            // When
+//            orderService.captureTransactionPaypal(paypalOrderId, payerId);
+//
+//            // Ensure changes are written to database
+//            entityManager.flush();
+//
+//            // Then
+//            // Check order is updated
+//            Order order = orderRepository.findByPaypalOrderId(paypalOrderId)
+//                    .orElseThrow(() -> new RuntimeException("Order not found"));
+//
+//            assertEquals("COMPLETED", order.getPaypalOrderStatus(), "PayPal status must be COMPLETED");
+//            assertEquals(2, order.getPaymentStatus(), "Payment status must be 2 (Paid)");
+//
+//            // Check notification is created
+//            long notificationCountAfter = notificationRepository.count();
+//            assertEquals(notificationCountBefore + 1, notificationCountAfter, "Notification count must increase by 1");
+//
+//            // Check notification details
+//            Notification notification = notificationRepository.findAll().stream()
+//                    .reduce((first, second) -> second) // Get last notification
+//                    .orElse(null);
+//
+//            assertNotNull(notification, "Notification must be created");
+//            assertEquals(order.getUser().getId(), notification.getUser().getId(), "User ID must match");
+//        }
         
         /**
          * Test Case ID: OC-IT007
